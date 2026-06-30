@@ -5,18 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FC-N28 Level 5 3D Campus Tour</title>
   </head>
+
   <body>
+    <canvas id="three-canvas"></canvas>
+
     <div id="welcome-screen">
       <h1>FC-N28 Level 5 3D Campus Tour</h1>
-      <p>Explore the Level 5 corridor, balcony, computer lab entrance, lab interior, and exit area.</p>
+      <p>
+        Explore the FC-N28 Level 5 area, including the starting point, open balcony,
+        corridor walkway, computer lab entrance, computer lab interior, and exit door.
+      </p>
       <button id="start-btn">Start Tour</button>
     </div>
 
     <div id="ui-panel">
       <h2>Navigation Guide</h2>
-      <p>Mouse: Look around</p>
-      <p>Scroll: Zoom in/out</p>
-      <p>Click yellow markers: View information</p>
+      <p><b>Mouse drag:</b> Look around</p>
+      <p><b>Scroll:</b> Zoom in/out</p>
+      <p><b>Click yellow spheres:</b> View information</p>
+
       <button id="reset-camera-btn">Reset View</button>
       <button id="toggle-light-btn">Toggle Light</button>
     </div>
@@ -24,10 +31,8 @@
     <div id="info-panel">
       <button id="close-info-btn">X</button>
       <h2 id="info-title">Information</h2>
-      <p id="info-text">Click a hotspot to view details.</p>
+      <p id="info-text">Click a yellow hotspot to view details.</p>
     </div>
-
-    <canvas id="three-canvas"></canvas>
 
     <script type="module" src="/src/main.js"></script>
   </body>
