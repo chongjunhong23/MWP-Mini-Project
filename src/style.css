@@ -96,6 +96,18 @@ body {
   cursor: pointer;
 }
 
+#open-lift-btn {
+  display: block;
+  width: 100%;
+  margin-right: 0;
+  background: #b8860b;
+}
+
+#open-lift-btn:disabled {
+  background: #777;
+  cursor: default;
+}
+
 #info-panel {
   position: fixed;
   top: 20px;
