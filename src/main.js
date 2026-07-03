@@ -378,6 +378,29 @@ function applyLiftModelDoorProgress(progress) {
   });
 }
 
+function loadSceneModel({ url, name, position, rotation = [0, 0, 0], scale = 1, parent = scene }) {
+  gltfLoader.load(url, (gltf) => {
+    const model = gltf.scene;
+    model.name = name;
+    model.position.set(...position);
+    model.rotation.set(...rotation);
+
+    if (Array.isArray(scale)) {
+      model.scale.set(...scale);
+    } else {
+      model.scale.setScalar(scale);
+    }
+
+    model.traverse((object) => {
+      if (object.isMesh) {
+        object.frustumCulled = false;
+      }
+    });
+
+    parent.add(model);
+  });
+}
+
 gltfLoader.load('/models/ElevatorAnimation.glb', (gltf) => {
   const elevatorModel = gltf.scene;
   elevatorModel.name = 'Realistic Animated Elevator Model';
@@ -458,6 +481,13 @@ createBox('Landing Ceiling', 3.7, 0.2, 2.4, -0.15, 3.1, 10.95, ceilingMaterial);
 createBox('Landing Safety Rail', 3.6, 0.12, 0.12, -0.15, 1.35, 9.82, railingMaterial);
 createWindowGrille('Lift Landing Window Grille', 0.2, 1.8, 9.58, 1.8, 1.2);
 createNoticeBoard('Lift Landing Notice Board', -1.55, 1.65, 10.25, 0.8, 0.55, 0xf8fafc);
+loadSceneModel({
+  url: '/models/kenney/construction-barrier.glb',
+  name: 'Downloaded Landing Safety Barrier',
+  position: [-0.15, 0.03, 9.45],
+  rotation: [0, Math.PI, 0],
+  scale: 1.15
+});
 
 createBox('First Left Corridor Floor', 8.1, 0.2, 2.5, -5.05, -0.1, 10.9, floorMaterial);
 createBox('First Corridor Solid Wall', 8.3, 3, 0.2, -5.05, 1.5, 12.15, wallMaterial);
@@ -465,8 +495,13 @@ createBox('First Corridor Balcony Barrier', 8.3, 1.2, 0.2, -5.05, 0.6, 9.65, wal
 createBox('First Corridor Ceiling', 8.3, 0.2, 2.5, -5.05, 3.1, 10.9, ceilingMaterial);
 createBox('First Corridor Rail', 7.8, 0.12, 0.12, -5.05, 1.35, 9.78, railingMaterial);
 createShoeRack(-6.2, 0, 11.65);
-createBox('Corridor Wooden Bench Seat', 1.7, 0.12, 0.42, -4.6, 0.48, 11.6, woodMaterial);
-createBox('Corridor Bench Back', 1.7, 0.45, 0.08, -4.6, 0.78, 11.82, woodMaterial);
+loadSceneModel({
+  url: '/models/kenney/bench.glb',
+  name: 'Downloaded Corridor Bench',
+  position: [-4.6, 0.02, 11.62],
+  rotation: [0, Math.PI / 2, 0],
+  scale: 1.1
+});
 createFireExtinguisher(-7.75, 0, 11.6);
 createNoticeBoard('Corridor Notice Board', -3.2, 1.7, 12.02, 1.2, 0.75, 0xf5d76e);
 
@@ -504,6 +539,14 @@ createBox('Lab Door Raised Top Panel', 0.04, 0.58, 0.82, 0.09, 0.28, -0.7, new T
 createBox('Lab Door Raised Bottom Panel', 0.04, 0.62, 0.82, 0.09, -0.55, -0.7, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
 const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.1, railingMaterial, labDoorPivot);
 labDoorHandle.userData = labDoor.userData;
+
+loadSceneModel({
+  url: '/models/kenney/doorwayOpen.glb',
+  name: 'Downloaded Lab Doorway Trim',
+  position: [-9.98, 0.02, 3.2],
+  rotation: [0, Math.PI / 2, 0],
+  scale: [1.05, 1.12, 1.05]
+});
 
 createTextPanel('LAB', 1.2, 0.32, -9.78, 2.58, 3.2, '#f5d76e', '#3a1f12');
 
