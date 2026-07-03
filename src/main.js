@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ===============================
 // BASIC SETUP
@@ -353,52 +354,65 @@ const liftGroup = new THREE.Group();
 liftGroup.name = 'Lift Opening Scene';
 scene.add(liftGroup);
 
-createBox('Lift Floor', 4.4, 0.2, 4.2, 0, -0.1, 14.2, floorMaterial, liftGroup);
-createBox('Lift Ceiling', 4.4, 0.2, 4.2, 0, 3.1, 14.2, liftWallMaterial, liftGroup);
-createBox('Lift Back Metal Wall', 4.4, 3.2, 0.18, 0, 1.5, 16.25, liftWallMaterial, liftGroup);
-createBox('Lift Left Metal Wall', 0.18, 3.2, 4.2, -2.2, 1.5, 14.2, liftWallMaterial, liftGroup);
-createBox('Lift Right Metal Wall', 0.18, 3.2, 4.2, 2.2, 1.5, 14.2, liftWallMaterial, liftGroup);
+const gltfLoader = new GLTFLoader();
+const liftDoorParts = [];
 
-for (let x = -1.6; x <= 1.6; x += 0.8) {
-  createBox('Lift Rear Wall Decorative Strip', 0.05, 2.7, 0.03, x, 1.55, 16.14, new THREE.MeshStandardMaterial({ color: 0xe2e5e8, metalness: 0.6, roughness: 0.2 }), liftGroup);
+function registerLiftDoorPart(object) {
+  const isLeftDoor = object.name === 'LeftOutsideDoor' || object.name === 'LeftInteriorDoor';
+  const isRightDoor = object.name === 'RightOutsideDoor' || object.name === 'RightInteriorDoor';
+
+  if (!isLeftDoor && !isRightDoor) {
+    return;
+  }
+
+  liftDoorParts.push({
+    object,
+    closed: object.position.clone(),
+    open: object.position.clone().add(new THREE.Vector3(0, 0, isLeftDoor ? 0.8 : -0.84))
+  });
 }
 
-for (let z = 12.65; z <= 15.65; z += 0.75) {
-  createBox('Lift Side Wall Decorative Strip', 0.03, 2.7, 0.05, -2.1, 1.55, z, new THREE.MeshStandardMaterial({ color: 0xe2e5e8, metalness: 0.6, roughness: 0.2 }), liftGroup);
-  createBox('Lift Side Wall Decorative Strip', 0.03, 2.7, 0.05, 2.1, 1.55, z, new THREE.MeshStandardMaterial({ color: 0xe2e5e8, metalness: 0.6, roughness: 0.2 }), liftGroup);
+function applyLiftModelDoorProgress(progress) {
+  liftDoorParts.forEach((part) => {
+    part.object.position.lerpVectors(part.closed, part.open, progress);
+  });
 }
 
-createBox('Lift Door Frame Top', 4.5, 0.28, 0.25, 0, 2.78, 12.05, liftPanelMaterial, liftGroup);
-createBox('Lift Door Frame Left', 0.22, 2.75, 0.25, -2.12, 1.38, 12.05, liftPanelMaterial, liftGroup);
-createBox('Lift Door Frame Right', 0.22, 2.75, 0.25, 2.12, 1.38, 12.05, liftPanelMaterial, liftGroup);
+gltfLoader.load('/models/ElevatorAnimation.glb', (gltf) => {
+  const elevatorModel = gltf.scene;
+  elevatorModel.name = 'Realistic Animated Elevator Model';
+  elevatorModel.position.set(0, 0, 12.25);
+  elevatorModel.rotation.y = Math.PI / 2;
+  elevatorModel.scale.setScalar(1.2);
+  liftGroup.add(elevatorModel);
 
-const leftLiftDoor = createBox('Left Sliding Lift Door', 1.18, 2.55, 0.14, -0.6, 1.28, 12.04, liftDoorMaterial, liftGroup);
-const rightLiftDoor = createBox('Right Sliding Lift Door', 1.18, 2.55, 0.14, 0.6, 1.28, 12.04, liftDoorMaterial, liftGroup);
-createBox('Lift Door Center Seam', 0.04, 2.5, 0.16, 0, 1.28, 11.95, liftPanelMaterial, liftGroup);
-createBox('Left Lift Door Lower Panel', 0.92, 0.55, 0.04, -0.6, 0.78, 11.94, metalMaterial, liftGroup);
-createBox('Right Lift Door Lower Panel', 0.92, 0.55, 0.04, 0.6, 0.78, 11.94, metalMaterial, liftGroup);
-createBox('Left Lift Door Upper Panel', 0.92, 0.55, 0.04, -0.6, 1.72, 11.94, metalMaterial, liftGroup);
-createBox('Right Lift Door Upper Panel', 0.92, 0.55, 0.04, 0.6, 1.72, 11.94, metalMaterial, liftGroup);
+  elevatorModel.traverse((object) => {
+    if (object.isMesh) {
+      object.frustumCulled = false;
+    }
 
-createTextPanel('LEVEL 5', 1.45, 0.42, 0, 2.48, 11.92, '#111827', '#ffd84d', liftGroup);
-createBox('Lift Handrail Left', 0.08, 0.08, 2.5, -2.05, 1.05, 14.45, railingMaterial, liftGroup);
-createBox('Lift Handrail Right', 0.08, 0.08, 2.5, 2.05, 1.05, 14.45, railingMaterial, liftGroup);
-createBox('Lift Handrail Back', 2.7, 0.08, 0.08, 0, 1.05, 16.05, railingMaterial, liftGroup);
+    registerLiftDoorPart(object);
+  });
 
-createBox('Lift Button Panel', 0.12, 1.25, 0.45, -2.05, 1.45, 13.25, liftPanelMaterial, liftGroup);
-createTextPanel('5', 0.28, 0.28, -1.97, 1.88, 13.25, '#111827', '#ffd84d', liftGroup);
-for (let i = 0; i < 4; i++) {
-  createCylinder('Lift Small Round Button', 0.055, 0.035, -1.96, 1.6 - i * 0.18, 13.23, liftButtonMaterial, liftGroup, 18).rotation.x = Math.PI / 2;
-}
+  applyLiftModelDoorProgress(liftDoorProgress);
+});
 
-const liftButton = createBox('Clickable Lift Open Button', 0.16, 0.16, 0.16, -1.96, 1.42, 13.05, liftButtonMaterial, liftGroup);
+const liftButton = createBox(
+  'Clickable Lift Open Button',
+  0.42,
+  0.72,
+  0.42,
+  -1.75,
+  1.45,
+  12.65,
+  new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
+  liftGroup
+);
 liftButton.userData = {
   isLiftButton: true,
   title: 'Open Lift Door',
   text: 'The lift door opens to begin the FC-N28 Level 5 tour route.'
 };
-
-createBox('Lift Interior Ceiling Light', 2.4, 0.05, 0.45, 0, 2.98, 14.1, new THREE.MeshBasicMaterial({ color: 0xffffcc }), liftGroup);
 
 const directionArrowGroup = new THREE.Group();
 directionArrowGroup.name = 'Corridor Direction Arrow';
@@ -420,7 +434,6 @@ let liftDoorProgress = 0;
 
 function openLiftDoors() {
   liftDoorOpen = true;
-  liftButton.material = liftButtonActiveMaterial;
   openLiftBtn.disabled = true;
   openLiftBtn.textContent = 'Lift Door Open';
 }
@@ -428,11 +441,9 @@ function openLiftDoors() {
 function resetLiftDoors() {
   liftDoorOpen = false;
   liftDoorProgress = 0;
-  liftButton.material = liftButtonMaterial;
+  applyLiftModelDoorProgress(liftDoorProgress);
   openLiftBtn.disabled = false;
   openLiftBtn.textContent = 'Open Lift Door';
-  leftLiftDoor.position.x = -0.6;
-  rightLiftDoor.position.x = 0.6;
   arrowMaterial.opacity = 0;
 }
 
@@ -824,8 +835,7 @@ function animate() {
 
   const targetProgress = liftDoorOpen ? 1 : 0;
   liftDoorProgress = THREE.MathUtils.damp(liftDoorProgress, targetProgress, 4.2, delta);
-  leftLiftDoor.position.x = THREE.MathUtils.lerp(-0.6, -1.55, liftDoorProgress);
-  rightLiftDoor.position.x = THREE.MathUtils.lerp(0.6, 1.55, liftDoorProgress);
+  applyLiftModelDoorProgress(liftDoorProgress);
   arrowMaterial.opacity = THREE.MathUtils.lerp(0, 0.9, liftDoorProgress);
   arrowStem.material.opacity = arrowMaterial.opacity;
   arrowHead.material.opacity = arrowMaterial.opacity;
