@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ===============================
 // BASIC SETUP
@@ -79,6 +80,13 @@ const deskMaterial = new THREE.MeshStandardMaterial({ color: 0x202020 });
 const monitorMaterial = new THREE.MeshStandardMaterial({ color: 0x050505 });
 const chairMaterial = new THREE.MeshStandardMaterial({ color: 0xbb2222 });
 const carpetMaterial = new THREE.MeshStandardMaterial({ color: 0x174a73 });
+const metalMaterial = new THREE.MeshStandardMaterial({ color: 0x9ca3af, metalness: 0.45, roughness: 0.28 });
+const darkMetalMaterial = new THREE.MeshStandardMaterial({ color: 0x1f2933, metalness: 0.35, roughness: 0.34 });
+const screenMaterial = new THREE.MeshBasicMaterial({ color: 0x5fb4ff });
+const whitePlasticMaterial = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.4 });
+const noticeMaterial = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5 });
+const extinguisherMaterial = new THREE.MeshStandardMaterial({ color: 0xc1121f, roughness: 0.32 });
+const woodMaterial = new THREE.MeshStandardMaterial({ color: 0x9a6a3a, roughness: 0.55 });
 
 const liftWallMaterial = new THREE.MeshStandardMaterial({
   color: 0xbfc3c6,
@@ -116,6 +124,15 @@ function createBox(name, width, height, depth, x, y, z, material, parent = scene
   return mesh;
 }
 
+function createCylinder(name, radius, height, x, y, z, material, parent = scene, segments = 24) {
+  const geometry = new THREE.CylinderGeometry(radius, radius, height, segments);
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.name = name;
+  mesh.position.set(x, y, z);
+  parent.add(mesh);
+  return mesh;
+}
+
 function createTextPanel(text, width, height, x, y, z, background, foreground, parent = scene) {
   const textureCanvas = document.createElement('canvas');
   textureCanvas.width = 512;
@@ -142,6 +159,142 @@ function createTextPanel(text, width, height, x, y, z, background, foreground, p
   panel.position.set(x, y, z);
   parent.add(panel);
   return panel;
+}
+
+function createFluorescentLight(name, x, y, z, rotationY = 0, parent = scene) {
+  const group = new THREE.Group();
+  group.name = name;
+  group.position.set(x, y, z);
+  group.rotation.y = rotationY;
+  parent.add(group);
+
+  createBox('Light Housing', 1.25, 0.05, 0.32, 0, 0, 0, whitePlasticMaterial, group);
+  createBox('Glowing Tube', 1.05, 0.035, 0.2, 0, -0.02, 0, new THREE.MeshBasicMaterial({ color: 0xffffdd }), group);
+
+  return group;
+}
+
+function createCeilingGrid(width, depth, centerX, centerZ, y, parent = scene) {
+  for (let x = centerX - width / 2; x <= centerX + width / 2 + 0.01; x += 1) {
+    createBox('Ceiling Grid Strip', 0.025, 0.025, depth, x, y, centerZ, metalMaterial, parent);
+  }
+
+  for (let z = centerZ - depth / 2; z <= centerZ + depth / 2 + 0.01; z += 1) {
+    createBox('Ceiling Grid Strip', width, 0.025, 0.025, centerX, y, z, metalMaterial, parent);
+  }
+}
+
+function createWindowGrille(name, x, y, z, width, height, parent = scene) {
+  const group = new THREE.Group();
+  group.name = name;
+  group.position.set(x, y, z);
+  parent.add(group);
+
+  createBox('Window Frame Top', width, 0.06, 0.05, 0, height / 2, 0, metalMaterial, group);
+  createBox('Window Frame Bottom', width, 0.06, 0.05, 0, -height / 2, 0, metalMaterial, group);
+  createBox('Window Frame Left', 0.06, height, 0.05, -width / 2, 0, 0, metalMaterial, group);
+  createBox('Window Frame Right', 0.06, height, 0.05, width / 2, 0, 0, metalMaterial, group);
+
+  for (let i = -2; i <= 2; i++) {
+    createBox('Window Grille Bar', 0.04, height, 0.04, i * width / 5, 0, 0, metalMaterial, group);
+  }
+
+  return group;
+}
+
+function createNoticeBoard(name, x, y, z, width, height, color = 0xf5d76e, parent = scene) {
+  const group = new THREE.Group();
+  group.name = name;
+  group.position.set(x, y, z);
+  parent.add(group);
+
+  createBox('Notice Board Backing', width, height, 0.06, 0, 0, 0, new THREE.MeshStandardMaterial({ color, roughness: 0.45 }), group);
+  createBox('Notice Paper A', width * 0.32, height * 0.38, 0.07, -width * 0.2, 0.08, 0.01, noticeMaterial, group);
+  createBox('Notice Paper B', width * 0.32, height * 0.28, 0.07, width * 0.22, -0.08, 0.01, noticeMaterial, group);
+  createBox('Notice Header Strip', width * 0.75, 0.04, 0.08, 0, height * 0.28, 0.02, new THREE.MeshBasicMaterial({ color: 0xcc3333 }), group);
+
+  return group;
+}
+
+function addDoorPanels(parent, width, height, depth = 0.03) {
+  createBox('Door Raised Top Panel', width * 0.62, height * 0.28, depth, 0, height * 0.18, -0.09, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), parent);
+  createBox('Door Raised Bottom Panel', width * 0.62, height * 0.32, depth, 0, -height * 0.24, -0.09, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), parent);
+}
+
+function createFireExtinguisher(x, y, z, parent = scene) {
+  const group = new THREE.Group();
+  group.name = 'Fire Extinguisher';
+  group.position.set(x, y, z);
+  parent.add(group);
+
+  createCylinder('Extinguisher Body', 0.13, 0.8, 0, 0.42, 0, extinguisherMaterial, group);
+  createCylinder('Extinguisher Neck', 0.06, 0.16, 0, 0.9, 0, darkMetalMaterial, group);
+  const hose = createCylinder('Extinguisher Hose', 0.025, 0.55, 0.18, 0.8, 0, darkMetalMaterial, group, 12);
+  hose.rotation.z = Math.PI / 2.8;
+  createBox('Extinguisher Label', 0.18, 0.16, 0.02, 0, 0.45, -0.13, noticeMaterial, group);
+
+  return group;
+}
+
+function createShoeRack(x, y, z, parent = scene) {
+  const group = new THREE.Group();
+  group.name = 'Wooden Shoe Rack';
+  group.position.set(x, y, z);
+  parent.add(group);
+
+  for (let level = 0; level < 3; level++) {
+    createBox('Shoe Rack Shelf', 1.45, 0.06, 0.38, 0, y + level * 0.26, 0, woodMaterial, group);
+  }
+
+  for (const xOffset of [-0.68, 0.68]) {
+    createBox('Shoe Rack Side', 0.06, 0.7, 0.42, xOffset, y + 0.32, 0, woodMaterial, group);
+  }
+
+  return group;
+}
+
+function createAirCond(name, x, y, z, parent = scene) {
+  const group = new THREE.Group();
+  group.name = name;
+  group.position.set(x, y, z);
+  parent.add(group);
+
+  createBox('Air Conditioner Body', 1.15, 0.35, 0.22, 0, 0, 0, whitePlasticMaterial, group);
+  createBox('Air Conditioner Vent', 0.95, 0.045, 0.04, 0, -0.11, -0.12, darkMetalMaterial, group);
+  createBox('Air Conditioner Indicator', 0.1, 0.035, 0.03, 0.42, 0.07, -0.13, new THREE.MeshBasicMaterial({ color: 0x66ff99 }), group);
+
+  return group;
+}
+
+function createComputerStation(x, z, parent = scene) {
+  const group = new THREE.Group();
+  group.name = 'Detailed Computer Station';
+  group.position.set(x, 0, z);
+  parent.add(group);
+
+  createBox('Lab Desk Top', 1.45, 0.12, 0.9, 0, 0.78, 0, deskMaterial, group);
+  createBox('Desk Left Side', 0.08, 0.7, 0.75, -0.62, 0.38, 0, darkMetalMaterial, group);
+  createBox('Desk Right Side', 0.08, 0.7, 0.75, 0.62, 0.38, 0, darkMetalMaterial, group);
+  createBox('Desk Back Modesty Panel', 1.25, 0.48, 0.06, 0, 0.42, -0.38, darkMetalMaterial, group);
+
+  createBox('Monitor Stand', 0.14, 0.28, 0.08, 0, 0.99, -0.2, darkMetalMaterial, group);
+  createBox('Monitor Base', 0.42, 0.04, 0.24, 0, 0.88, -0.18, darkMetalMaterial, group);
+  createBox('Monitor Screen Back', 0.86, 0.58, 0.08, 0, 1.28, -0.28, monitorMaterial, group);
+  createBox('Monitor Blue Screen', 0.72, 0.44, 0.02, 0, 1.28, -0.325, screenMaterial, group);
+  createBox('Keyboard', 0.72, 0.035, 0.22, 0, 0.88, 0.12, darkMetalMaterial, group);
+  createBox('Mouse', 0.14, 0.035, 0.2, 0.48, 0.88, 0.12, darkMetalMaterial, group);
+  createBox('CPU Tower', 0.28, 0.62, 0.45, -0.48, 0.33, 0.22, monitorMaterial, group);
+
+  createBox('Chair Seat', 0.62, 0.12, 0.62, 0, 0.45, 0.85, chairMaterial, group);
+  createBox('Chair Back', 0.62, 0.72, 0.12, 0, 0.88, 1.13, chairMaterial, group);
+  createCylinder('Chair Post', 0.05, 0.42, 0, 0.24, 0.85, darkMetalMaterial, group, 14);
+  for (const xOffset of [-0.25, 0.25]) {
+    for (const zOffset of [0.62, 1.05]) {
+      createCylinder('Chair Leg', 0.025, 0.45, xOffset, 0.22, zOffset, darkMetalMaterial, group, 10);
+    }
+  }
+
+  return group;
 }
 
 function setCameraView(position, target) {
@@ -201,45 +354,88 @@ const liftGroup = new THREE.Group();
 liftGroup.name = 'Lift Opening Scene';
 scene.add(liftGroup);
 
-createBox('Lift Floor', 4.4, 0.2, 4.2, 0, -0.1, 14.2, floorMaterial, liftGroup);
-createBox('Lift Ceiling', 4.4, 0.2, 4.2, 0, 3.1, 14.2, liftWallMaterial, liftGroup);
-createBox('Lift Back Metal Wall', 4.4, 3.2, 0.18, 0, 1.5, 16.25, liftWallMaterial, liftGroup);
-createBox('Lift Left Metal Wall', 0.18, 3.2, 4.2, -2.2, 1.5, 14.2, liftWallMaterial, liftGroup);
-createBox('Lift Right Metal Wall', 0.18, 3.2, 4.2, 2.2, 1.5, 14.2, liftWallMaterial, liftGroup);
+const gltfLoader = new GLTFLoader();
+const liftDoorParts = [];
 
-for (let x = -1.6; x <= 1.6; x += 0.8) {
-  createBox('Lift Rear Wall Decorative Strip', 0.05, 2.7, 0.03, x, 1.55, 16.14, new THREE.MeshStandardMaterial({ color: 0xe2e5e8, metalness: 0.6, roughness: 0.2 }), liftGroup);
+function registerLiftDoorPart(object) {
+  const isLeftDoor = object.name === 'LeftOutsideDoor' || object.name === 'LeftInteriorDoor';
+  const isRightDoor = object.name === 'RightOutsideDoor' || object.name === 'RightInteriorDoor';
+
+  if (!isLeftDoor && !isRightDoor) {
+    return;
+  }
+
+  liftDoorParts.push({
+    object,
+    closed: object.position.clone(),
+    open: object.position.clone().add(new THREE.Vector3(0, 0, isLeftDoor ? 0.8 : -0.84))
+  });
 }
 
-for (let z = 12.65; z <= 15.65; z += 0.75) {
-  createBox('Lift Side Wall Decorative Strip', 0.03, 2.7, 0.05, -2.1, 1.55, z, new THREE.MeshStandardMaterial({ color: 0xe2e5e8, metalness: 0.6, roughness: 0.2 }), liftGroup);
-  createBox('Lift Side Wall Decorative Strip', 0.03, 2.7, 0.05, 2.1, 1.55, z, new THREE.MeshStandardMaterial({ color: 0xe2e5e8, metalness: 0.6, roughness: 0.2 }), liftGroup);
+function applyLiftModelDoorProgress(progress) {
+  liftDoorParts.forEach((part) => {
+    part.object.position.lerpVectors(part.closed, part.open, progress);
+  });
 }
 
-createBox('Lift Door Frame Top', 4.5, 0.28, 0.25, 0, 2.78, 12.05, liftPanelMaterial, liftGroup);
-createBox('Lift Door Frame Left', 0.22, 2.75, 0.25, -2.12, 1.38, 12.05, liftPanelMaterial, liftGroup);
-createBox('Lift Door Frame Right', 0.22, 2.75, 0.25, 2.12, 1.38, 12.05, liftPanelMaterial, liftGroup);
+function loadSceneModel({ url, name, position, rotation = [0, 0, 0], scale = 1, parent = scene }) {
+  gltfLoader.load(url, (gltf) => {
+    const model = gltf.scene;
+    model.name = name;
+    model.position.set(...position);
+    model.rotation.set(...rotation);
 
-const leftLiftDoor = createBox('Left Sliding Lift Door', 1.18, 2.55, 0.14, -0.6, 1.28, 12.04, liftDoorMaterial, liftGroup);
-const rightLiftDoor = createBox('Right Sliding Lift Door', 1.18, 2.55, 0.14, 0.6, 1.28, 12.04, liftDoorMaterial, liftGroup);
-createBox('Lift Door Center Seam', 0.04, 2.5, 0.16, 0, 1.28, 11.95, liftPanelMaterial, liftGroup);
+    if (Array.isArray(scale)) {
+      model.scale.set(...scale);
+    } else {
+      model.scale.setScalar(scale);
+    }
 
-createTextPanel('LEVEL 5', 1.45, 0.42, 0, 2.48, 11.92, '#111827', '#ffd84d', liftGroup);
-createBox('Lift Handrail Left', 0.08, 0.08, 2.5, -2.05, 1.05, 14.45, railingMaterial, liftGroup);
-createBox('Lift Handrail Right', 0.08, 0.08, 2.5, 2.05, 1.05, 14.45, railingMaterial, liftGroup);
-createBox('Lift Handrail Back', 2.7, 0.08, 0.08, 0, 1.05, 16.05, railingMaterial, liftGroup);
+    model.traverse((object) => {
+      if (object.isMesh) {
+        object.frustumCulled = false;
+      }
+    });
 
-createBox('Lift Button Panel', 0.12, 1.25, 0.45, -2.05, 1.45, 13.25, liftPanelMaterial, liftGroup);
-createTextPanel('5', 0.28, 0.28, -1.97, 1.88, 13.25, '#111827', '#ffd84d', liftGroup);
+    parent.add(model);
+  });
+}
 
-const liftButton = createBox('Clickable Lift Open Button', 0.16, 0.16, 0.16, -1.96, 1.42, 13.05, liftButtonMaterial, liftGroup);
+gltfLoader.load('/models/ElevatorAnimation.glb', (gltf) => {
+  const elevatorModel = gltf.scene;
+  elevatorModel.name = 'Realistic Animated Elevator Model';
+  elevatorModel.position.set(0, 0, 12.25);
+  elevatorModel.rotation.y = Math.PI / 2;
+  elevatorModel.scale.setScalar(1.2);
+  liftGroup.add(elevatorModel);
+
+  elevatorModel.traverse((object) => {
+    if (object.isMesh) {
+      object.frustumCulled = false;
+    }
+
+    registerLiftDoorPart(object);
+  });
+
+  applyLiftModelDoorProgress(liftDoorProgress);
+});
+
+const liftButton = createBox(
+  'Clickable Lift Open Button',
+  0.42,
+  0.72,
+  0.42,
+  -1.75,
+  1.45,
+  12.65,
+  new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }),
+  liftGroup
+);
 liftButton.userData = {
   isLiftButton: true,
   title: 'Open Lift Door',
   text: 'The lift door opens to begin the FC-N28 Level 5 tour route.'
 };
-
-createBox('Lift Interior Ceiling Light', 2.4, 0.05, 0.45, 0, 2.98, 14.1, new THREE.MeshBasicMaterial({ color: 0xffffcc }), liftGroup);
 
 const directionArrowGroup = new THREE.Group();
 directionArrowGroup.name = 'Corridor Direction Arrow';
@@ -261,7 +457,6 @@ let liftDoorProgress = 0;
 
 function openLiftDoors() {
   liftDoorOpen = true;
-  liftButton.material = liftButtonActiveMaterial;
   openLiftBtn.disabled = true;
   openLiftBtn.textContent = 'Lift Door Open';
 }
@@ -269,11 +464,9 @@ function openLiftDoors() {
 function resetLiftDoors() {
   liftDoorOpen = false;
   liftDoorProgress = 0;
-  liftButton.material = liftButtonMaterial;
+  applyLiftModelDoorProgress(liftDoorProgress);
   openLiftBtn.disabled = false;
   openLiftBtn.textContent = 'Open Lift Door';
-  leftLiftDoor.position.x = -0.6;
-  rightLiftDoor.position.x = 0.6;
   arrowMaterial.opacity = 0;
 }
 
@@ -286,12 +479,31 @@ createBox('Landing Front Barrier', 3.8, 1.25, 0.22, -0.15, 0.62, 9.7, wallMateri
 createBox('Landing Right Wall', 0.22, 3, 2.55, 1.8, 1.5, 10.95, wallMaterial);
 createBox('Landing Ceiling', 3.7, 0.2, 2.4, -0.15, 3.1, 10.95, ceilingMaterial);
 createBox('Landing Safety Rail', 3.6, 0.12, 0.12, -0.15, 1.35, 9.82, railingMaterial);
+createWindowGrille('Lift Landing Window Grille', 0.2, 1.8, 9.58, 1.8, 1.2);
+createNoticeBoard('Lift Landing Notice Board', -1.55, 1.65, 10.25, 0.8, 0.55, 0xf8fafc);
+loadSceneModel({
+  url: '/models/kenney/construction-barrier.glb',
+  name: 'Downloaded Landing Safety Barrier',
+  position: [-0.15, 0.03, 9.45],
+  rotation: [0, Math.PI, 0],
+  scale: 1.15
+});
 
 createBox('First Left Corridor Floor', 8.1, 0.2, 2.5, -5.05, -0.1, 10.9, floorMaterial);
 createBox('First Corridor Solid Wall', 8.3, 3, 0.2, -5.05, 1.5, 12.15, wallMaterial);
 createBox('First Corridor Balcony Barrier', 8.3, 1.2, 0.2, -5.05, 0.6, 9.65, wallMaterial);
 createBox('First Corridor Ceiling', 8.3, 0.2, 2.5, -5.05, 3.1, 10.9, ceilingMaterial);
 createBox('First Corridor Rail', 7.8, 0.12, 0.12, -5.05, 1.35, 9.78, railingMaterial);
+createShoeRack(-6.2, 0, 11.65);
+loadSceneModel({
+  url: '/models/kenney/bench.glb',
+  name: 'Downloaded Corridor Bench',
+  position: [-4.6, 0.02, 11.62],
+  rotation: [0, Math.PI / 2, 0],
+  scale: 1.1
+});
+createFireExtinguisher(-7.75, 0, 11.6);
+createNoticeBoard('Corridor Notice Board', -3.2, 1.7, 12.02, 1.2, 0.75, 0xf5d76e);
 
 createBox('Right Turn Corridor Floor', 2.8, 0.2, 17.2, -8.5, -0.1, 1.85, floorMaterial);
 createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 17, -7.1, 0.6, 1.85, wallMaterial);
@@ -299,6 +511,8 @@ createBox('Right Turn Balcony Rail', 0.12, 0.12, 16.3, -7.25, 1.35, 1.85, railin
 createBox('Right Turn Ceiling', 2.8, 0.2, 17.2, -8.5, 3.1, 1.85, ceilingMaterial);
 createBox('Lab Wall Before Door', 0.22, 3, 6.0, -9.92, 1.5, -3.65, wallMaterial);
 createBox('Lab Wall After Door', 0.22, 3, 6.0, -9.92, 1.5, 6.35, wallMaterial);
+createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
+createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.6, 3.95, 0.9, 0.65, 0xf8fafc);
 
 for (let z = 8; z >= -5; z -= 4) {
   createBox('Right Turn Balcony Pillar', 0.35, 3, 0.35, -7.2, 1.5, z, pillarMaterial);
@@ -321,36 +535,56 @@ labDoor.userData = {
   title: 'Computer Lab Door',
   text: 'This door opens into the FC-N28 Level 5 computer lab.'
 };
+createBox('Lab Door Raised Top Panel', 0.04, 0.58, 0.82, 0.09, 0.28, -0.7, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
+createBox('Lab Door Raised Bottom Panel', 0.04, 0.62, 0.82, 0.09, -0.55, -0.7, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
 const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.1, railingMaterial, labDoorPivot);
 labDoorHandle.userData = labDoor.userData;
+
+loadSceneModel({
+  url: '/models/kenney/doorwayOpen.glb',
+  name: 'Downloaded Lab Doorway Trim',
+  position: [-9.98, 0.02, 3.2],
+  rotation: [0, Math.PI / 2, 0],
+  scale: [1.05, 1.12, 1.05]
+});
 
 createTextPanel('LAB', 1.2, 0.32, -9.78, 2.58, 3.2, '#f5d76e', '#3a1f12');
 
 createBox('Computer Lab Exit Door', 1.4, 2.4, 0.15, -14, 1.2, 6.38, doorMaterial);
+createBox('Exit Door Raised Top Panel', 0.85, 0.56, 0.04, -14, 1.48, 6.28, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }));
+createBox('Exit Door Raised Bottom Panel', 0.85, 0.62, 0.04, -14, 0.58, 6.28, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }));
 createBox('Exit Door Handle', 0.08, 0.08, 0.25, -13.6, 1.1, 6.26, railingMaterial);
 createTextPanel('KELUAR', 1.35, 0.34, -14, 2.62, 6.26, '#007a3d', '#ffffff');
+createFireExtinguisher(-16.9, 0, 5.75);
+createNoticeBoard('Exit Safety Notice', -15.4, 1.4, 6.26, 0.85, 0.55, 0xf8fafc);
+createAirCond('Lab Rear Air Conditioner', -15.7, 2.45, -1.36);
+createAirCond('Lab Side Air Conditioner', -12.4, 2.45, -1.36);
+createBox('Front Whiteboard', 2.8, 1.05, 0.06, -14, 1.65, -1.36, whitePlasticMaterial);
+createBox('Projector', 0.45, 0.18, 0.3, -14, 2.75, 1.1, whitePlasticMaterial);
+createBox('Teacher Table', 1.75, 0.18, 0.8, -11.7, 0.78, 5.05, deskMaterial);
+createBox('Teacher Monitor', 0.72, 0.48, 0.08, -11.7, 1.22, 4.78, monitorMaterial);
+createBox('Teacher Screen', 0.58, 0.34, 0.02, -11.7, 1.22, 4.73, screenMaterial);
 
 for (let row = 0; row < 3; row++) {
   for (let col = 0; col < 3; col++) {
     const x = -16 + col * 2;
     const z = 0.6 + row * 1.8;
-
-    createBox('Computer Desk', 1.4, 0.18, 0.9, x, 0.75, z, deskMaterial);
-    createBox('Monitor', 0.8, 0.55, 0.08, x, 1.18, z - 0.28, monitorMaterial);
-    createBox('Chair', 0.6, 0.6, 0.6, x, 0.35, z + 0.75, chairMaterial);
+    createComputerStation(x, z);
   }
 }
 
+createCeilingGrid(8, 8, -14, 2.5, 3.02);
+
 for (let x = -8; x <= -2; x += 2) {
-  createBox('First Corridor Ceiling Light', 1.0, 0.05, 0.35, x, 2.95, 10.9, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
+  createFluorescentLight('First Corridor Ceiling Light', x, 2.95, 10.9, Math.PI / 2);
 }
 
 for (let z = -5; z <= 9; z += 4) {
-  createBox('Right Turn Ceiling Light', 0.35, 0.05, 1.0, -8.5, 2.95, z, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
+  createFluorescentLight('Right Turn Ceiling Light', -8.5, 2.95, z, 0);
 }
 
 for (let x = -16; x <= -12; x += 2) {
-  createBox('Lab Ceiling Light', 1.0, 0.05, 0.35, x, 2.95, 2.5, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
+  createFluorescentLight('Lab Ceiling Light', x, 2.95, 2.5, Math.PI / 2);
 }
 
 createBox('Distant Building View', 5, 2, 0.2, -4, 1.0, 7.6, new THREE.MeshStandardMaterial({ color: 0xc49a6c }));
@@ -644,8 +878,7 @@ function animate() {
 
   const targetProgress = liftDoorOpen ? 1 : 0;
   liftDoorProgress = THREE.MathUtils.damp(liftDoorProgress, targetProgress, 4.2, delta);
-  leftLiftDoor.position.x = THREE.MathUtils.lerp(-0.6, -1.55, liftDoorProgress);
-  rightLiftDoor.position.x = THREE.MathUtils.lerp(0.6, 1.55, liftDoorProgress);
+  applyLiftModelDoorProgress(liftDoorProgress);
   arrowMaterial.opacity = THREE.MathUtils.lerp(0, 0.9, liftDoorProgress);
   arrowStem.material.opacity = arrowMaterial.opacity;
   arrowHead.material.opacity = arrowMaterial.opacity;
