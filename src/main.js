@@ -39,6 +39,15 @@ controls.dampingFactor = 0.05;
 controls.minDistance = 1.4;
 controls.maxDistance = 24;
 
+const moveKeys = {
+  forward: false,
+  backward: false,
+  left: false,
+  right: false
+};
+const walkSpeed = 3.4;
+let tourStarted = false;
+
 // ===============================
 // LIGHTING
 // ===============================
@@ -141,6 +150,49 @@ function setCameraView(position, target) {
   controls.update();
 }
 
+const walkableZones = [
+  { minX: -1.75, maxX: 1.75, minZ: 12.1, maxZ: 15.8 },
+  { minX: -1.75, maxX: 1.35, minZ: 10.25, maxZ: 12.35, needsLiftDoor: true },
+  { minX: -8.9, maxX: -1.2, minZ: 9.65, maxZ: 12.15, needsLiftDoor: true },
+  { minX: -9.9, maxX: -7.1, minZ: -6.8, maxZ: 10.5, needsLiftDoor: true },
+  { minX: -10.55, maxX: -9.7, minZ: 2.45, maxZ: 3.65, needsLiftDoor: true, needsLabDoor: true },
+  { minX: -15.5, maxX: -10.35, minZ: -1.45, maxZ: 5.8, needsLiftDoor: true, needsLabDoor: true }
+];
+
+function isInsideZone(position, zone) {
+  if (zone.needsLiftDoor && !liftDoorOpen) {
+    return false;
+  }
+
+  if (zone.needsLabDoor && !labDoorOpen) {
+    return false;
+  }
+
+  return (
+    position.x >= zone.minX &&
+    position.x <= zone.maxX &&
+    position.z >= zone.minZ &&
+    position.z <= zone.maxZ
+  );
+}
+
+function canWalkTo(position) {
+  return walkableZones.some((zone) => isInsideZone(position, zone));
+}
+
+function moveCameraBy(offset) {
+  const nextPosition = camera.position.clone().add(offset);
+  nextPosition.y = camera.position.y;
+
+  if (!canWalkTo(nextPosition)) {
+    return;
+  }
+
+  camera.position.copy(nextPosition);
+  controls.target.add(offset);
+  controls.target.y = Math.max(1.1, Math.min(2.0, controls.target.y));
+}
+
 // ===============================
 // LIFT OPENING SCENE
 // ===============================
@@ -197,12 +249,11 @@ const arrowMaterial = new THREE.MeshBasicMaterial({
   transparent: true,
   opacity: 0
 });
-const arrowStem = createBox('Arrow Stem', 0.28, 0.05, 1.4, 0, 0.08, 10.6, arrowMaterial, directionArrowGroup);
+const arrowStem = createBox('Arrow Stem', 1.4, 0.05, 0.28, -1.35, 0.08, 10.9, arrowMaterial, directionArrowGroup);
 const arrowHead = new THREE.Mesh(new THREE.ConeGeometry(0.45, 0.8, 4), arrowMaterial);
 arrowHead.name = 'Arrow Head';
-arrowHead.position.set(0, 0.08, 9.6);
-arrowHead.rotation.x = Math.PI / 2;
-arrowHead.rotation.z = Math.PI / 4;
+arrowHead.position.set(-2.28, 0.08, 10.9);
+arrowHead.rotation.z = Math.PI / 2;
 directionArrowGroup.add(arrowHead);
 
 let liftDoorOpen = false;
@@ -230,32 +281,59 @@ function resetLiftDoors() {
 // FC-N28 LEVEL 5 ENVIRONMENT
 // ===============================
 
-createBox('Level 5 Corridor Floor', 6, 0.2, 24, 0, -0.1, 0, floorMaterial);
-createBox('Lab Side Wall', 0.2, 3, 24, -3, 1.5, 0, wallMaterial);
-createBox('Balcony Half Wall', 0.2, 1.2, 24, 3, 0.6, 0, wallMaterial);
-createBox('Corridor Ceiling', 6, 0.2, 24, 0, 3.1, 0, ceilingMaterial);
-createBox('Balcony Rail', 0.15, 0.15, 22, 2.8, 1.35, 0, railingMaterial);
+createBox('Lift Landing Floor', 3.7, 0.2, 2.4, -0.15, -0.1, 10.95, floorMaterial);
+createBox('Landing Front Barrier', 3.8, 1.25, 0.22, -0.15, 0.62, 9.7, wallMaterial);
+createBox('Landing Right Wall', 0.22, 3, 2.55, 1.8, 1.5, 10.95, wallMaterial);
+createBox('Landing Ceiling', 3.7, 0.2, 2.4, -0.15, 3.1, 10.95, ceilingMaterial);
+createBox('Landing Safety Rail', 3.6, 0.12, 0.12, -0.15, 1.35, 9.82, railingMaterial);
 
-for (let z = -9; z <= 9; z += 6) {
-  createBox('Balcony Pillar', 0.4, 3, 0.4, 2.7, 1.5, z, pillarMaterial);
+createBox('First Left Corridor Floor', 8.1, 0.2, 2.5, -5.05, -0.1, 10.9, floorMaterial);
+createBox('First Corridor Solid Wall', 8.3, 3, 0.2, -5.05, 1.5, 12.15, wallMaterial);
+createBox('First Corridor Balcony Barrier', 8.3, 1.2, 0.2, -5.05, 0.6, 9.65, wallMaterial);
+createBox('First Corridor Ceiling', 8.3, 0.2, 2.5, -5.05, 3.1, 10.9, ceilingMaterial);
+createBox('First Corridor Rail', 7.8, 0.12, 0.12, -5.05, 1.35, 9.78, railingMaterial);
+
+createBox('Right Turn Corridor Floor', 2.8, 0.2, 17.2, -8.5, -0.1, 1.85, floorMaterial);
+createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 17, -7.1, 0.6, 1.85, wallMaterial);
+createBox('Right Turn Balcony Rail', 0.12, 0.12, 16.3, -7.25, 1.35, 1.85, railingMaterial);
+createBox('Right Turn Ceiling', 2.8, 0.2, 17.2, -8.5, 3.1, 1.85, ceilingMaterial);
+createBox('Lab Wall Before Door', 0.22, 3, 6.0, -9.92, 1.5, -3.65, wallMaterial);
+createBox('Lab Wall After Door', 0.22, 3, 6.0, -9.92, 1.5, 6.35, wallMaterial);
+
+for (let z = 8; z >= -5; z -= 4) {
+  createBox('Right Turn Balcony Pillar', 0.35, 3, 0.35, -7.2, 1.5, z, pillarMaterial);
 }
 
-createBox('Computer Lab Entrance Door', 1.4, 2.4, 0.15, -2.88, 1.2, -4, doorMaterial);
-createBox('Computer Lab Exit Door', 1.4, 2.4, 0.15, -2.88, 1.2, 8, doorMaterial);
-createBox('Lab Entrance Door Handle', 0.08, 0.08, 0.25, -2.72, 1.1, -3.6, railingMaterial);
-createBox('Exit Door Handle', 0.08, 0.08, 0.25, -2.72, 1.1, 8.4, railingMaterial);
-createBox('Lab Signboard', 1.6, 0.35, 0.08, -2.75, 2.55, -4, new THREE.MeshStandardMaterial({ color: 0xf5d76e }));
-createBox('Exit Sign', 1.4, 0.35, 0.08, -2.75, 2.55, 8, new THREE.MeshStandardMaterial({ color: 0x00aa44 }));
+createBox('Computer Lab Floor', 8, 0.2, 8, -14, -0.1, 2.5, carpetMaterial);
+createBox('Computer Lab Back Wall', 8, 3, 0.2, -14, 1.5, -1.5, wallMaterial);
+createBox('Computer Lab Front Wall', 8, 3, 0.2, -14, 1.5, 6.5, wallMaterial);
+createBox('Computer Lab Left Wall', 0.2, 3, 8, -18, 1.5, 2.5, wallMaterial);
+createBox('Computer Lab Ceiling', 8, 0.2, 8, -14, 3.1, 2.5, ceilingMaterial);
 
-createBox('Computer Lab Floor', 8, 0.2, 8, -8, -0.1, -4, carpetMaterial);
-createBox('Computer Lab Back Wall', 8, 3, 0.2, -8, 1.5, -8, wallMaterial);
-createBox('Computer Lab Left Wall', 0.2, 3, 8, -12, 1.5, -4, wallMaterial);
-createBox('Computer Lab Ceiling', 8, 0.2, 8, -8, 3.1, -4, ceilingMaterial);
+const labDoorPivot = new THREE.Group();
+labDoorPivot.name = 'Computer Lab Door Pivot';
+labDoorPivot.position.set(-9.92, 1.2, 3.2);
+scene.add(labDoorPivot);
+
+const labDoor = createBox('Openable Computer Lab Door', 0.15, 2.4, 1.4, 0, 0, -0.7, doorMaterial, labDoorPivot);
+labDoor.userData = {
+  isLabDoor: true,
+  title: 'Computer Lab Door',
+  text: 'This door opens into the FC-N28 Level 5 computer lab.'
+};
+const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.1, railingMaterial, labDoorPivot);
+labDoorHandle.userData = labDoor.userData;
+
+createTextPanel('LAB', 1.2, 0.32, -9.78, 2.58, 3.2, '#f5d76e', '#3a1f12');
+
+createBox('Computer Lab Exit Door', 1.4, 2.4, 0.15, -14, 1.2, 6.38, doorMaterial);
+createBox('Exit Door Handle', 0.08, 0.08, 0.25, -13.6, 1.1, 6.26, railingMaterial);
+createTextPanel('KELUAR', 1.35, 0.34, -14, 2.62, 6.26, '#007a3d', '#ffffff');
 
 for (let row = 0; row < 3; row++) {
   for (let col = 0; col < 3; col++) {
-    const x = -10 + col * 2;
-    const z = -6 + row * 2;
+    const x = -16 + col * 2;
+    const z = 0.6 + row * 1.8;
 
     createBox('Computer Desk', 1.4, 0.18, 0.9, x, 0.75, z, deskMaterial);
     createBox('Monitor', 0.8, 0.55, 0.08, x, 1.18, z - 0.28, monitorMaterial);
@@ -263,16 +341,37 @@ for (let row = 0; row < 3; row++) {
   }
 }
 
-for (let z = -8; z <= 8; z += 4) {
-  createBox('Corridor Ceiling Light', 1.0, 0.05, 0.35, 0, 2.95, z, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
+for (let x = -8; x <= -2; x += 2) {
+  createBox('First Corridor Ceiling Light', 1.0, 0.05, 0.35, x, 2.95, 10.9, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
 }
 
-for (let x = -10; x <= -6; x += 2) {
-  createBox('Lab Ceiling Light', 1.0, 0.05, 0.35, x, 2.95, -4, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
+for (let z = -5; z <= 9; z += 4) {
+  createBox('Right Turn Ceiling Light', 0.35, 0.05, 1.0, -8.5, 2.95, z, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
 }
 
-createBox('Distant Building View', 5, 2, 0.2, 6, 1.0, 2, new THREE.MeshStandardMaterial({ color: 0xc49a6c }));
-createBox('Outdoor Tree Area', 4, 1, 0.2, 6, 0.5, -2, new THREE.MeshStandardMaterial({ color: 0x228b22 }));
+for (let x = -16; x <= -12; x += 2) {
+  createBox('Lab Ceiling Light', 1.0, 0.05, 0.35, x, 2.95, 2.5, new THREE.MeshBasicMaterial({ color: 0xffffcc }));
+}
+
+createBox('Distant Building View', 5, 2, 0.2, -4, 1.0, 7.6, new THREE.MeshStandardMaterial({ color: 0xc49a6c }));
+createBox('Outdoor Tree Area', 4, 1, 0.2, -7.8, 0.5, -8.5, new THREE.MeshStandardMaterial({ color: 0x228b22 }));
+
+let labDoorOpen = false;
+let labDoorProgress = 0;
+
+function openLabDoor() {
+  labDoorOpen = true;
+  openLabDoorBtn.disabled = true;
+  openLabDoorBtn.textContent = 'Lab Door Open';
+}
+
+function resetLabDoor() {
+  labDoorOpen = false;
+  labDoorProgress = 0;
+  labDoorPivot.rotation.y = 0;
+  openLabDoorBtn.disabled = false;
+  openLabDoorBtn.textContent = 'Open Lab Door';
+}
 
 // ===============================
 // HOTSPOTS
@@ -326,19 +425,19 @@ hotspotGroups.push(
   createHotspot(
     'Open Balcony View',
     'The open balcony provides a view of the surrounding Faculty of Computing area. It also gives natural lighting and open-air visibility to the Level 5 corridor.',
-    2.2,
+    -7.25,
     2,
-    2
+    -2
   )
 );
 
 hotspotGroups.push(
   createHotspot(
     'Level 5 Open Corridor Walkway',
-    'The corridor walkway connects different rooms and areas on FC-N28 Level 5. It is one of the main walking paths for students and staff.',
-    0,
+    'From the lift landing, users turn left into this corridor before turning right toward the computer lab entrance.',
+    -5.2,
     2,
-    -1
+    10.9
   )
 );
 
@@ -346,9 +445,9 @@ hotspotGroups.push(
   createHotspot(
     'Computer Lab Entrance',
     'This entrance leads into the computer lab. The lab is used for practical classes, programming sessions, and multimedia-related learning activities.',
-    -2.1,
+    -9.25,
     2,
-    -4
+    3.2
   )
 );
 
@@ -356,9 +455,9 @@ hotspotGroups.push(
   createHotspot(
     'Computer Lab Interior',
     'The computer lab interior contains rows of computer desks, monitors, chairs, ceiling lights, and learning facilities for students.',
-    -8,
+    -14,
     2,
-    -4
+    2.5
   )
 );
 
@@ -366,9 +465,9 @@ hotspotGroups.push(
   createHotspot(
     'Computer Lab Exit Door',
     'This area represents the computer lab exit door. The exit sign and safety elements help users identify the way out from the lab.',
-    -2.1,
+    -14,
     2,
-    8
+    5.7
   )
 );
 
@@ -389,7 +488,7 @@ canvas.addEventListener('click', (event) => {
 
   raycaster.setFromCamera(mouse, camera);
 
-  const intersects = raycaster.intersectObjects([...hotspots, liftButton]);
+  const intersects = raycaster.intersectObjects([...hotspots, liftButton, labDoor, labDoorHandle]);
 
   if (intersects.length === 0) {
     return;
@@ -399,6 +498,10 @@ canvas.addEventListener('click', (event) => {
 
   if (clickedObject.userData.isLiftButton) {
     openLiftDoors();
+  }
+
+  if (clickedObject.userData.isLabDoor) {
+    openLabDoor();
   }
 
   infoTitle.textContent = clickedObject.userData.title;
@@ -414,11 +517,13 @@ const welcomeScreen = document.querySelector('#welcome-screen');
 const startBtn = document.querySelector('#start-btn');
 const closeInfoBtn = document.querySelector('#close-info-btn');
 const openLiftBtn = document.querySelector('#open-lift-btn');
+const openLabDoorBtn = document.querySelector('#open-lab-door-btn');
 const resetCameraBtn = document.querySelector('#reset-camera-btn');
 const toggleLightBtn = document.querySelector('#toggle-light-btn');
 
 startBtn.addEventListener('click', () => {
   welcomeScreen.style.display = 'none';
+  tourStarted = true;
   setCameraView(liftCameraPosition, liftCameraTarget);
 });
 
@@ -430,8 +535,13 @@ openLiftBtn.addEventListener('click', () => {
   openLiftDoors();
 });
 
+openLabDoorBtn.addEventListener('click', () => {
+  openLabDoor();
+});
+
 resetCameraBtn.addEventListener('click', () => {
   resetLiftDoors();
+  resetLabDoor();
   setCameraView(liftCameraPosition, liftCameraTarget);
 });
 
@@ -450,6 +560,61 @@ toggleLightBtn.addEventListener('click', () => {
     scene.background = new THREE.Color(0x111827);
   }
 });
+
+window.addEventListener('keydown', (event) => {
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+    return;
+  }
+
+  const key = event.key.toLowerCase();
+
+  if (key === 'w') moveKeys.forward = true;
+  if (key === 's') moveKeys.backward = true;
+  if (key === 'a') moveKeys.left = true;
+  if (key === 'd') moveKeys.right = true;
+});
+
+window.addEventListener('keyup', (event) => {
+  const key = event.key.toLowerCase();
+
+  if (key === 'w') moveKeys.forward = false;
+  if (key === 's') moveKeys.backward = false;
+  if (key === 'a') moveKeys.left = false;
+  if (key === 'd') moveKeys.right = false;
+});
+
+function updatePlayerMovement(delta) {
+  if (!tourStarted) {
+    return;
+  }
+
+  const forward = new THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y = 0;
+
+  if (forward.lengthSq() === 0) {
+    return;
+  }
+
+  forward.normalize();
+
+  const right = new THREE.Vector3();
+  right.crossVectors(forward, camera.up).normalize();
+
+  const movement = new THREE.Vector3();
+
+  if (moveKeys.forward) movement.add(forward);
+  if (moveKeys.backward) movement.sub(forward);
+  if (moveKeys.right) movement.add(right);
+  if (moveKeys.left) movement.sub(right);
+
+  if (movement.lengthSq() === 0) {
+    return;
+  }
+
+  movement.normalize().multiplyScalar(walkSpeed * delta);
+  moveCameraBy(movement);
+}
 
 // ===============================
 // RESPONSIVE RESIZE
@@ -474,6 +639,7 @@ function animate() {
   const delta = Math.min((now - lastFrameTime) / 1000, 0.05);
   lastFrameTime = now;
 
+  updatePlayerMovement(delta);
   controls.update();
 
   const targetProgress = liftDoorOpen ? 1 : 0;
@@ -483,6 +649,10 @@ function animate() {
   arrowMaterial.opacity = THREE.MathUtils.lerp(0, 0.9, liftDoorProgress);
   arrowStem.material.opacity = arrowMaterial.opacity;
   arrowHead.material.opacity = arrowMaterial.opacity;
+
+  const labDoorTarget = labDoorOpen ? -Math.PI / 2.15 : 0;
+  labDoorProgress = THREE.MathUtils.damp(labDoorProgress, labDoorOpen ? 1 : 0, 4.2, delta);
+  labDoorPivot.rotation.y = THREE.MathUtils.lerp(0, labDoorTarget, labDoorProgress);
 
   hotspotGroups.forEach((group, index) => {
     group.position.y = group.userData.baseY + Math.sin(Date.now() * 0.003 + index) * 0.12;
