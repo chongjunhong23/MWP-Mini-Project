@@ -96,14 +96,23 @@ body {
   cursor: pointer;
 }
 
-#open-lift-btn {
+#open-lift-btn,
+#open-lab-door-btn {
   display: block;
   width: 100%;
   margin-right: 0;
+}
+
+#open-lift-btn {
   background: #b8860b;
 }
 
-#open-lift-btn:disabled {
+#open-lab-door-btn {
+  background: #654321;
+}
+
+#open-lift-btn:disabled,
+#open-lab-door-btn:disabled {
   background: #777;
   cursor: default;
 }
