@@ -282,7 +282,7 @@ function createComputerStation(x, z, parent = scene) {
     url: labMonitorModelUrl,
     name: 'Downloaded Workstation Monitor',
     position: [0, 0.95, -0.2],
-    rotation: [0, -Math.PI / 2, 0],
+    rotation: [0, Math.PI / 2, 0],
     scale: 0.00108,
     parent: group
   });
@@ -312,7 +312,7 @@ const walkableZones = [
   { minX: -1.75, maxX: 1.75, minZ: 12.1, maxZ: 15.8 },
   { minX: -1.75, maxX: 1.35, minZ: 10.25, maxZ: 12.35, needsLiftDoor: true },
   { minX: -8.9, maxX: -1.2, minZ: 9.65, maxZ: 12.15, needsLiftDoor: true },
-  { minX: -9.9, maxX: -7.1, minZ: -6.8, maxZ: 10.5, needsLiftDoor: true },
+  { minX: -9.9, maxX: -7.1, minZ: -6.8, maxZ: 12.15, needsLiftDoor: true },
   { minX: -10.55, maxX: -9.7, minZ: 2.45, maxZ: 3.65, needsLiftDoor: true, needsLabDoor: true },
   { minX: -22.05, maxX: -10.35, minZ: -4.7, maxZ: 9.75, needsLiftDoor: true, needsLabDoor: true }
 ];
@@ -516,10 +516,10 @@ createBox('First Corridor Ceiling', 8.3, 0.2, 2.5, -5.05, 3.1, 10.9, ceilingMate
 createBox('First Corridor Rail', 7.8, 0.12, 0.12, -5.05, 1.35, 9.78, railingMaterial);
 createNoticeBoard('Corridor Notice Board', -3.2, 1.7, 12.02, 1.2, 0.75, 0xf5d76e);
 
-createBox('Right Turn Corridor Floor', 2.8, 0.2, 17.2, -8.5, -0.1, 1.85, floorMaterial);
-createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 17, -7.1, 0.6, 1.85, wallMaterial);
-createBox('Right Turn Balcony Rail', 0.12, 0.12, 16.3, -7.25, 1.35, 1.85, railingMaterial);
-createBox('Right Turn Ceiling', 2.8, 0.2, 17.2, -8.5, 3.1, 1.85, ceilingMaterial);
+createBox('Right Turn Corridor Floor', 2.8, 0.2, 18.95, -8.5, -0.1, 2.675, floorMaterial);
+createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 18.75, -7.1, 0.6, 2.775, wallMaterial);
+createBox('Right Turn Balcony Rail', 0.12, 0.12, 18.05, -7.25, 1.35, 2.775, railingMaterial);
+createBox('Right Turn Ceiling', 2.8, 0.2, 18.95, -8.5, 3.1, 2.675, ceilingMaterial);
 createBox('Lab Wall Before Door', 0.22, 3, 6.0, -9.92, 1.5, -3.65, wallMaterial);
 createBox('Lab Wall After Door', 0.22, 3, 6.0, -9.92, 1.5, 6.35, wallMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
@@ -601,14 +601,14 @@ loadSceneModel({
   url: labMonitorModelUrl,
   name: 'Downloaded Teacher Workstation Monitor',
   position: [-12.4, 0.96, -3.88],
-  rotation: [0, -Math.PI / 2, 0],
+  rotation: [0, Math.PI / 2, 0],
   scale: 0.0011
 });
 createBox('Teacher Keyboard', 0.72, 0.035, 0.22, -12.4, 0.88, -3.42, darkMetalMaterial);
 createBox('Teacher Chair Seat', 0.62, 0.12, 0.62, -12.4, 0.45, -2.75, chairMaterial);
 createBox('Teacher Chair Back', 0.62, 0.72, 0.12, -12.4, 0.88, -2.47, chairMaterial);
 
-const pairedDeskColumns = [-19.6, -18.1, -14.1, -12.6];
+const pairedDeskColumns = [-19.825, -18.375, -14.175, -12.725];
 for (let row = 0; row < 4; row++) {
   for (const x of pairedDeskColumns) {
     const z = -0.2 + row * 2.45;
