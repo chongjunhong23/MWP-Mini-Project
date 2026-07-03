@@ -30,7 +30,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-const clock = new THREE.Clock();
+let lastFrameTime = performance.now();
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.copy(liftCameraTarget);
@@ -470,7 +470,9 @@ window.addEventListener('resize', () => {
 function animate() {
   requestAnimationFrame(animate);
 
-  const delta = Math.min(clock.getDelta(), 0.05);
+  const now = performance.now();
+  const delta = Math.min((now - lastFrameTime) / 1000, 0.05);
+  lastFrameTime = now;
 
   controls.update();
 
