@@ -627,10 +627,10 @@ createBox('Teacher Keyboard', 0.72, 0.035, 0.22, -13.35, 0.88, -3.42, darkMetalM
 createBox('Teacher Chair Seat', 0.62, 0.12, 0.62, -13.35, 0.45, -2.75, chairMaterial);
 createBox('Teacher Chair Back', 0.62, 0.72, 0.12, -13.35, 0.88, -2.47, chairMaterial);
 
-const pairedDeskColumns = [-22.0, -20.55, -16.55, -15.1];
-for (let row = 0; row < 4; row++) {
+const pairedDeskColumns = [-22.8, -21.35, -18.15, -16.7];
+const pairedDeskRows = [-1.15, 0.65, 5.2, 7.0];
+for (const z of pairedDeskRows) {
   for (const x of pairedDeskColumns) {
-    const z = -0.2 + row * 2.45;
     createComputerStation(x, z);
   }
 }
