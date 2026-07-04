@@ -294,7 +294,7 @@ function createComputerStation(x, z, parent = scene) {
   loadSceneModel({
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
-    position: [0, 0.92, 0.92],
+    position: [0, 0.04, 0.92],
     rotation: [0, Math.PI / 2, 0],
     scale: 0.92,
     parent: group
@@ -548,14 +548,14 @@ createBox('Lab Door Upper Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 4.05, wallMat
 createBox('Lab Door Threshold Floor Fill', 2.95, 0.05, 2.05, -11.15, 0.025, 3.2, floorMaterial);
 createBox('Lab Door Corridor Floor Patch', 0.95, 0.045, 2.05, -9.55, 0.025, 3.2, floorMaterial);
 createBox('Lab Exterior Safety Wall Before Door', 0.55, 3, 8.75, -10.22, 1.5, -2.275, wallMaterial);
-createBox('Lab Exterior Safety Wall After Door', 0.55, 3, 5.8, -10.22, 1.5, 6.95, wallMaterial);
+createBox('Lab Exterior Safety Wall After Door', 0.55, 3.25, 6.45, -10.22, 1.625, 7.2, wallMaterial);
 createBox('Lab Exterior Floor Cover Before Door', 0.9, 0.05, 8.75, -10.15, 0.025, -2.275, floorMaterial);
-createBox('Lab Exterior Floor Cover After Door', 0.9, 0.05, 5.8, -10.15, 0.025, 6.95, floorMaterial);
-createBox('Exterior Corner Floor Cover', 2.1, 0.06, 9.05, -11.45, 0.03, 5.3, floorMaterial);
-createBox('Exterior Corner Safety Wall', 0.32, 3, 9.05, -12.42, 1.5, 5.3, wallMaterial);
-createBox('Exterior Corner End Wall', 2.1, 3, 0.32, -11.45, 1.5, 9.72, wallMaterial);
-createBox('Exterior Corner Return Wall', 0.32, 3, 1.5, -10.52, 1.5, 9.05, wallMaterial);
-createBox('Exterior Corner Floor Skirt', 2.1, 0.22, 0.22, -11.45, 0.11, 9.65, wallMaterial);
+createBox('Lab Exterior Floor Cover After Door', 0.9, 0.05, 6.45, -10.15, 0.025, 7.2, floorMaterial);
+createBox('Exterior Corner Floor Cover', 2.7, 0.06, 10.0, -11.2, 0.03, 5.5, floorMaterial);
+createBox('Exterior Corner Safety Wall', 0.36, 3.25, 10.0, -12.42, 1.625, 5.5, wallMaterial);
+createBox('Exterior Corner End Wall', 3.05, 3.25, 0.36, -11.02, 1.625, 10.1, wallMaterial);
+createBox('Exterior Corner Return Wall', 0.36, 3.25, 1.9, -9.82, 1.625, 9.25, wallMaterial);
+createBox('Exterior Corner Floor Skirt', 3.05, 0.24, 0.24, -11.02, 0.12, 9.9, wallMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
 createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
 createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
@@ -563,7 +563,7 @@ createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 1.4, 0.85, 0.6, 0xf8
 loadSceneModel({
   url: '/models/shoe_rack.glb',
   name: 'Downloaded Lab Entrance Shoe Rack',
-  position: [-9.32, 2.04, 0.55],
+  position: [-9.32, 0.04, 0.55],
   rotation: [0, Math.PI / 2, 0],
   scale: 2.04
 });
@@ -649,7 +649,7 @@ createBox('Teacher Keyboard', 0.72, 0.035, 0.22, -13.35, 0.88, -3.42, darkMetalM
 loadSceneModel({
   url: officeChairModelUrl,
   name: 'Downloaded Teacher Office Chair',
-  position: [-13.35, 0.92, -2.75],
+  position: [-13.35, 0.04, -2.75],
   rotation: [0, Math.PI / 2, 0],
   scale: 0.92
 });
