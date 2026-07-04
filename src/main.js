@@ -494,7 +494,8 @@ function resetLiftDoors() {
 // FC-N28 LEVEL 5 ENVIRONMENT
 // ===============================
 
-createBox('Lift Landing Floor', 3.7, 0.2, 2.4, -0.15, -0.1, 10.95, floorMaterial);
+createBox('Lift Landing Floor', 3.7, 0.18, 2.05, -0.15, -0.11, 10.78, floorMaterial);
+createBox('Lift Door Threshold Strip', 3.45, 0.035, 0.32, -0.15, 0.015, 11.86, metalMaterial);
 createBox('Landing Front Barrier', 3.8, 1.25, 0.22, -0.15, 0.62, 9.7, wallMaterial);
 createBox('Landing Right Wall', 0.22, 3, 2.55, 1.8, 1.5, 10.95, wallMaterial);
 createBox('Landing Ceiling', 3.7, 0.2, 2.4, -0.15, 3.1, 10.95, ceilingMaterial);
@@ -511,30 +512,33 @@ loadSceneModel({
 
 createBox('First Left Corridor Floor', 8.1, 0.2, 2.5, -5.05, -0.1, 10.9, floorMaterial);
 createBox('First Corridor Solid Wall', 8.3, 3, 0.2, -5.05, 1.5, 12.15, wallMaterial);
-createBox('First Corridor Balcony Barrier', 8.3, 1.2, 0.2, -5.05, 0.6, 9.65, wallMaterial);
+createBox('First Corridor Balcony Barrier', 6.25, 1.2, 0.2, -4.0, 0.6, 9.65, wallMaterial);
 createBox('First Corridor Ceiling', 8.3, 0.2, 2.5, -5.05, 3.1, 10.9, ceilingMaterial);
-createBox('First Corridor Rail', 7.8, 0.12, 0.12, -5.05, 1.35, 9.78, railingMaterial);
+createBox('First Corridor Rail', 5.9, 0.12, 0.12, -4.15, 1.35, 9.78, railingMaterial);
 createNoticeBoard('Corridor Notice Board', -3.2, 1.7, 12.02, 1.2, 0.75, 0xf5d76e);
 
-createBox('Right Turn Corridor Floor', 2.8, 0.2, 18.95, -8.5, -0.1, 2.675, floorMaterial);
-createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 18.75, -7.1, 0.6, 2.775, wallMaterial);
-createBox('Right Turn Balcony Rail', 0.12, 0.12, 18.05, -7.25, 1.35, 2.775, railingMaterial);
-createBox('Right Turn Ceiling', 2.8, 0.2, 18.95, -8.5, 3.1, 2.675, ceilingMaterial);
-createBox('Lab Wall Before Door', 0.22, 3, 6.0, -9.92, 1.5, -3.65, wallMaterial);
-createBox('Lab Wall After Door', 0.22, 3, 6.0, -9.92, 1.5, 6.35, wallMaterial);
+createBox('Right Turn Corridor Floor', 2.8, 0.2, 16.45, -8.5, -0.1, 1.425, floorMaterial);
+createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 16.25, -7.1, 0.6, 1.525, wallMaterial);
+createBox('Right Turn Balcony Rail', 0.12, 0.12, 15.9, -7.25, 1.35, 1.7, railingMaterial);
+createBox('Right Turn Ceiling', 2.8, 0.2, 16.45, -8.5, 3.1, 1.425, ceilingMaterial);
+createBox('Lab Wall Before Door', 0.22, 3, 8.9, -9.92, 1.5, -2.2, wallMaterial);
+createBox('Lab Wall After Door', 0.22, 3, 5.3, -9.92, 1.5, 6.7, wallMaterial);
+createBox('Lab Door Lower Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 2.35, wallMaterial);
+createBox('Lab Door Upper Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 4.05, wallMaterial);
+createBox('Lab Door Top Lintel', 0.24, 0.45, 1.88, -9.92, 2.775, 3.2, wallMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
-createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.6, 3.95, 0.9, 0.65, 0xf8fafc);
-const labEntranceShelf = createShoeRack(-9.58, 0, 0.55);
+createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 4.45, 0.85, 0.6, 0xf8fafc);
+const labEntranceShelf = createShoeRack(-9.36, 0, 6.25);
 labEntranceShelf.name = 'Lab Entrance Side Shelf';
 labEntranceShelf.rotation.y = Math.PI / 2;
 loadSceneModel({
   url: '/models/kenney/bench.glb',
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.55, 0.02, 1.75],
+  position: [-9.36, 0.02, 5.05],
   rotation: [0, Math.PI / 2, 0],
-  scale: 3
+  scale: 2.7
 });
-createFireExtinguisher(-9.55, 0, 2.55);
+createFireExtinguisher(-9.36, 0, 4.12);
 
 for (let z = 8; z >= -5; z -= 4) {
   createBox('Right Turn Balcony Pillar', 0.35, 3, 0.35, -7.2, 1.5, z, pillarMaterial);
