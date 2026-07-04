@@ -1269,12 +1269,12 @@ createBox(
 // come forward toward the camera.
 createBox(
   'Lift Left Corner Side Wall',
-  0.18,
+  0.24,
   3.2,
-  1.9,
-  -2.02,
+  2.35,
+  -2.18,
   1.5,
-  10.55,
+  10.78,
   wallMaterial
 );
 
@@ -1283,12 +1283,12 @@ createBox(
 // without extending across the balcony.
 createBox(
   'Lift Left Corner Back Connector',
-  0.7,
+  1.15,
   3.2,
-  0.18,
-  -2.28,
+  0.24,
+  -2.52,
   1.5,
-  9.68,
+  9.62,
   wallMaterial
 );
 
@@ -1296,12 +1296,12 @@ createBox(
 // It is only placed on the left side of the lift.
 createBox(
   'Lift Left Corner Floor Strip',
-  0.85,
+  1.2,
   0.2,
-  1.9,
-  -2.38,
+  2.35,
+  -2.48,
   -0.1,
-  10.55,
+  10.78,
   floorMaterial
 );
 
@@ -1309,24 +1309,24 @@ createBox(
 // This is below the visible floor and prevents blue cracks.
 createBox(
   'Lift Left Corner Underfloor',
-  1.25,
+  1.55,
   0.3,
-  2.2,
-  -2.2,
+  2.55,
+  -2.35,
   -0.32,
-  10.65,
+  10.78,
   floorMaterial
 );
 
 // Small ceiling strip directly above the corner.
 createBox(
   'Lift Left Corner Ceiling Strip',
-  0.85,
+  1.2,
   0.2,
-  1.9,
-  -2.38,
+  2.35,
+  -2.48,
   3.1,
-  10.55,
+  10.78,
   ceilingMaterial
 );
 
