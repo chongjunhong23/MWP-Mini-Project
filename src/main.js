@@ -858,7 +858,7 @@ function createComputerStation(
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
     position: [0, 0.04, 0.42],
-    rotation: [0, -Math.PI / 12, 0],
+    rotation: [0, Math.PI / 9, 0],
     scale: 0.92,
     parent: group
   });
@@ -1256,10 +1256,10 @@ createBox(
 // Close the outside corner without protruding into the corridor path.
 createBox(
   'Corridor Outside Corner Side Wall',
-  0.22,
+  0.24,
   3.2,
-  2.6,
-  -10.42,
+  2.5,
+  -10.28,
   1.5,
   10.9,
   wallMaterial
@@ -1267,10 +1267,10 @@ createBox(
 
 createBox(
   'Corridor Outside Corner Back Connector',
-  0.34,
+  0.55,
   3.2,
-  0.22,
-  -10.31,
+  0.24,
+  -10.16,
   1.5,
   12.08,
   wallMaterial
@@ -1278,32 +1278,43 @@ createBox(
 
 createBox(
   'Corridor Outside Corner Floor Cover',
-  0.28,
-  0.08,
-  2.6,
-  -10.31,
-  -0.04,
+  0.56,
+  0.2,
+  2.5,
+  -10.18,
+  -0.1,
   10.9,
   floorMaterial
 );
 
 createBox(
   'Corridor Outside Corner Underfloor',
-  0.36,
-  0.16,
-  2.75,
-  -10.33,
-  -0.16,
+  0.56,
+  0.3,
+  2.7,
+  -10.18,
+  -0.32,
   10.9,
   floorMaterial
 );
 
 createBox(
+  'Corridor Outside Corner Base Seal',
+  0.18,
+  0.22,
+  2.5,
+  -10.01,
+  0.02,
+  10.9,
+  wallMaterial
+);
+
+createBox(
   'Corridor Outside Corner Ceiling Cover',
-  0.32,
+  0.56,
   0.2,
-  2.6,
-  -10.31,
+  2.5,
+  -10.18,
   3.1,
   10.9,
   ceilingMaterial
@@ -2182,7 +2193,7 @@ loadSceneModel({
   name:
     'Downloaded Teacher Office Chair',
   position: [-13.35, 0.04, -3.18],
-  rotation: [0, -Math.PI / 12, 0],
+  rotation: [0, Math.PI / 9, 0],
   scale: 0.92
 });
 
