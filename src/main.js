@@ -106,6 +106,7 @@ const liftPanelMaterial = new THREE.MeshStandardMaterial({
 const liftButtonMaterial = new THREE.MeshBasicMaterial({ color: 0xffd84d });
 const liftButtonActiveMaterial = new THREE.MeshBasicMaterial({ color: 0x66ff99 });
 const labMonitorModelUrl = '/models/office_monitor__workstation_monitor.glb';
+const officeChairModelUrl = '/models/ergonomic_office_chair.glb';
 
 const hotspotMaterial = new THREE.MeshBasicMaterial({
   color: 0xffff00,
@@ -290,14 +291,14 @@ function createComputerStation(x, z, parent = scene) {
   createBox('Mouse', 0.14, 0.035, 0.2, 0.48, 0.88, 0.12, darkMetalMaterial, group);
   createBox('CPU Tower', 0.28, 0.62, 0.45, -0.48, 0.33, 0.22, monitorMaterial, group);
 
-  createBox('Chair Seat', 0.62, 0.12, 0.62, 0, 0.45, 0.85, chairMaterial, group);
-  createBox('Chair Back', 0.62, 0.72, 0.12, 0, 0.88, 1.13, chairMaterial, group);
-  createCylinder('Chair Post', 0.05, 0.42, 0, 0.24, 0.85, darkMetalMaterial, group, 14);
-  for (const xOffset of [-0.25, 0.25]) {
-    for (const zOffset of [0.62, 1.05]) {
-      createCylinder('Chair Leg', 0.025, 0.45, xOffset, 0.22, zOffset, darkMetalMaterial, group, 10);
-    }
-  }
+  loadSceneModel({
+    url: officeChairModelUrl,
+    name: 'Downloaded Lab Office Chair',
+    position: [0, 0.46, 0.92],
+    rotation: [0, Math.PI, 0],
+    scale: 0.46,
+    parent: group
+  });
 
   return group;
 }
@@ -550,9 +551,11 @@ createBox('Lab Exterior Safety Wall Before Door', 0.55, 3, 8.75, -10.22, 1.5, -2
 createBox('Lab Exterior Safety Wall After Door', 0.55, 3, 5.8, -10.22, 1.5, 6.95, wallMaterial);
 createBox('Lab Exterior Floor Cover Before Door', 0.9, 0.05, 8.75, -10.15, 0.025, -2.275, floorMaterial);
 createBox('Lab Exterior Floor Cover After Door', 0.9, 0.05, 5.8, -10.15, 0.025, 6.95, floorMaterial);
-createBox('Exterior Corner Floor Cover', 1.55, 0.06, 7.45, -11.15, 0.03, 6.05, floorMaterial);
-createBox('Exterior Corner Safety Wall', 0.28, 3, 7.45, -11.86, 1.5, 6.05, wallMaterial);
-createBox('Exterior Corner End Wall', 1.55, 3, 0.28, -11.15, 1.5, 9.7, wallMaterial);
+createBox('Exterior Corner Floor Cover', 2.1, 0.06, 9.05, -11.45, 0.03, 5.3, floorMaterial);
+createBox('Exterior Corner Safety Wall', 0.32, 3, 9.05, -12.42, 1.5, 5.3, wallMaterial);
+createBox('Exterior Corner End Wall', 2.1, 3, 0.32, -11.45, 1.5, 9.72, wallMaterial);
+createBox('Exterior Corner Return Wall', 0.32, 3, 1.5, -10.52, 1.5, 9.05, wallMaterial);
+createBox('Exterior Corner Floor Skirt', 2.1, 0.22, 0.22, -11.45, 0.11, 9.65, wallMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
 createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
 createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
@@ -560,9 +563,9 @@ createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 1.4, 0.85, 0.6, 0xf8
 loadSceneModel({
   url: '/models/shoe_rack.glb',
   name: 'Downloaded Lab Entrance Shoe Rack',
-  position: [-9.32, 0.55, 0.55],
+  position: [-9.32, 0.68, 0.55],
   rotation: [0, Math.PI / 2, 0],
-  scale: 0.55
+  scale: 0.68
 });
 loadSceneModel({
   url: '/models/kenney/bench.glb',
@@ -643,8 +646,13 @@ loadSceneModel({
   scale: 0.0011
 });
 createBox('Teacher Keyboard', 0.72, 0.035, 0.22, -13.35, 0.88, -3.42, darkMetalMaterial);
-createBox('Teacher Chair Seat', 0.62, 0.12, 0.62, -13.35, 0.45, -2.75, chairMaterial);
-createBox('Teacher Chair Back', 0.62, 0.72, 0.12, -13.35, 0.88, -2.47, chairMaterial);
+loadSceneModel({
+  url: officeChairModelUrl,
+  name: 'Downloaded Teacher Office Chair',
+  position: [-13.35, 0.46, -2.75],
+  rotation: [0, Math.PI, 0],
+  scale: 0.46
+});
 
 const pairedDeskColumns = [-22.8, -21.35, -18.15, -16.7];
 const pairedDeskRows = [-1.15, 0.65, 5.2, 7.0];
