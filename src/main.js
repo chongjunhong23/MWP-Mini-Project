@@ -294,9 +294,9 @@ function createComputerStation(x, z, parent = scene) {
   loadSceneModel({
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
-    position: [0, 0.46, 0.92],
-    rotation: [0, Math.PI, 0],
-    scale: 0.46,
+    position: [0, 0.92, 0.92],
+    rotation: [0, Math.PI / 2, 0],
+    scale: 0.92,
     parent: group
   });
 
@@ -563,9 +563,9 @@ createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 1.4, 0.85, 0.6, 0xf8
 loadSceneModel({
   url: '/models/shoe_rack.glb',
   name: 'Downloaded Lab Entrance Shoe Rack',
-  position: [-9.32, 0.68, 0.55],
+  position: [-9.32, 2.04, 0.55],
   rotation: [0, Math.PI / 2, 0],
-  scale: 0.68
+  scale: 2.04
 });
 loadSceneModel({
   url: '/models/kenney/bench.glb',
@@ -649,9 +649,9 @@ createBox('Teacher Keyboard', 0.72, 0.035, 0.22, -13.35, 0.88, -3.42, darkMetalM
 loadSceneModel({
   url: officeChairModelUrl,
   name: 'Downloaded Teacher Office Chair',
-  position: [-13.35, 0.46, -2.75],
-  rotation: [0, Math.PI, 0],
-  scale: 0.46
+  position: [-13.35, 0.92, -2.75],
+  rotation: [0, Math.PI / 2, 0],
+  scale: 0.92
 });
 
 const pairedDeskColumns = [-22.8, -21.35, -18.15, -16.7];
