@@ -858,7 +858,7 @@ function createComputerStation(
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
     position: [0, 0.04, 0.42],
-    rotation: [0, -5 * Math.PI / 9, 0],
+    rotation: [0, -19 * Math.PI / 36, 0],
     scale: 0.92,
     parent: group
   });
@@ -1525,12 +1525,12 @@ createBox(
 
 createBox(
   'Lab Wall After Door',
-  0.22,
+  0.18,
   3,
-  4.7,
-  -10.24,
+  4.35,
+  -11.02,
   1.5,
-  7.05,
+  7.55,
   wallMaterial
 );
 
@@ -1732,10 +1732,10 @@ createBox(
   'Lab Wall Base Seal After Door',
   0.08,
   0.18,
-  4.55,
-  -10.1,
+  4.2,
+  -10.9,
   0.09,
-  7.05,
+  7.55,
   wallMaterial
 );
 
@@ -2193,7 +2193,7 @@ loadSceneModel({
   name:
     'Downloaded Teacher Office Chair',
   position: [-13.35, 0.04, -3.18],
-  rotation: [0, -5 * Math.PI / 9, 0],
+  rotation: [0, -19 * Math.PI / 36, 0],
   scale: 0.92
 });
 
