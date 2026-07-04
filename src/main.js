@@ -1,6 +1,5 @@
 import './style.css';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ===============================
@@ -33,12 +32,13 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 let lastFrameTime = performance.now();
 
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.copy(liftCameraTarget);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
-controls.minDistance = 1.4;
-controls.maxDistance = 24;
+const cameraRotation = {
+  yaw: 0,
+  pitch: 0
+};
+const mouseLookSensitivity = 0.0022;
+const minPitch = THREE.MathUtils.degToRad(-78);
+const maxPitch = THREE.MathUtils.degToRad(78);
 
 const moveKeys = {
   forward: false,
@@ -304,8 +304,22 @@ function createComputerStation(x, z, parent = scene) {
 
 function setCameraView(position, target) {
   camera.position.copy(position);
-  controls.target.copy(target);
-  controls.update();
+  const direction = target.clone().sub(position).normalize();
+  cameraRotation.yaw = Math.atan2(-direction.x, -direction.z);
+  cameraRotation.pitch = THREE.MathUtils.clamp(Math.asin(direction.y), minPitch, maxPitch);
+  applyCameraRotation();
+}
+
+function applyCameraRotation() {
+  camera.rotation.order = 'YXZ';
+  camera.rotation.y = cameraRotation.yaw;
+  camera.rotation.x = cameraRotation.pitch;
+  camera.rotation.z = 0;
+}
+
+function resetCameraZoom() {
+  camera.fov = 60;
+  camera.updateProjectionMatrix();
 }
 
 const walkableZones = [
@@ -347,8 +361,6 @@ function moveCameraBy(offset) {
   }
 
   camera.position.copy(nextPosition);
-  controls.target.add(offset);
-  controls.target.y = Math.max(1.1, Math.min(2.0, controls.target.y));
 }
 
 // ===============================
@@ -780,6 +792,31 @@ const infoPanel = document.querySelector('#info-panel');
 const infoTitle = document.querySelector('#info-title');
 const infoText = document.querySelector('#info-text');
 
+window.addEventListener('mousemove', (event) => {
+  if (!tourStarted) {
+    return;
+  }
+
+  if (event.target.closest?.('#ui-panel, #info-panel, #welcome-screen')) {
+    return;
+  }
+
+  cameraRotation.yaw -= event.movementX * mouseLookSensitivity;
+  cameraRotation.pitch = THREE.MathUtils.clamp(
+    cameraRotation.pitch - event.movementY * mouseLookSensitivity,
+    minPitch,
+    maxPitch
+  );
+  applyCameraRotation();
+});
+
+canvas.addEventListener('wheel', (event) => {
+  event.preventDefault();
+
+  camera.fov = THREE.MathUtils.clamp(camera.fov + event.deltaY * 0.025, 38, 75);
+  camera.updateProjectionMatrix();
+}, { passive: false });
+
 canvas.addEventListener('click', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -832,6 +869,7 @@ function returnToLiftStart() {
   tourStarted = false;
   resetLiftDoors();
   resetLabDoor();
+  resetCameraZoom();
   setCameraView(liftCameraPosition, liftCameraTarget);
   infoPanel.style.display = 'none';
   welcomeScreen.style.display = 'flex';
@@ -840,6 +878,7 @@ function returnToLiftStart() {
 startBtn.addEventListener('click', () => {
   welcomeScreen.style.display = 'none';
   tourStarted = true;
+  resetCameraZoom();
   setCameraView(liftCameraPosition, liftCameraTarget);
 });
 
@@ -858,6 +897,7 @@ openLabDoorBtn.addEventListener('click', () => {
 resetCameraBtn.addEventListener('click', () => {
   resetLiftDoors();
   resetLabDoor();
+  resetCameraZoom();
   setCameraView(liftCameraPosition, liftCameraTarget);
 });
 
@@ -956,7 +996,6 @@ function animate() {
   lastFrameTime = now;
 
   updatePlayerMovement(delta);
-  controls.update();
 
   const targetProgress = liftDoorOpen ? 1 : 0;
   liftDoorProgress = THREE.MathUtils.damp(liftDoorProgress, targetProgress, 4.2, delta);
