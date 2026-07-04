@@ -525,7 +525,11 @@ createBox('Lab Wall Before Door', 0.22, 3, 8.9, -9.92, 1.5, -2.2, wallMaterial);
 createBox('Lab Wall After Door', 0.22, 3, 5.3, -9.92, 1.5, 6.7, wallMaterial);
 createBox('Lab Door Lower Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 2.35, wallMaterial);
 createBox('Lab Door Upper Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 4.05, wallMaterial);
-createBox('Lab Door Top Lintel', 0.24, 0.45, 1.88, -9.92, 2.775, 3.2, wallMaterial);
+createBox('Lab Door Top Lintel', 0.24, 0.72, 2.05, -9.92, 2.74, 3.2, wallMaterial);
+createBox('Lab Door Exterior Header Fill', 0.08, 0.68, 2.05, -9.74, 2.76, 3.2, wallMaterial);
+createBox('Lab Door Lower Return Wall', 0.62, 3, 0.18, -10.2, 1.5, 2.35, wallMaterial);
+createBox('Lab Door Upper Return Wall', 0.62, 3, 0.18, -10.2, 1.5, 4.05, wallMaterial);
+createBox('Lab Door Threshold Floor Fill', 0.82, 0.04, 1.9, -10.08, 0.02, 3.2, floorMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
 createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
 createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
@@ -536,7 +540,7 @@ labEntranceShelf.rotation.y = Math.PI / 2;
 loadSceneModel({
   url: '/models/kenney/bench.glb',
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.32, 0.02, 1.55],
+  position: [-9.32, 0.02, -1.0],
   rotation: [0, Math.PI / 2, 0],
   scale: 2.65
 });
