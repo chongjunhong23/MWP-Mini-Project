@@ -282,7 +282,7 @@ function createComputerStation(x, z, parent = scene) {
     url: labMonitorModelUrl,
     name: 'Downloaded Workstation Monitor',
     position: [0, 0.95, -0.2],
-    rotation: [0, Math.PI / 2, 0],
+    rotation: [0, -Math.PI / 2, 0],
     scale: 0.00108,
     parent: group
   });
@@ -534,6 +534,10 @@ createBox('Lab Door Lower Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 2.35, wallMat
 createBox('Lab Door Upper Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 4.05, wallMaterial);
 createBox('Lab Door Threshold Floor Fill', 2.95, 0.05, 2.05, -11.15, 0.025, 3.2, floorMaterial);
 createBox('Lab Door Corridor Floor Patch', 0.95, 0.045, 2.05, -9.55, 0.025, 3.2, floorMaterial);
+createBox('Lab Exterior Safety Wall Before Door', 0.55, 3, 8.75, -10.22, 1.5, -2.275, wallMaterial);
+createBox('Lab Exterior Safety Wall After Door', 0.55, 3, 5.8, -10.22, 1.5, 6.95, wallMaterial);
+createBox('Lab Exterior Floor Cover Before Door', 0.9, 0.05, 8.75, -10.15, 0.025, -2.275, floorMaterial);
+createBox('Lab Exterior Floor Cover After Door', 0.9, 0.05, 5.8, -10.15, 0.025, 6.95, floorMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
 createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
 createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
@@ -615,7 +619,7 @@ loadSceneModel({
   url: labMonitorModelUrl,
   name: 'Downloaded Teacher Workstation Monitor',
   position: [-12.4, 0.96, -3.88],
-  rotation: [0, Math.PI / 2, 0],
+  rotation: [0, -Math.PI / 2, 0],
   scale: 0.0011
 });
 createBox('Teacher Keyboard', 0.72, 0.035, 0.22, -12.4, 0.88, -3.42, darkMetalMaterial);
