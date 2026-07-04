@@ -858,7 +858,7 @@ function createComputerStation(
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
     position: [0, 0.04, 0.92],
-    rotation: [0, Math.PI, 0],
+    rotation: [0, -Math.PI / 2, 0],
     scale: 0.92,
     parent: group
   });
@@ -1253,80 +1253,59 @@ createBox(
   wallMaterial
 );
 
-// ==========================================================
-// CORRECT LEFT LIFT CORNER FIX
-// Thin side wall at the actual blue corner.
-// It does not cross or overlap the balcony.
-// ==========================================================
-
-// Narrow vertical wall beside the left edge of the lift.
-//
-// X is thin: 0.18
-// Z is longer: 1.9
-//
-// The wall extends from z = 9.60 to z = 11.50.
-// Therefore, it stays behind the lift entrance and does not
-// come forward toward the camera.
+// Close the outside corner where the lift landing corridor meets the right turn.
 createBox(
-  'Lift Left Corner Side Wall',
+  'Corridor Outside Corner Side Wall',
   0.24,
   3.2,
-  2.35,
-  -2.18,
-  1.5,
-  10.78,
-  wallMaterial
-);
-
-// Small wall connection at the back.
-// This joins the side wall to the existing balcony barrier,
-// without extending across the balcony.
-createBox(
-  'Lift Left Corner Back Connector',
-  1.15,
-  3.2,
-  0.24,
-  -2.52,
-  1.5,
-  9.62,
-  wallMaterial
-);
-
-// Floor strip beneath the same corner.
-// It is only placed on the left side of the lift.
-createBox(
-  'Lift Left Corner Floor Strip',
-  1.2,
-  0.2,
-  2.35,
-  -2.48,
-  -0.1,
-  10.78,
-  floorMaterial
-);
-
-// Lower backing floor.
-// This is below the visible floor and prevents blue cracks.
-createBox(
-  'Lift Left Corner Underfloor',
-  1.55,
-  0.3,
   2.55,
-  -2.35,
-  -0.32,
-  10.78,
+  -9.95,
+  1.5,
+  10.9,
+  wallMaterial
+);
+
+createBox(
+  'Corridor Outside Corner Back Connector',
+  1.0,
+  3.2,
+  0.24,
+  -9.55,
+  1.5,
+  12.08,
+  wallMaterial
+);
+
+createBox(
+  'Corridor Outside Corner Floor Cover',
+  0.95,
+  0.2,
+  2.55,
+  -9.55,
+  -0.1,
+  10.9,
   floorMaterial
 );
 
-// Small ceiling strip directly above the corner.
 createBox(
-  'Lift Left Corner Ceiling Strip',
-  1.2,
+  'Corridor Outside Corner Underfloor',
+  1.15,
+  0.3,
+  2.75,
+  -9.55,
+  -0.32,
+  10.9,
+  floorMaterial
+);
+
+createBox(
+  'Corridor Outside Corner Ceiling Cover',
+  0.95,
   0.2,
-  2.35,
-  -2.48,
+  2.55,
+  -9.55,
   3.1,
-  10.78,
+  10.9,
   ceilingMaterial
 );
 
@@ -2203,7 +2182,7 @@ loadSceneModel({
   name:
     'Downloaded Teacher Office Chair',
   position: [-13.35, 0.04, -2.75],
-  rotation: [0, Math.PI, 0],
+  rotation: [0, -Math.PI / 2, 0],
   scale: 0.92
 });
 
