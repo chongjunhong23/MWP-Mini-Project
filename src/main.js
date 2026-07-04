@@ -424,7 +424,7 @@ function loadSceneModel({ url, name, position, rotation = [0, 0, 0], scale = 1, 
 gltfLoader.load('/models/ElevatorAnimation.glb', (gltf) => {
   const elevatorModel = gltf.scene;
   elevatorModel.name = 'Realistic Animated Elevator Model';
-  elevatorModel.position.set(0, 0, 12.25);
+  elevatorModel.position.set(0, -0.08, 12.25);
   elevatorModel.rotation.y = Math.PI / 2;
   elevatorModel.scale.setScalar(1.2);
   liftGroup.add(elevatorModel);
@@ -527,24 +527,26 @@ createBox('Lab Door Lower Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 2.35, wallMater
 createBox('Lab Door Upper Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 4.05, wallMaterial);
 createBox('Lab Door Top Lintel', 0.24, 0.45, 1.88, -9.92, 2.775, 3.2, wallMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
-createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 4.45, 0.85, 0.6, 0xf8fafc);
-const labEntranceShelf = createShoeRack(-9.36, 0, 6.25);
+createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
+createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
+createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 1.4, 0.85, 0.6, 0xf8fafc);
+const labEntranceShelf = createShoeRack(-9.32, 0, 0.55);
 labEntranceShelf.name = 'Lab Entrance Side Shelf';
 labEntranceShelf.rotation.y = Math.PI / 2;
 loadSceneModel({
   url: '/models/kenney/bench.glb',
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.36, 0.02, 5.05],
+  position: [-9.32, 0.02, 1.55],
   rotation: [0, Math.PI / 2, 0],
-  scale: 2.7
+  scale: 2.65
 });
-createFireExtinguisher(-9.36, 0, 4.12);
+createFireExtinguisher(-9.32, 0, 2.18);
 
 for (let z = 8; z >= -5; z -= 4) {
   createBox('Right Turn Balcony Pillar', 0.35, 3, 0.35, -7.2, 1.5, z, pillarMaterial);
 }
 
-createBox('Computer Lab Floor', 12.8, 0.2, 15.4, -16.1, -0.1, 2.7, carpetMaterial);
+createBox('Computer Lab Floor', 12.35, 0.2, 15.4, -16.325, -0.1, 2.7, carpetMaterial);
 createBox('Computer Lab Back Teaching Wall', 12.8, 3, 0.2, -16.1, 1.5, -5, wallMaterial);
 createBox('Computer Lab Exit Wall', 12.8, 3, 0.2, -16.1, 1.5, 10.4, wallMaterial);
 createBox('Computer Lab Left Wall', 0.2, 3, 15.4, -22.5, 1.5, 2.7, wallMaterial);
@@ -559,18 +561,18 @@ createBox('Lab Storage Cabinet Door', 0.04, 1.45, 0.45, -21.78, 0.93, 9.1, doorM
 
 const labDoorPivot = new THREE.Group();
 labDoorPivot.name = 'Computer Lab Door Pivot';
-labDoorPivot.position.set(-9.92, 1.2, 3.2);
+labDoorPivot.position.set(-9.92, 1.2, 4.05);
 scene.add(labDoorPivot);
 
-const labDoor = createBox('Openable Computer Lab Door', 0.15, 2.4, 1.4, 0, 0, -0.7, doorMaterial, labDoorPivot);
+const labDoor = createBox('Openable Computer Lab Door', 0.15, 2.4, 1.65, 0, 0, -0.825, doorMaterial, labDoorPivot);
 labDoor.userData = {
   isLabDoor: true,
   title: 'Computer Lab Door',
   text: 'This door opens into the FC-N28 Level 5 computer lab.'
 };
-createBox('Lab Door Raised Top Panel', 0.04, 0.58, 0.82, 0.09, 0.28, -0.7, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
-createBox('Lab Door Raised Bottom Panel', 0.04, 0.62, 0.82, 0.09, -0.55, -0.7, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
-const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.1, railingMaterial, labDoorPivot);
+createBox('Lab Door Raised Top Panel', 0.04, 0.58, 1.0, 0.09, 0.28, -0.825, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
+createBox('Lab Door Raised Bottom Panel', 0.04, 0.62, 1.0, 0.09, -0.55, -0.825, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
+const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.32, railingMaterial, labDoorPivot);
 labDoorHandle.userData = labDoor.userData;
 
 loadSceneModel({
