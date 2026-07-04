@@ -512,14 +512,17 @@ loadSceneModel({
 
 createBox('First Left Corridor Floor', 8.1, 0.2, 2.5, -5.05, -0.1, 10.9, floorMaterial);
 createBox('First Corridor Solid Wall', 8.3, 3, 0.2, -5.05, 1.5, 12.15, wallMaterial);
-createBox('First Corridor Balcony Barrier', 6.25, 1.2, 0.2, -4.0, 0.6, 9.65, wallMaterial);
+createBox('First Corridor Balcony Barrier', 6.0, 1.2, 0.2, -4.0, 0.6, 9.65, wallMaterial);
 createBox('First Corridor Ceiling', 8.3, 0.2, 2.5, -5.05, 3.1, 10.9, ceilingMaterial);
-createBox('First Corridor Rail', 5.9, 0.12, 0.12, -4.15, 1.35, 9.78, railingMaterial);
+createBox('First Corridor Rail', 5.7, 0.12, 0.12, -4.15, 1.35, 9.78, railingMaterial);
 createNoticeBoard('Corridor Notice Board', -3.2, 1.7, 12.02, 1.2, 0.75, 0xf5d76e);
 
 createBox('Right Turn Corridor Floor', 2.8, 0.2, 16.45, -8.5, -0.1, 1.425, floorMaterial);
 createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 16.25, -7.1, 0.6, 1.525, wallMaterial);
 createBox('Right Turn Balcony Rail', 0.12, 0.12, 15.9, -7.25, 1.35, 1.7, railingMaterial);
+createBox('Right Turn Balcony Flat Face', 0.05, 1.18, 16.25, -6.98, 0.6, 1.525, wallMaterial);
+createBox('Balcony Corner Wall Cap', 0.24, 1.2, 0.24, -7.1, 0.6, 9.65, wallMaterial);
+createBox('Right Turn Balcony Top Cap', 0.28, 0.08, 16.25, -7.1, 1.22, 1.525, wallMaterial);
 createBox('Right Turn Ceiling', 2.8, 0.2, 16.45, -8.5, 3.1, 1.425, ceilingMaterial);
 createBox('Lab Wall Before Door', 0.22, 3, 8.9, -9.92, 1.5, -2.2, wallMaterial);
 createBox('Lab Wall After Door', 0.22, 3, 5.3, -9.92, 1.5, 6.7, wallMaterial);
@@ -527,9 +530,10 @@ createBox('Lab Door Lower Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 2.35, wallMater
 createBox('Lab Door Upper Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 4.05, wallMaterial);
 createBox('Lab Door Top Lintel', 0.24, 0.72, 2.05, -9.92, 2.74, 3.2, wallMaterial);
 createBox('Lab Door Exterior Header Fill', 0.08, 0.68, 2.05, -9.74, 2.76, 3.2, wallMaterial);
-createBox('Lab Door Lower Return Wall', 0.62, 3, 0.18, -10.2, 1.5, 2.35, wallMaterial);
-createBox('Lab Door Upper Return Wall', 0.62, 3, 0.18, -10.2, 1.5, 4.05, wallMaterial);
-createBox('Lab Door Threshold Floor Fill', 0.82, 0.04, 1.9, -10.08, 0.02, 3.2, floorMaterial);
+createBox('Lab Door Lower Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 2.35, wallMaterial);
+createBox('Lab Door Upper Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 4.05, wallMaterial);
+createBox('Lab Door Threshold Floor Fill', 2.95, 0.05, 2.05, -11.15, 0.025, 3.2, floorMaterial);
+createBox('Lab Door Corridor Floor Patch', 0.95, 0.045, 2.05, -9.55, 0.025, 3.2, floorMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
 createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
 createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
