@@ -858,7 +858,7 @@ function createComputerStation(
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
     position: [0, 0.04, 0.92],
-    rotation: [0, Math.PI * 0.75, 0],
+    rotation: [0, Math.PI, 0],
     scale: 0.92,
     parent: group
   });
@@ -1370,7 +1370,6 @@ createNoticeBoard(
   0.55,
   0xf8fafc
 );
-
 loadSceneModel({
   url:
     '/models/kenney/construction-barrier.glb',
@@ -2204,7 +2203,7 @@ loadSceneModel({
   name:
     'Downloaded Teacher Office Chair',
   position: [-13.35, 0.04, -2.75],
-  rotation: [0, Math.PI * 0.75, 0],
+  rotation: [0, Math.PI, 0],
   scale: 0.92
 });
 
