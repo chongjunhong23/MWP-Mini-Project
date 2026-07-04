@@ -312,7 +312,7 @@ const walkableZones = [
   { minX: -1.75, maxX: 1.75, minZ: 12.1, maxZ: 15.8 },
   { minX: -1.75, maxX: 1.35, minZ: 10.25, maxZ: 12.35, needsLiftDoor: true },
   { minX: -8.9, maxX: -1.2, minZ: 9.65, maxZ: 12.15, needsLiftDoor: true },
-  { minX: -9.9, maxX: -7.1, minZ: -6.8, maxZ: 10.5, needsLiftDoor: true },
+  { minX: -9.9, maxX: -7.1, minZ: -6.8, maxZ: 12.15, needsLiftDoor: true },
   { minX: -10.55, maxX: -9.7, minZ: 2.45, maxZ: 3.65, needsLiftDoor: true, needsLabDoor: true },
   { minX: -22.05, maxX: -10.35, minZ: -4.7, maxZ: 9.75, needsLiftDoor: true, needsLabDoor: true }
 ];
@@ -424,7 +424,7 @@ function loadSceneModel({ url, name, position, rotation = [0, 0, 0], scale = 1, 
 gltfLoader.load('/models/ElevatorAnimation.glb', (gltf) => {
   const elevatorModel = gltf.scene;
   elevatorModel.name = 'Realistic Animated Elevator Model';
-  elevatorModel.position.set(0, 0, 12.25);
+  elevatorModel.position.set(0, -0.08, 12.25);
   elevatorModel.rotation.y = Math.PI / 2;
   elevatorModel.scale.setScalar(1.2);
   liftGroup.add(elevatorModel);
@@ -494,7 +494,8 @@ function resetLiftDoors() {
 // FC-N28 LEVEL 5 ENVIRONMENT
 // ===============================
 
-createBox('Lift Landing Floor', 3.7, 0.2, 2.4, -0.15, -0.1, 10.95, floorMaterial);
+createBox('Lift Landing Floor', 3.7, 0.18, 2.05, -0.15, -0.11, 10.78, floorMaterial);
+createBox('Lift Door Threshold Strip', 3.45, 0.035, 0.32, -0.15, 0.015, 11.86, metalMaterial);
 createBox('Landing Front Barrier', 3.8, 1.25, 0.22, -0.15, 0.62, 9.7, wallMaterial);
 createBox('Landing Right Wall', 0.22, 3, 2.55, 1.8, 1.5, 10.95, wallMaterial);
 createBox('Landing Ceiling', 3.7, 0.2, 2.4, -0.15, 3.1, 10.95, ceilingMaterial);
@@ -511,36 +512,53 @@ loadSceneModel({
 
 createBox('First Left Corridor Floor', 8.1, 0.2, 2.5, -5.05, -0.1, 10.9, floorMaterial);
 createBox('First Corridor Solid Wall', 8.3, 3, 0.2, -5.05, 1.5, 12.15, wallMaterial);
-createBox('First Corridor Balcony Barrier', 8.3, 1.2, 0.2, -5.05, 0.6, 9.65, wallMaterial);
+createBox('First Corridor Balcony Barrier', 6.0, 1.2, 0.2, -4.0, 0.6, 9.65, wallMaterial);
 createBox('First Corridor Ceiling', 8.3, 0.2, 2.5, -5.05, 3.1, 10.9, ceilingMaterial);
-createBox('First Corridor Rail', 7.8, 0.12, 0.12, -5.05, 1.35, 9.78, railingMaterial);
+createBox('First Corridor Rail', 5.7, 0.12, 0.12, -4.15, 1.35, 9.78, railingMaterial);
 createNoticeBoard('Corridor Notice Board', -3.2, 1.7, 12.02, 1.2, 0.75, 0xf5d76e);
 
-createBox('Right Turn Corridor Floor', 2.8, 0.2, 17.2, -8.5, -0.1, 1.85, floorMaterial);
-createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 17, -7.1, 0.6, 1.85, wallMaterial);
-createBox('Right Turn Balcony Rail', 0.12, 0.12, 16.3, -7.25, 1.35, 1.85, railingMaterial);
-createBox('Right Turn Ceiling', 2.8, 0.2, 17.2, -8.5, 3.1, 1.85, ceilingMaterial);
-createBox('Lab Wall Before Door', 0.22, 3, 6.0, -9.92, 1.5, -3.65, wallMaterial);
-createBox('Lab Wall After Door', 0.22, 3, 6.0, -9.92, 1.5, 6.35, wallMaterial);
+createBox('Right Turn Corridor Floor', 2.8, 0.2, 16.45, -8.5, -0.1, 1.425, floorMaterial);
+createBox('Right Turn Balcony Half Wall', 0.2, 1.2, 16.25, -7.1, 0.6, 1.525, wallMaterial);
+createBox('Right Turn Balcony Rail', 0.12, 0.12, 15.9, -7.25, 1.35, 1.7, railingMaterial);
+createBox('Right Turn Balcony Flat Face', 0.05, 1.18, 16.25, -6.98, 0.6, 1.525, wallMaterial);
+createBox('Balcony Corner Wall Cap', 0.24, 1.2, 0.24, -7.1, 0.6, 9.65, wallMaterial);
+createBox('Right Turn Balcony Top Cap', 0.28, 0.08, 16.25, -7.1, 1.22, 1.525, wallMaterial);
+createBox('Right Turn Ceiling', 2.8, 0.2, 16.45, -8.5, 3.1, 1.425, ceilingMaterial);
+createBox('Lab Wall Before Door', 0.22, 3, 8.9, -9.92, 1.5, -2.2, wallMaterial);
+createBox('Lab Wall After Door', 0.22, 3, 5.3, -9.92, 1.5, 6.7, wallMaterial);
+createBox('Lab Door Lower Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 2.35, wallMaterial);
+createBox('Lab Door Upper Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 4.05, wallMaterial);
+createBox('Lab Door Top Lintel', 0.24, 0.72, 2.05, -9.92, 2.74, 3.2, wallMaterial);
+createBox('Lab Door Exterior Header Fill', 0.08, 0.68, 2.05, -9.74, 2.76, 3.2, wallMaterial);
+createBox('Lab Door Lower Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 2.35, wallMaterial);
+createBox('Lab Door Upper Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 4.05, wallMaterial);
+createBox('Lab Door Threshold Floor Fill', 2.95, 0.05, 2.05, -11.15, 0.025, 3.2, floorMaterial);
+createBox('Lab Door Corridor Floor Patch', 0.95, 0.045, 2.05, -9.55, 0.025, 3.2, floorMaterial);
+createBox('Lab Exterior Safety Wall Before Door', 0.55, 3, 8.75, -10.22, 1.5, -2.275, wallMaterial);
+createBox('Lab Exterior Safety Wall After Door', 0.55, 3, 5.8, -10.22, 1.5, 6.95, wallMaterial);
+createBox('Lab Exterior Floor Cover Before Door', 0.9, 0.05, 8.75, -10.15, 0.025, -2.275, floorMaterial);
+createBox('Lab Exterior Floor Cover After Door', 0.9, 0.05, 5.8, -10.15, 0.025, 6.95, floorMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
-createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.6, 3.95, 0.9, 0.65, 0xf8fafc);
-const labEntranceShelf = createShoeRack(-9.58, 0, 0.55);
+createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
+createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
+createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 1.4, 0.85, 0.6, 0xf8fafc);
+const labEntranceShelf = createShoeRack(-9.32, 0, 0.55);
 labEntranceShelf.name = 'Lab Entrance Side Shelf';
 labEntranceShelf.rotation.y = Math.PI / 2;
 loadSceneModel({
   url: '/models/kenney/bench.glb',
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.55, 0.02, 1.75],
+  position: [-9.32, 0.02, -1.0],
   rotation: [0, Math.PI / 2, 0],
-  scale: 3
+  scale: 2.65
 });
-createFireExtinguisher(-9.55, 0, 2.55);
+createFireExtinguisher(-9.32, 0, 2.18);
 
 for (let z = 8; z >= -5; z -= 4) {
   createBox('Right Turn Balcony Pillar', 0.35, 3, 0.35, -7.2, 1.5, z, pillarMaterial);
 }
 
-createBox('Computer Lab Floor', 12.8, 0.2, 15.4, -16.1, -0.1, 2.7, carpetMaterial);
+createBox('Computer Lab Floor', 12.35, 0.2, 15.4, -16.325, -0.1, 2.7, carpetMaterial);
 createBox('Computer Lab Back Teaching Wall', 12.8, 3, 0.2, -16.1, 1.5, -5, wallMaterial);
 createBox('Computer Lab Exit Wall', 12.8, 3, 0.2, -16.1, 1.5, 10.4, wallMaterial);
 createBox('Computer Lab Left Wall', 0.2, 3, 15.4, -22.5, 1.5, 2.7, wallMaterial);
@@ -555,18 +573,18 @@ createBox('Lab Storage Cabinet Door', 0.04, 1.45, 0.45, -21.78, 0.93, 9.1, doorM
 
 const labDoorPivot = new THREE.Group();
 labDoorPivot.name = 'Computer Lab Door Pivot';
-labDoorPivot.position.set(-9.92, 1.2, 3.2);
+labDoorPivot.position.set(-9.92, 1.2, 4.05);
 scene.add(labDoorPivot);
 
-const labDoor = createBox('Openable Computer Lab Door', 0.15, 2.4, 1.4, 0, 0, -0.7, doorMaterial, labDoorPivot);
+const labDoor = createBox('Openable Computer Lab Door', 0.15, 2.4, 1.65, 0, 0, -0.825, doorMaterial, labDoorPivot);
 labDoor.userData = {
   isLabDoor: true,
   title: 'Computer Lab Door',
   text: 'This door opens into the FC-N28 Level 5 computer lab.'
 };
-createBox('Lab Door Raised Top Panel', 0.04, 0.58, 0.82, 0.09, 0.28, -0.7, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
-createBox('Lab Door Raised Bottom Panel', 0.04, 0.62, 0.82, 0.09, -0.55, -0.7, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
-const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.1, railingMaterial, labDoorPivot);
+createBox('Lab Door Raised Top Panel', 0.04, 0.58, 1.0, 0.09, 0.28, -0.825, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
+createBox('Lab Door Raised Bottom Panel', 0.04, 0.62, 1.0, 0.09, -0.55, -0.825, new THREE.MeshStandardMaterial({ color: 0x4b2a17, roughness: 0.36 }), labDoorPivot);
+const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.32, railingMaterial, labDoorPivot);
 labDoorHandle.userData = labDoor.userData;
 
 loadSceneModel({
@@ -608,7 +626,7 @@ createBox('Teacher Keyboard', 0.72, 0.035, 0.22, -12.4, 0.88, -3.42, darkMetalMa
 createBox('Teacher Chair Seat', 0.62, 0.12, 0.62, -12.4, 0.45, -2.75, chairMaterial);
 createBox('Teacher Chair Back', 0.62, 0.72, 0.12, -12.4, 0.88, -2.47, chairMaterial);
 
-const pairedDeskColumns = [-19.6, -18.1, -14.1, -12.6];
+const pairedDeskColumns = [-19.825, -18.375, -14.175, -12.725];
 for (let row = 0; row < 4; row++) {
   for (const x of pairedDeskColumns) {
     const z = -0.2 + row * 2.45;
