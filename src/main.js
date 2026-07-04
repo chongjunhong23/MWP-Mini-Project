@@ -180,10 +180,15 @@ const labMonitorModelUrl =
 const officeChairModelUrl =
   '/models/ergonomic_office_chair.glb';
 
-const hotspotMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffff00,
-  depthTest: false
-});
+const hotspotModelUrl =
+  '/models/highpoly_info_sign_3d_icon.glb';
+
+const hotspotHitMaterial =
+  new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 0,
+    depthWrite: false
+  });
 
 // ===============================
 // HELPER FUNCTIONS
@@ -857,8 +862,8 @@ function createComputerStation(
   loadSceneModel({
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
-    position: [0, 0.04, 0.92],
-    rotation: [0, Math.PI * 0.75, 0],
+    position: [0, 0.04, 0.42],
+    rotation: [0, -7 * Math.PI / 18, 0],
     scale: 0.92,
     parent: group
   });
@@ -1253,80 +1258,70 @@ createBox(
   wallMaterial
 );
 
-// ==========================================================
-// CORRECT LEFT LIFT CORNER FIX
-// Thin side wall at the actual blue corner.
-// It does not cross or overlap the balcony.
-// ==========================================================
-
-// Narrow vertical wall beside the left edge of the lift.
-//
-// X is thin: 0.18
-// Z is longer: 1.9
-//
-// The wall extends from z = 9.60 to z = 11.50.
-// Therefore, it stays behind the lift entrance and does not
-// come forward toward the camera.
+// Close the outside corner without protruding into the corridor path.
 createBox(
-  'Lift Left Corner Side Wall',
+  'Corridor Outside Corner Side Wall',
   0.18,
   3.2,
-  1.9,
-  -2.02,
+  2.5,
+  -10.58,
   1.5,
-  10.55,
+  10.9,
   wallMaterial
 );
 
-// Small wall connection at the back.
-// This joins the side wall to the existing balcony barrier,
-// without extending across the balcony.
 createBox(
-  'Lift Left Corner Back Connector',
-  0.7,
+  'Corridor Outside Corner Back Connector',
+  0.46,
   3.2,
-  0.18,
-  -2.28,
+  0.24,
+  -10.44,
   1.5,
-  9.68,
+  12.08,
   wallMaterial
 );
 
-// Floor strip beneath the same corner.
-// It is only placed on the left side of the lift.
 createBox(
-  'Lift Left Corner Floor Strip',
-  0.85,
-  0.2,
-  1.9,
-  -2.38,
-  -0.1,
-  10.55,
+  'Corridor Outside Corner Floor Cover',
+  0.4,
+  0.12,
+  2.5,
+  -10.42,
+  -0.06,
+  10.9,
   floorMaterial
 );
 
-// Lower backing floor.
-// This is below the visible floor and prevents blue cracks.
 createBox(
-  'Lift Left Corner Underfloor',
-  1.25,
-  0.3,
-  2.2,
-  -2.2,
-  -0.32,
-  10.65,
+  'Corridor Outside Corner Underfloor',
+  0.46,
+  0.18,
+  2.7,
+  -10.42,
+  -0.18,
+  10.9,
   floorMaterial
 );
 
-// Small ceiling strip directly above the corner.
 createBox(
-  'Lift Left Corner Ceiling Strip',
-  0.85,
+  'Corridor Outside Corner Base Seal',
+  0.16,
+  0.22,
+  2.5,
+  -10.2,
+  0.02,
+  10.9,
+  wallMaterial
+);
+
+createBox(
+  'Corridor Outside Corner Ceiling Cover',
+  0.4,
   0.2,
-  1.9,
-  -2.38,
+  2.5,
+  -10.42,
   3.1,
-  10.55,
+  10.9,
   ceilingMaterial
 );
 
@@ -1370,7 +1365,6 @@ createNoticeBoard(
   0.55,
   0xf8fafc
 );
-
 loadSceneModel({
   url:
     '/models/kenney/construction-barrier.glb',
@@ -1624,12 +1618,12 @@ createBox(
 
 createBox(
   'Lab Exterior Safety Wall After Door',
-  0.55,
+  0.24,
   3.25,
-  6.45,
-  -10.22,
+  5.4,
+  -10.15,
   1.625,
-  7.2,
+  6.95,
   wallMaterial
 );
 
@@ -1646,12 +1640,12 @@ createBox(
 
 createBox(
   'Lab Exterior Floor Cover After Door',
-  0.9,
+  0.38,
   0.05,
-  6.45,
+  5.4,
   -10.15,
   0.025,
-  7.2,
+  6.95,
   floorMaterial
 );
 
@@ -1703,10 +1697,10 @@ createBox(
   'Exterior Corner Return Wall',
   0.36,
   3.25,
-  1.9,
-  -9.82,
+  1.05,
+  -11.08,
   1.625,
-  9.25,
+  9.75,
   wallMaterial
 );
 
@@ -2203,8 +2197,8 @@ loadSceneModel({
   url: officeChairModelUrl,
   name:
     'Downloaded Teacher Office Chair',
-  position: [-13.35, 0.04, -2.75],
-  rotation: [0, Math.PI * 0.75, 0],
+  position: [-13.35, 0.04, -3.18],
+  rotation: [0, -7 * Math.PI / 18, 0],
   scale: 0.92
 });
 
@@ -2347,46 +2341,36 @@ function createHotspot(
       32
     );
 
-  const sphere = new THREE.Mesh(
+  const hitTarget = new THREE.Mesh(
     sphereGeometry,
-    hotspotMaterial
+    hotspotHitMaterial
   );
 
-  sphere.name = title;
+  hitTarget.name = title;
 
-  sphere.userData = {
+  hitTarget.userData = {
     title,
     text,
     isHotspot: true
   };
 
-  const ringGeometry =
-    new THREE.TorusGeometry(
-      radius * 1.55,
-      radius * 0.11,
-      16,
-      100
-    );
-
-  const ring = new THREE.Mesh(
-    ringGeometry,
-    new THREE.MeshBasicMaterial({
-      color: 0xffcc00,
-      depthTest: false
-    })
-  );
-
-  ring.rotation.x = Math.PI / 2;
-
-  group.add(sphere);
-  group.add(ring);
+  group.add(hitTarget);
 
   group.position.set(x, y, z);
   group.userData.baseY = y;
 
   scene.add(group);
 
-  hotspots.push(sphere);
+  loadSceneModel({
+    url: hotspotModelUrl,
+    name: `${title} Info Sign`,
+    position: [0, 0, 0],
+    rotation: [0, Math.PI, 0],
+    scale: radius * 0.9,
+    parent: group
+  });
+
+  hotspots.push(hitTarget);
 
   return group;
 }
