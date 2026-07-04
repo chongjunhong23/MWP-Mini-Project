@@ -550,17 +550,20 @@ createBox('Lab Exterior Safety Wall Before Door', 0.55, 3, 8.75, -10.22, 1.5, -2
 createBox('Lab Exterior Safety Wall After Door', 0.55, 3, 5.8, -10.22, 1.5, 6.95, wallMaterial);
 createBox('Lab Exterior Floor Cover Before Door', 0.9, 0.05, 8.75, -10.15, 0.025, -2.275, floorMaterial);
 createBox('Lab Exterior Floor Cover After Door', 0.9, 0.05, 5.8, -10.15, 0.025, 6.95, floorMaterial);
-createBox('Corridor Corner Floor Bridge', 1.35, 0.06, 7.4, -10.35, 0.03, 6.05, floorMaterial);
-createBox('Corridor Corner Outer Safety Wall', 0.28, 3, 7.4, -10.95, 1.5, 6.05, wallMaterial);
-createBox('Corridor Corner End Safety Wall', 1.25, 3, 0.28, -10.35, 1.5, 9.7, wallMaterial);
-createBox('Corridor Corner Floor Lip', 1.35, 0.18, 0.18, -10.35, 0.09, 9.72, wallMaterial);
+createBox('Exterior Corner Floor Cover', 1.55, 0.06, 7.45, -11.15, 0.03, 6.05, floorMaterial);
+createBox('Exterior Corner Safety Wall', 0.28, 3, 7.45, -11.86, 1.5, 6.05, wallMaterial);
+createBox('Exterior Corner End Wall', 1.55, 3, 0.28, -11.15, 1.5, 9.7, wallMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
 createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
 createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
 createNoticeBoard('Lab Entrance Door Notices', -9.78, 1.65, 1.4, 0.85, 0.6, 0xf8fafc);
-const labEntranceShelf = createShoeRack(-9.32, 0, 0.55);
-labEntranceShelf.name = 'Lab Entrance Side Shelf';
-labEntranceShelf.rotation.y = Math.PI / 2;
+loadSceneModel({
+  url: '/models/shoe_rack.glb',
+  name: 'Downloaded Lab Entrance Shoe Rack',
+  position: [-9.32, 0.55, 0.55],
+  rotation: [0, Math.PI / 2, 0],
+  scale: 0.55
+});
 loadSceneModel({
   url: '/models/kenney/bench.glb',
   name: 'Lab Entrance Corridor Bench',
