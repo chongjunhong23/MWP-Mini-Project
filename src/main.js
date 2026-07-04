@@ -295,7 +295,7 @@ function createComputerStation(x, z, parent = scene) {
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
     position: [0, 0.04, 0.92],
-    rotation: [0, Math.PI / 2, 0],
+    rotation: [0, Math.PI * 0.75, 0],
     scale: 0.92,
     parent: group
   });
@@ -543,8 +543,6 @@ createBox('Lab Door Lower Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 2.35, wallMater
 createBox('Lab Door Upper Jamb', 0.24, 2.45, 0.18, -9.92, 1.225, 4.05, wallMaterial);
 createBox('Lab Door Top Lintel', 0.24, 0.72, 2.05, -9.92, 2.74, 3.2, wallMaterial);
 createBox('Lab Door Exterior Header Fill', 0.08, 0.68, 2.05, -9.74, 2.76, 3.2, wallMaterial);
-createBox('Lab Door Lower Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 2.35, wallMaterial);
-createBox('Lab Door Upper Return Wall', 2.8, 3, 0.18, -11.25, 1.5, 4.05, wallMaterial);
 createBox('Lab Door Threshold Floor Fill', 2.95, 0.05, 2.05, -11.15, 0.025, 3.2, floorMaterial);
 createBox('Lab Door Corridor Floor Patch', 0.95, 0.045, 2.05, -9.55, 0.025, 3.2, floorMaterial);
 createBox('Lab Exterior Safety Wall Before Door', 0.55, 3, 8.75, -10.22, 1.5, -2.275, wallMaterial);
@@ -553,9 +551,10 @@ createBox('Lab Exterior Floor Cover Before Door', 0.9, 0.05, 8.75, -10.15, 0.025
 createBox('Lab Exterior Floor Cover After Door', 0.9, 0.05, 6.45, -10.15, 0.025, 7.2, floorMaterial);
 createBox('Exterior Corner Floor Cover', 2.7, 0.06, 10.0, -11.2, 0.03, 5.5, floorMaterial);
 createBox('Exterior Corner Safety Wall', 0.36, 3.25, 10.0, -12.42, 1.625, 5.5, wallMaterial);
-createBox('Exterior Corner End Wall', 3.05, 3.25, 0.36, -11.02, 1.625, 10.1, wallMaterial);
+createBox('Exterior Corner End Wall', 5.25, 3.25, 0.36, -11.4, 1.625, 10.1, wallMaterial);
+createBox('Exterior Corner Continuous Wall Cap', 5.45, 3.25, 0.3, -11.5, 1.625, 9.82, wallMaterial);
 createBox('Exterior Corner Return Wall', 0.36, 3.25, 1.9, -9.82, 1.625, 9.25, wallMaterial);
-createBox('Exterior Corner Floor Skirt', 3.05, 0.24, 0.24, -11.02, 0.12, 9.9, wallMaterial);
+createBox('Exterior Corner Floor Skirt', 5.25, 0.24, 0.24, -11.4, 0.12, 9.9, wallMaterial);
 createAirCond('Corridor Wall Air Conditioner', -9.78, 2.38, -1.2);
 createBox('Lab Wall Base Seal Before Door', 0.08, 0.18, 8.7, -9.74, 0.09, -2.25, wallMaterial);
 createBox('Lab Wall Base Seal After Door', 0.08, 0.18, 5.15, -9.74, 0.09, 6.7, wallMaterial);
@@ -610,14 +609,6 @@ createBox('Lab Door Raised Bottom Panel', 0.04, 0.62, 1.0, 0.09, -0.55, -0.825, 
 const labDoorHandle = createBox('Lab Door Handle', 0.22, 0.08, 0.08, 0.12, -0.1, -1.32, railingMaterial, labDoorPivot);
 labDoorHandle.userData = labDoor.userData;
 
-loadSceneModel({
-  url: '/models/kenney/doorwayOpen.glb',
-  name: 'Downloaded Lab Doorway Trim',
-  position: [-9.98, 0.02, 3.2],
-  rotation: [0, Math.PI / 2, 0],
-  scale: [1.05, 1.12, 1.05]
-});
-
 createTextPanel('LAB', 1.2, 0.32, -9.78, 2.58, 3.2, '#f5d76e', '#3a1f12');
 
 const exitDoor = createBox('Clickable Computer Lab Exit Door', 1.6, 2.45, 0.15, -16.05, 1.22, 10.28, doorMaterial);
@@ -650,7 +641,7 @@ loadSceneModel({
   url: officeChairModelUrl,
   name: 'Downloaded Teacher Office Chair',
   position: [-13.35, 0.04, -2.75],
-  rotation: [0, Math.PI / 2, 0],
+  rotation: [0, Math.PI * 0.75, 0],
   scale: 0.92
 });
 
