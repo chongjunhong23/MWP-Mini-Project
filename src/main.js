@@ -2338,7 +2338,7 @@ loadSceneModel({
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-12.17, 0.81, -0.82],
+  position: [-12.28, 0.835, -1.42],
   rotation: [0, Math.PI / 2, 0],
   scale: [1.59, 1.3, 1.52]
 });
@@ -2356,7 +2356,7 @@ loadSceneModel({
   name:
     'Downloaded Teacher Office Chair',
   position: [-11.27, 0.04, -1.48],
-  rotation: [0, -Math.PI / 2, 0],
+  rotation: [0, 0, 0],
   scale: 0.92
 });
 
