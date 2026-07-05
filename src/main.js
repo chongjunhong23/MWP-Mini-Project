@@ -1729,72 +1729,6 @@ createBox(
   floorMaterial
 );
 
-createBox(
-  'Exterior Corner Floor Cover',
-  2.7,
-  0.06,
-  10,
-  -11.2,
-  0.03,
-  5.5,
-  floorMaterial
-);
-
-createBox(
-  'Exterior Corner Safety Wall',
-  0.36,
-  3.25,
-  10,
-  -12.42,
-  1.625,
-  5.5,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner End Wall',
-  5.25,
-  3.25,
-  0.36,
-  -11.4,
-  1.625,
-  10.1,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner Continuous Wall Cap',
-  5.45,
-  3.25,
-  0.3,
-  -11.5,
-  1.625,
-  9.82,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner Return Wall',
-  0.36,
-  3.25,
-  1.05,
-  -11.08,
-  1.625,
-  9.75,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner Floor Skirt',
-  5.25,
-  0.24,
-  0.24,
-  -11.4,
-  0.12,
-  9.9,
-  wallMaterial
-);
-
 createAirCond(
   'Corridor Wall Air Conditioner',
   -9.78,
@@ -2349,11 +2283,11 @@ loadSceneModel({
 
 const pairedDeskColumns = [
   -22.8,
-  -21.42,
+  -21.9,
   -18.55,
-  -17.17,
+  -17.65,
   -14.3,
-  -12.92
+  -13.4
 ];
 
 const pairedDeskRows = [
