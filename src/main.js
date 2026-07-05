@@ -1552,24 +1552,79 @@ createBox(
 );
 
 createBox(
-  'Lab Wall Before Door',
-  0.22,
-  3,
-  8.9,
-  -9.92,
-  1.5,
-  -2.2,
+  'Right Turn Corridor End Wall',
+  2.8,
+  3.05,
+  0.24,
+  -8.5,
+  1.525,
+  -6.8,
   wallMaterial
 );
 
 createBox(
-  'Lab Wall After Door',
+  'Right Turn Corridor End Floor Seal',
+  2.8,
+  0.08,
+  0.45,
+  -8.5,
+  0.02,
+  -6.6,
+  floorMaterial
+);
+
+createBox(
+  'Corridor L Corner Floor Seam Cover',
+  2.95,
+  0.06,
+  0.34,
+  -8.5,
+  0.03,
+  9.62,
+  floorMaterial
+);
+
+createBox(
+  'Corridor L Corner Enclosed Wall Cap',
+  0.22,
+  3.2,
+  2.85,
+  -9.92,
+  1.6,
+  10.82,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Before Exit Door',
   0.22,
   3,
-  5.3,
+  1.95,
   -9.92,
   1.5,
-  6.7,
+  -4.02,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Between Exit And Entry Doors',
+  0.22,
+  3,
+  3.8,
+  -9.92,
+  1.5,
+  0.48,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall After Entry Door',
+  0.22,
+  3,
+  6.35,
+  -9.92,
+  1.5,
+  7.22,
   wallMaterial
 );
 
@@ -1640,46 +1695,68 @@ createBox(
 );
 
 createBox(
-  'Lab Exterior Safety Wall Before Door',
+  'Lab Exterior Safety Wall Before Exit',
   0.55,
   3,
-  8.75,
+  1.9,
   -10.22,
   1.5,
-  -2.275,
+  -4.05,
   wallMaterial
 );
 
 createBox(
-  'Lab Exterior Safety Wall After Door',
-  0.24,
+  'Lab Exterior Safety Wall Between Doors',
+  0.38,
   3.25,
-  5.4,
+  3.6,
   -10.15,
   1.625,
-  6.95,
+  0.42,
   wallMaterial
 );
 
 createBox(
-  'Lab Exterior Floor Cover Before Door',
+  'Lab Exterior Safety Wall After Entry',
+  0.24,
+  3.25,
+  6.35,
+  -10.15,
+  1.625,
+  7.22,
+  wallMaterial
+);
+
+createBox(
+  'Lab Exterior Floor Cover Before Exit',
   0.9,
   0.05,
-  8.75,
+  1.9,
   -10.15,
   0.025,
-  -2.275,
+  -4.05,
   floorMaterial
 );
 
 createBox(
-  'Lab Exterior Floor Cover After Door',
-  0.38,
+  'Lab Exterior Floor Cover Between Doors',
+  0.55,
   0.05,
-  5.4,
+  3.6,
   -10.15,
   0.025,
-  6.95,
+  0.42,
+  floorMaterial
+);
+
+createBox(
+  'Lab Exterior Floor Cover After Entry',
+  0.38,
+  0.05,
+  6.35,
+  -10.15,
+  0.025,
+  7.22,
   floorMaterial
 );
 
@@ -1757,24 +1834,35 @@ createAirCond(
 );
 
 createBox(
-  'Lab Wall Base Seal Before Door',
+  'Lab Wall Base Seal Before Exit',
   0.08,
   0.18,
-  8.7,
+  1.8,
   -9.74,
   0.09,
-  -2.25,
+  -4.05,
   wallMaterial
 );
 
 createBox(
-  'Lab Wall Base Seal After Door',
+  'Lab Wall Base Seal Between Doors',
   0.08,
   0.18,
-  5.15,
+  3.45,
   -9.74,
   0.09,
-  6.7,
+  0.35,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Base Seal After Entry',
+  0.08,
+  0.18,
+  6.05,
+  -9.74,
+  0.09,
+  7.15,
   wallMaterial
 );
 
@@ -2072,61 +2160,122 @@ createTextPanel(
   '#3a1f12'
 );
 
-const exitDoor = createBox(
-  'Clickable Computer Lab Exit Door',
-  1.6,
+createBox(
+  'Exit Door Lower Jamb',
+  0.24,
   2.45,
+  0.18,
+  -9.92,
+  1.225,
+  -3.1,
+  wallMaterial
+);
+
+createBox(
+  'Exit Door Upper Jamb',
+  0.24,
+  2.45,
+  0.18,
+  -9.92,
+  1.225,
+  -1.4,
+  wallMaterial
+);
+
+createBox(
+  'Exit Door Top Lintel',
+  0.24,
+  0.72,
+  1.98,
+  -9.92,
+  2.74,
+  -2.25,
+  wallMaterial
+);
+
+createBox(
+  'Exit Door Threshold Floor Fill',
+  2.1,
+  0.05,
+  1.95,
+  -9.98,
+  0.025,
+  -2.25,
+  floorMaterial
+);
+
+const exitDoorPivot = new THREE.Group();
+
+exitDoorPivot.name =
+  'Computer Lab Side Exit Door Pivot';
+
+exitDoorPivot.position.set(
+  -9.92,
+  1.2,
+  -1.4
+);
+
+scene.add(exitDoorPivot);
+
+const exitDoor = createBox(
+  'Openable Computer Lab Side Exit Door',
   0.15,
-  -16.05,
-  1.22,
-  10.28,
-  doorMaterial
+  2.4,
+  1.65,
+  0,
+  0,
+  -0.825,
+  doorMaterial,
+  exitDoorPivot
 );
 
 exitDoor.userData = {
   isExitDoor: true,
   title: 'Exit Door',
   text:
-    'Click this exit door to end the current walkthrough and return to the lift starting screen.'
+    'This side exit door opens beside the corridor bench. It marks the route exit without returning to the lift.'
 };
 
 createBox(
   'Exit Door Raised Top Panel',
-  1,
-  0.56,
   0.04,
-  -16.05,
-  1.5,
-  10.18,
+  0.58,
+  1,
+  0.09,
+  0.28,
+  -0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
     roughness: 0.36
-  })
+  }),
+  exitDoorPivot
 );
 
 createBox(
   'Exit Door Raised Bottom Panel',
-  1,
-  0.62,
   0.04,
-  -16.05,
-  0.6,
-  10.18,
+  0.62,
+  1,
+  0.09,
+  -0.55,
+  -0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
     roughness: 0.36
-  })
+  }),
+  exitDoorPivot
 );
 
 const exitDoorHandle = createBox(
   'Exit Door Handle',
+  0.22,
   0.08,
   0.08,
-  0.25,
-  -15.55,
-  1.1,
-  10.16,
-  railingMaterial
+  0.12,
+  -0.1,
+  -1.32,
+  railingMaterial,
+  exitDoorPivot
 );
 
 exitDoorHandle.userData =
@@ -2136,9 +2285,9 @@ createTextPanel(
   'KELUAR',
   1.35,
   0.34,
-  -16.05,
+  -9.78,
   2.62,
-  10.16,
+  -2.25,
   '#007a3d',
   '#ffffff'
 );
@@ -2151,9 +2300,9 @@ createFireExtinguisher(
 
 createNoticeBoard(
   'Exit Safety Notice',
-  -18,
+  -9.78,
   1.45,
-  10.16,
+  -3.65,
   0.9,
   0.58,
   0xf8fafc
@@ -2334,6 +2483,8 @@ createBox(
 
 let labDoorOpen = false;
 let labDoorProgress = 0;
+let exitDoorOpen = false;
+let exitDoorProgress = 0;
 
 function openLabDoor() {
   labDoorOpen = true;
@@ -2352,6 +2503,17 @@ function resetLabDoor() {
   openLabDoorBtn.disabled = false;
   openLabDoorBtn.textContent =
     'Open Lab Door';
+}
+
+function openExitDoor() {
+  exitDoorOpen = true;
+}
+
+function resetExitDoor() {
+  exitDoorOpen = false;
+  exitDoorProgress = 0;
+
+  exitDoorPivot.rotation.y = 0;
 }
 
 // ===============================
@@ -2467,10 +2629,10 @@ hotspotGroups.push(
 hotspotGroups.push(
   createHotspot(
     'Computer Lab Exit Door',
-    'Click the exit door to end the walkthrough and return to the lift starting screen.',
-    -16.05,
+    'This side exit door opens from the corridor beside the bench. It marks the end of the covered tour area without teleporting the user back to the lift.',
+    -9.25,
     2,
-    9.55
+    -2.25
   )
 );
 
@@ -2603,8 +2765,7 @@ canvas.addEventListener(
       clickedObject.userData
         .isExitDoor
     ) {
-      returnToLiftStart();
-      return;
+      openExitDoor();
     }
 
     infoTitle.textContent =
@@ -2667,6 +2828,7 @@ function returnToLiftStart() {
 
   resetLiftDoors();
   resetLabDoor();
+  resetExitDoor();
   resetCameraZoom();
 
   setCameraView(
@@ -2968,6 +3130,26 @@ function animate() {
       0,
       labDoorTarget,
       labDoorProgress
+    );
+
+  const exitDoorTarget =
+    exitDoorOpen
+      ? Math.PI / 2.15
+      : 0;
+
+  exitDoorProgress =
+    THREE.MathUtils.damp(
+      exitDoorProgress,
+      exitDoorOpen ? 1 : 0,
+      4.2,
+      delta
+    );
+
+  exitDoorPivot.rotation.y =
+    THREE.MathUtils.lerp(
+      0,
+      exitDoorTarget,
+      exitDoorProgress
     );
 
   hotspotGroups.forEach(
