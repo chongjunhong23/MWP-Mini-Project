@@ -1609,17 +1609,6 @@ createBox(
 );
 
 createBox(
-  'Lab Wall Between Exit And Entry Doors',
-  0.22,
-  3,
-  7.65,
-  -9.92,
-  1.5,
-  -1.48,
-  wallMaterial
-);
-
-createBox(
   'Lab Door Lower Jamb',
   0.24,
   2.45,
@@ -1638,6 +1627,17 @@ createBox(
   -9.92,
   1.225,
   4.05,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall After Entry Door',
+  0.22,
+  3,
+  6.35,
+  -9.92,
+  1.5,
+  7.22,
   wallMaterial
 );
 
@@ -1697,17 +1697,6 @@ createBox(
 );
 
 createBox(
-  'Lab Exterior Safety Wall Between Doors',
-  0.38,
-  3.25,
-  7.65,
-  -10.15,
-  1.625,
-  -1.48,
-  wallMaterial
-);
-
-createBox(
   'Lab Exterior Floor Cover Before Exit',
   0.9,
   0.05,
@@ -1719,13 +1708,24 @@ createBox(
 );
 
 createBox(
-  'Lab Exterior Floor Cover Between Doors',
-  0.55,
+  'Lab Exterior Safety Wall After Entry',
+  0.24,
+  3.25,
+  6.35,
+  -10.15,
+  1.625,
+  7.22,
+  wallMaterial
+);
+
+createBox(
+  'Lab Exterior Floor Cover After Entry',
+  0.38,
   0.05,
-  7.65,
+  6.35,
   -10.15,
   0.025,
-  -1.48,
+  7.22,
   floorMaterial
 );
 
@@ -1810,17 +1810,6 @@ createBox(
   -9.74,
   0.09,
   -7.85,
-  wallMaterial
-);
-
-createBox(
-  'Lab Wall Base Seal Between Doors',
-  0.08,
-  0.18,
-  7.45,
-  -9.74,
-  0.09,
-  -1.48,
   wallMaterial
 );
 
@@ -2264,6 +2253,17 @@ createNoticeBoard(
   0.9,
   0.58,
   0xf8fafc
+);
+
+createBox(
+  'Lab Wall Base Seal After Entry',
+  0.08,
+  0.18,
+  6.05,
+  -9.74,
+  0.09,
+  7.15,
+  wallMaterial
 );
 
 createAirCond(
