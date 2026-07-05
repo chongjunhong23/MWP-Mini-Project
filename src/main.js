@@ -1601,10 +1601,10 @@ createBox(
   'Lab Wall Before Exit Door',
   0.22,
   3,
-  1.95,
+  1.45,
   -9.92,
   1.5,
-  -4.02,
+  -7.85,
   wallMaterial
 );
 
@@ -1612,21 +1612,10 @@ createBox(
   'Lab Wall Between Exit And Entry Doors',
   0.22,
   3,
-  3.8,
+  7.65,
   -9.92,
   1.5,
-  0.48,
-  wallMaterial
-);
-
-createBox(
-  'Lab Wall After Entry Door',
-  0.22,
-  3,
-  6.35,
-  -9.92,
-  1.5,
-  7.22,
+  -1.48,
   wallMaterial
 );
 
@@ -1700,10 +1689,10 @@ createBox(
   'Lab Exterior Safety Wall Before Exit',
   0.55,
   3,
-  1.9,
+  1.45,
   -10.22,
   1.5,
-  -4.05,
+  -7.85,
   wallMaterial
 );
 
@@ -1711,21 +1700,10 @@ createBox(
   'Lab Exterior Safety Wall Between Doors',
   0.38,
   3.25,
-  3.6,
+  7.65,
   -10.15,
   1.625,
-  0.42,
-  wallMaterial
-);
-
-createBox(
-  'Lab Exterior Safety Wall After Entry',
-  0.24,
-  3.25,
-  6.35,
-  -10.15,
-  1.625,
-  7.22,
+  -1.48,
   wallMaterial
 );
 
@@ -1733,10 +1711,10 @@ createBox(
   'Lab Exterior Floor Cover Before Exit',
   0.9,
   0.05,
-  1.9,
+  1.45,
   -10.15,
   0.025,
-  -4.05,
+  -7.85,
   floorMaterial
 );
 
@@ -1744,21 +1722,10 @@ createBox(
   'Lab Exterior Floor Cover Between Doors',
   0.55,
   0.05,
-  3.6,
+  7.65,
   -10.15,
   0.025,
-  0.42,
-  floorMaterial
-);
-
-createBox(
-  'Lab Exterior Floor Cover After Entry',
-  0.38,
-  0.05,
-  6.35,
-  -10.15,
-  0.025,
-  7.22,
+  -1.48,
   floorMaterial
 );
 
@@ -1839,10 +1806,10 @@ createBox(
   'Lab Wall Base Seal Before Exit',
   0.08,
   0.18,
-  1.8,
+  1.35,
   -9.74,
   0.09,
-  -4.05,
+  -7.85,
   wallMaterial
 );
 
@@ -1850,21 +1817,10 @@ createBox(
   'Lab Wall Base Seal Between Doors',
   0.08,
   0.18,
-  3.45,
+  7.45,
   -9.74,
   0.09,
-  0.35,
-  wallMaterial
-);
-
-createBox(
-  'Lab Wall Base Seal After Entry',
-  0.08,
-  0.18,
-  6.05,
-  -9.74,
-  0.09,
-  7.15,
+  -1.48,
   wallMaterial
 );
 
@@ -2169,7 +2125,7 @@ createBox(
   0.18,
   -9.92,
   1.225,
-  -3.1,
+  -7.05,
   wallMaterial
 );
 
@@ -2180,7 +2136,7 @@ createBox(
   0.18,
   -9.92,
   1.225,
-  -1.4,
+  -5.35,
   wallMaterial
 );
 
@@ -2191,7 +2147,7 @@ createBox(
   1.98,
   -9.92,
   2.74,
-  -2.25,
+  -6.2,
   wallMaterial
 );
 
@@ -2202,7 +2158,7 @@ createBox(
   1.95,
   -9.98,
   0.025,
-  -2.25,
+  -6.2,
   floorMaterial
 );
 
@@ -2214,7 +2170,7 @@ exitDoorPivot.name =
 exitDoorPivot.position.set(
   -9.92,
   1.2,
-  -1.4
+  -5.35
 );
 
 scene.add(exitDoorPivot);
@@ -2289,7 +2245,7 @@ createTextPanel(
   0.34,
   -9.78,
   2.62,
-  -2.25,
+  -6.2,
   '#007a3d',
   '#ffffff'
 );
@@ -2304,7 +2260,7 @@ createNoticeBoard(
   'Exit Safety Notice',
   -9.78,
   1.45,
-  -3.65,
+  -7.55,
   0.9,
   0.58,
   0xf8fafc
@@ -2639,7 +2595,7 @@ hotspotGroups.push(
     'This side exit door opens from the corridor beside the bench. It marks the end of the covered tour area without teleporting the user back to the lift.',
     -9.25,
     2,
-    -2.25
+    -6.2
   )
 );
 
