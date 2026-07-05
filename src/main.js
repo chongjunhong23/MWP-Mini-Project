@@ -766,12 +766,14 @@ function createAirCond(
 function createComputerStation(
   x,
   z,
-  parent = scene
+  parent = scene,
+  rotationY = 0
 ) {
   const group = new THREE.Group();
 
   group.name = 'Detailed Computer Station';
   group.position.set(x, 0, z);
+  group.rotation.y = rotationY;
 
   parent.add(group);
 
@@ -921,16 +923,16 @@ const walkableZones = [
     needsLiftDoor: true
   },
   {
-    minX: -8.9,
+    minX: -9.55,
     maxX: -1.2,
     minZ: 9.65,
     maxZ: 12.15,
     needsLiftDoor: true
   },
   {
-    minX: -9.9,
+    minX: -10.35,
     maxX: -7.1,
-    minZ: -6.8,
+    minZ: -8.75,
     maxZ: 12.15,
     needsLiftDoor: true
   },
@@ -1411,10 +1413,10 @@ loadSceneModel({
 
 createBox(
   'First Left Corridor Floor',
-  8.1,
+  8.95,
   0.2,
   2.5,
-  -5.05,
+  -5.48,
   -0.1,
   10.9,
   floorMaterial
@@ -1422,10 +1424,10 @@ createBox(
 
 createBox(
   'First Corridor Solid Wall',
-  8.3,
+  9.05,
   3,
   0.2,
-  -5.05,
+  -5.43,
   1.5,
   12.15,
   wallMaterial
@@ -1444,10 +1446,10 @@ createBox(
 
 createBox(
   'First Corridor Ceiling',
-  8.3,
+  9.05,
   0.2,
   2.5,
-  -5.05,
+  -5.43,
   3.1,
   10.9,
   ceilingMaterial
@@ -1476,12 +1478,12 @@ createNoticeBoard(
 
 createBox(
   'Right Turn Corridor Floor',
-  2.8,
+  3.55,
   0.2,
-  16.45,
-  -8.5,
+  18.25,
+  -8.62,
   -0.1,
-  1.425,
+  0.525,
   floorMaterial
 );
 
@@ -1489,10 +1491,10 @@ createBox(
   'Right Turn Balcony Half Wall',
   0.2,
   1.2,
-  16.25,
+  18.05,
   -7.1,
   0.6,
-  1.525,
+  0.625,
   wallMaterial
 );
 
@@ -1500,10 +1502,10 @@ createBox(
   'Right Turn Balcony Rail',
   0.12,
   0.12,
-  15.9,
+  17.7,
   -7.25,
   1.35,
-  1.7,
+  0.8,
   railingMaterial
 );
 
@@ -1511,10 +1513,10 @@ createBox(
   'Right Turn Balcony Flat Face',
   0.05,
   1.18,
-  16.25,
+  18.05,
   -6.98,
   0.6,
-  1.525,
+  0.625,
   wallMaterial
 );
 
@@ -1533,43 +1535,43 @@ createBox(
   'Right Turn Balcony Top Cap',
   0.28,
   0.08,
-  16.25,
+  18.05,
   -7.1,
   1.22,
-  1.525,
+  0.625,
   wallMaterial
 );
 
 createBox(
   'Right Turn Ceiling',
-  2.8,
+  3.55,
   0.2,
-  16.45,
-  -8.5,
+  18.25,
+  -8.62,
   3.1,
-  1.425,
+  0.525,
   ceilingMaterial
 );
 
 createBox(
   'Right Turn Corridor End Wall',
-  2.8,
+  3.55,
   3.05,
   0.24,
-  -8.5,
+  -8.62,
   1.525,
-  -6.8,
+  -8.6,
   wallMaterial
 );
 
 createBox(
   'Right Turn Corridor End Floor Seal',
-  2.8,
+  3.55,
   0.08,
   0.45,
-  -8.5,
+  -8.62,
   0.02,
-  -6.6,
+  -8.38,
   floorMaterial
 );
 
@@ -1898,7 +1900,7 @@ createFireExtinguisher(
   2.18
 );
 
-for (let z = 8; z >= -5; z -= 4) {
+for (let z = 8; z >= -8; z -= 4) {
   createBox(
     'Right Turn Balcony Pillar',
     0.35,
@@ -2310,16 +2312,16 @@ createNoticeBoard(
 
 createAirCond(
   'Lab Rear Air Conditioner',
-  -19.1,
+  -17.2,
   2.45,
-  -4.86
+  10.26
 );
 
 createAirCond(
   'Lab Side Air Conditioner',
-  -12.8,
+  -13.1,
   2.45,
-  -4.86
+  10.26
 );
 
 createBox(
@@ -2327,9 +2329,9 @@ createBox(
   4.2,
   1.15,
   0.06,
-  -16.1,
+  -17.2,
   1.65,
-  -4.86,
+  10.26,
   whitePlasticMaterial
 );
 
@@ -2338,9 +2340,9 @@ createBox(
   0.45,
   0.18,
   0.3,
-  -16.1,
+  -17.2,
   2.75,
-  0.7,
+  5.3,
   whitePlasticMaterial
 );
 
@@ -2349,9 +2351,9 @@ createBox(
   2.1,
   0.18,
   0.85,
-  -13.35,
+  -17.2,
   0.78,
-  -3.65,
+  8.85,
   deskMaterial
 );
 
@@ -2359,7 +2361,7 @@ loadSceneModel({
   url: labMonitorModelUrl,
   name:
     'Downloaded Teacher Workstation Monitor',
-  position: [-13.35, 0.96, -3.88],
+  position: [-17.2, 0.96, 8.62],
   rotation: [0, -Math.PI / 2, 0],
   scale: 0.0011
 });
@@ -2367,14 +2369,14 @@ loadSceneModel({
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-14.53, 0.873, -4.07],
+  position: [-18.38, 0.873, 8.43],
   scale: [1.59, 1.3, 1.52]
 });
 
 loadSceneModel({
   url: labMouseModelUrl,
   name: 'Downloaded Teacher Gaming Mouse',
-  position: [-12.87, 0.84, -3.42],
+  position: [-16.72, 0.84, 9.08],
   scale: [0.17, 0.1, 0.13]
 });
 
@@ -2382,7 +2384,7 @@ loadSceneModel({
   url: officeChairModelUrl,
   name:
     'Downloaded Teacher Office Chair',
-  position: [-13.35, 0.04, -3.18],
+  position: [-17.2, 0.04, 9.32],
   rotation: [0, -13 * Math.PI / 36, 0],
   scale: 0.92
 });
@@ -2403,7 +2405,12 @@ const pairedDeskRows = [
 
 for (const z of pairedDeskRows) {
   for (const x of pairedDeskColumns) {
-    createComputerStation(x, z);
+    createComputerStation(
+      x,
+      z,
+      scene,
+      Math.PI / 2
+    );
   }
 }
 
@@ -2425,7 +2432,7 @@ for (let x = -8; x <= -2; x += 2) {
   );
 }
 
-for (let z = -5; z <= 9; z += 4) {
+for (let z = -7; z <= 9; z += 4) {
   createFluorescentLight(
     'Right Turn Ceiling Light',
     -8.5,
