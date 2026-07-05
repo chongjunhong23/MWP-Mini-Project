@@ -1609,6 +1609,17 @@ createBox(
 );
 
 createBox(
+  'Lab Wall Between Exit And Entry Doors',
+  0.22,
+  3,
+  7.65,
+  -9.92,
+  1.5,
+  -1.48,
+  wallMaterial
+);
+
+createBox(
   'Lab Door Lower Jamb',
   0.24,
   2.45,
@@ -1627,17 +1638,6 @@ createBox(
   -9.92,
   1.225,
   4.05,
-  wallMaterial
-);
-
-createBox(
-  'Lab Wall After Entry Door',
-  0.22,
-  3,
-  6.35,
-  -9.92,
-  1.5,
-  7.22,
   wallMaterial
 );
 
@@ -1708,24 +1708,24 @@ createBox(
 );
 
 createBox(
-  'Lab Exterior Safety Wall After Entry',
-  0.24,
+  'Lab Exterior Safety Wall Between Doors',
+  0.38,
   3.25,
-  6.35,
+  7.65,
   -10.15,
   1.625,
-  7.22,
+  -1.48,
   wallMaterial
 );
 
 createBox(
-  'Lab Exterior Floor Cover After Entry',
-  0.38,
+  'Lab Exterior Floor Cover Between Doors',
+  0.55,
   0.05,
-  6.35,
+  7.65,
   -10.15,
   0.025,
-  7.22,
+  -1.48,
   floorMaterial
 );
 
@@ -1814,13 +1814,13 @@ createBox(
 );
 
 createBox(
-  'Lab Wall Base Seal After Entry',
+  'Lab Wall Base Seal Between Doors',
   0.08,
   0.18,
-  6.05,
+  7.45,
   -9.74,
   0.09,
-  7.15,
+  -1.48,
   wallMaterial
 );
 
@@ -2349,11 +2349,11 @@ loadSceneModel({
 
 const pairedDeskColumns = [
   -22.8,
-  -21.35,
+  -21.42,
   -18.55,
-  -17.1,
+  -17.17,
   -14.3,
-  -12.85
+  -12.92
 ];
 
 const pairedDeskRows = [
