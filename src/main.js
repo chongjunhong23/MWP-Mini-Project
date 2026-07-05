@@ -1642,6 +1642,17 @@ createBox(
 );
 
 createBox(
+  'Lab Wall After Entry Door',
+  0.22,
+  3,
+  6.35,
+  -9.92,
+  1.5,
+  7.22,
+  wallMaterial
+);
+
+createBox(
   'Lab Door Top Lintel',
   0.24,
   0.72,
@@ -1729,6 +1740,28 @@ createBox(
   floorMaterial
 );
 
+createBox(
+  'Lab Exterior Safety Wall After Entry',
+  0.24,
+  3.25,
+  6.35,
+  -10.15,
+  1.625,
+  7.22,
+  wallMaterial
+);
+
+createBox(
+  'Lab Exterior Floor Cover After Entry',
+  0.38,
+  0.05,
+  6.35,
+  -10.15,
+  0.025,
+  7.22,
+  floorMaterial
+);
+
 createAirCond(
   'Corridor Wall Air Conditioner',
   -9.78,
@@ -1755,6 +1788,17 @@ createBox(
   -9.74,
   0.09,
   -1.48,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Base Seal After Entry',
+  0.08,
+  0.18,
+  6.05,
+  -9.74,
+  0.09,
+  7.15,
   wallMaterial
 );
 
@@ -2283,18 +2327,17 @@ loadSceneModel({
 
 const pairedDeskColumns = [
   -22.8,
-  -21.9,
   -18.55,
-  -17.65,
-  -14.3,
-  -13.4
+  -14.3
 ];
 
 const pairedDeskRows = [
-  -4,
-  -0.6,
-  3.2,
-  6.6
+  -5.1,
+  -3.65,
+  0,
+  1.45,
+  4,
+  5.45
 ];
 
 for (const z of pairedDeskRows) {
