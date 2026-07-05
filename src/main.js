@@ -2338,7 +2338,7 @@ loadSceneModel({
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-11.95, 0.865, -1.92],
+  position: [-12.9, 0.88, -0.62],
   rotation: [0, Math.PI / 2, 0],
   scale: [1.59, 1.3, 1.52]
 });
