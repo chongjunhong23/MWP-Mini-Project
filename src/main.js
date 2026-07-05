@@ -1824,8 +1824,8 @@ loadSceneModel({
 loadSceneModel({
   url: labBenchModelUrl,
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.32, -0.04, -1],
-  scale: 0.55
+  position: [-8.95, -0.04, -1.75],
+  scale: 0.825
 });
 
 createFireExtinguisher(
@@ -2338,7 +2338,7 @@ loadSceneModel({
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-12.68, 0.865, -2.08],
+  position: [-11.95, 0.865, -1.92],
   rotation: [0, Math.PI / 2, 0],
   scale: [1.59, 1.3, 1.52]
 });
