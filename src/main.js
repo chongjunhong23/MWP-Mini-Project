@@ -2276,7 +2276,7 @@ createBox(
   0.45,
   0.18,
   0.3,
-  -12.65,
+  -13.2,
   2.75,
   -1.48,
   whitePlasticMaterial
@@ -2287,7 +2287,7 @@ createBox(
   1.08,
   0.12,
   2.55,
-  -11.75,
+  -12.3,
   0.78,
   -1.48,
   deskMaterial
@@ -2298,7 +2298,7 @@ createBox(
   0.86,
   0.7,
   0.08,
-  -11.75,
+  -12.3,
   0.38,
   -2.69,
   darkMetalMaterial
@@ -2309,7 +2309,7 @@ createBox(
   0.86,
   0.7,
   0.08,
-  -11.75,
+  -12.3,
   0.38,
   -0.27,
   darkMetalMaterial
@@ -2320,7 +2320,7 @@ createBox(
   0.08,
   0.48,
   2.25,
-  -11.3,
+  -11.85,
   0.42,
   -1.48,
   darkMetalMaterial
@@ -2330,15 +2330,15 @@ loadSceneModel({
   url: labMonitorModelUrl,
   name:
     'Downloaded Teacher Workstation Monitor',
-  position: [-11.95, 0.96, -1.48],
-  rotation: [0, Math.PI, 0],
+  position: [-12.5, 0.96, -1.48],
+  rotation: [0, 0, 0],
   scale: 0.0011
 });
 
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-11.62, 0.873, -0.82],
+  position: [-12.17, 0.81, -0.82],
   rotation: [0, Math.PI / 2, 0],
   scale: [1.59, 1.3, 1.52]
 });
@@ -2346,7 +2346,7 @@ loadSceneModel({
 loadSceneModel({
   url: labMouseModelUrl,
   name: 'Downloaded Teacher Gaming Mouse',
-  position: [-11.55, 0.84, -2.2],
+  position: [-12.1, 0.84, -2.2],
   rotation: [0, Math.PI / 2, 0],
   scale: [0.17, 0.1, 0.13]
 });
@@ -2355,7 +2355,7 @@ loadSceneModel({
   url: officeChairModelUrl,
   name:
     'Downloaded Teacher Office Chair',
-  position: [-10.72, 0.04, -1.48],
+  position: [-11.27, 0.04, -1.48],
   rotation: [0, -Math.PI / 2, 0],
   scale: 0.92
 });
