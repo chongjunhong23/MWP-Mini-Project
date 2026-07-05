@@ -1383,24 +1383,6 @@ createBox(
   railingMaterial
 );
 
-createWindowGrille(
-  'Lift Landing Window Grille',
-  0.2,
-  1.8,
-  9.58,
-  1.8,
-  1.2
-);
-
-createNoticeBoard(
-  'Lift Landing Notice Board',
-  -1.55,
-  1.65,
-  10.25,
-  0.8,
-  0.55,
-  0xf8fafc
-);
 loadSceneModel({
   url:
     '/models/kenney/construction-barrier.glb',
@@ -2433,19 +2415,6 @@ for (
     );
   }
 }
-
-createBox(
-  'Distant Building View',
-  5,
-  2,
-  0.2,
-  -4,
-  1,
-  7.6,
-  new THREE.MeshStandardMaterial({
-    color: 0xc49a6c
-  })
-);
 
 createBox(
   'Outdoor Tree Area',
