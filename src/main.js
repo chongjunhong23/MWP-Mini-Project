@@ -1609,17 +1609,6 @@ createBox(
 );
 
 createBox(
-  'Lab Wall Between Exit And Entry Doors',
-  0.22,
-  3,
-  7.65,
-  -9.92,
-  1.5,
-  -1.48,
-  wallMaterial
-);
-
-createBox(
   'Lab Door Lower Jamb',
   0.24,
   2.45,
@@ -1708,17 +1697,6 @@ createBox(
 );
 
 createBox(
-  'Lab Exterior Safety Wall Between Doors',
-  0.38,
-  3.25,
-  7.65,
-  -10.15,
-  1.625,
-  -1.48,
-  wallMaterial
-);
-
-createBox(
   'Lab Exterior Floor Cover Before Exit',
   0.9,
   0.05,
@@ -1726,17 +1704,6 @@ createBox(
   -10.15,
   0.025,
   -7.85,
-  floorMaterial
-);
-
-createBox(
-  'Lab Exterior Floor Cover Between Doors',
-  0.55,
-  0.05,
-  7.65,
-  -10.15,
-  0.025,
-  -1.48,
   floorMaterial
 );
 
@@ -1843,17 +1810,6 @@ createBox(
   -9.74,
   0.09,
   -7.85,
-  wallMaterial
-);
-
-createBox(
-  'Lab Wall Base Seal Between Doors',
-  0.08,
-  0.18,
-  7.45,
-  -9.74,
-  0.09,
-  -1.48,
   wallMaterial
 );
 
@@ -2342,7 +2298,7 @@ createBox(
   0.3,
   -17.2,
   2.75,
-  5.3,
+  8.55,
   whitePlasticMaterial
 );
 
@@ -2353,7 +2309,7 @@ createBox(
   0.85,
   -17.2,
   0.78,
-  8.85,
+  9.25,
   deskMaterial
 );
 
@@ -2361,22 +2317,24 @@ loadSceneModel({
   url: labMonitorModelUrl,
   name:
     'Downloaded Teacher Workstation Monitor',
-  position: [-17.2, 0.96, 8.62],
-  rotation: [0, -Math.PI / 2, 0],
+  position: [-17.2, 0.96, 9.48],
+  rotation: [0, Math.PI / 2, 0],
   scale: 0.0011
 });
 
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-18.38, 0.873, 8.43],
+  position: [-18.38, 0.873, 9.52],
+  rotation: [0, Math.PI, 0],
   scale: [1.59, 1.3, 1.52]
 });
 
 loadSceneModel({
   url: labMouseModelUrl,
   name: 'Downloaded Teacher Gaming Mouse',
-  position: [-16.72, 0.84, 9.08],
+  position: [-16.72, 0.84, 9.12],
+  rotation: [0, Math.PI, 0],
   scale: [0.17, 0.1, 0.13]
 });
 
@@ -2384,23 +2342,25 @@ loadSceneModel({
   url: officeChairModelUrl,
   name:
     'Downloaded Teacher Office Chair',
-  position: [-17.2, 0.04, 9.32],
-  rotation: [0, -13 * Math.PI / 36, 0],
+  position: [-17.2, 0.04, 8.45],
+  rotation: [0, Math.PI, 0],
   scale: 0.92
 });
 
 const pairedDeskColumns = [
   -22.8,
   -21.35,
-  -18.15,
-  -16.7
+  -18.55,
+  -17.1,
+  -14.3,
+  -12.85
 ];
 
 const pairedDeskRows = [
-  -1.15,
-  0.65,
-  5.2,
-  7
+  -4,
+  -0.6,
+  3.2,
+  6.6
 ];
 
 for (const z of pairedDeskRows) {
