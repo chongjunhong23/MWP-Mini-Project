@@ -178,7 +178,7 @@ const labMonitorModelUrl =
   '/models/office_monitor__workstation_monitor.glb';
 
 const labKeyboardModelUrl =
-  '/models/keyboard.glb';
+  '/models/basic_keyboard.glb';
 
 const labMouseModelUrl =
   '/models/gaming_mouse.glb';
@@ -835,8 +835,8 @@ function createComputerStation(
   loadSceneModel({
     url: labKeyboardModelUrl,
     name: 'Downloaded Lab Keyboard',
-    position: [-0.84, 0.855, 0.12],
-    scale: [1.55, 0.08, 0.2],
+    position: [-1.18, 0.873, -0.53],
+    scale: [1.59, 1.3, 1.52],
     parent: group
   });
 
@@ -2218,8 +2218,8 @@ loadSceneModel({
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-14.19, 0.855, -3.42],
-  scale: [1.55, 0.08, 0.2]
+  position: [-14.53, 0.873, -4.07],
+  scale: [1.59, 1.3, 1.52]
 });
 
 loadSceneModel({
