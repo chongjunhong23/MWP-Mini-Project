@@ -1383,24 +1383,6 @@ createBox(
   railingMaterial
 );
 
-createWindowGrille(
-  'Lift Landing Window Grille',
-  0.2,
-  1.8,
-  9.58,
-  1.8,
-  1.2
-);
-
-createNoticeBoard(
-  'Lift Landing Notice Board',
-  -1.55,
-  1.65,
-  10.25,
-  0.8,
-  0.55,
-  0xf8fafc
-);
 loadSceneModel({
   url:
     '/models/kenney/construction-barrier.glb',
@@ -1708,17 +1690,6 @@ createBox(
 );
 
 createBox(
-  'Lab Exterior Safety Wall Between Doors',
-  0.38,
-  3.25,
-  7.65,
-  -10.15,
-  1.625,
-  -1.48,
-  wallMaterial
-);
-
-createBox(
   'Lab Exterior Floor Cover Before Exit',
   0.9,
   0.05,
@@ -1727,6 +1698,17 @@ createBox(
   0.025,
   -7.85,
   floorMaterial
+);
+
+createBox(
+  'Lab Exterior Safety Wall Between Doors',
+  0.38,
+  3.25,
+  7.65,
+  -10.15,
+  1.625,
+  -1.48,
+  wallMaterial
 );
 
 createBox(
@@ -1760,72 +1742,6 @@ createBox(
   0.025,
   7.22,
   floorMaterial
-);
-
-createBox(
-  'Exterior Corner Floor Cover',
-  2.7,
-  0.06,
-  10,
-  -11.2,
-  0.03,
-  5.5,
-  floorMaterial
-);
-
-createBox(
-  'Exterior Corner Safety Wall',
-  0.36,
-  3.25,
-  10,
-  -12.42,
-  1.625,
-  5.5,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner End Wall',
-  5.25,
-  3.25,
-  0.36,
-  -11.4,
-  1.625,
-  10.1,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner Continuous Wall Cap',
-  5.45,
-  3.25,
-  0.3,
-  -11.5,
-  1.625,
-  9.82,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner Return Wall',
-  0.36,
-  3.25,
-  1.05,
-  -11.08,
-  1.625,
-  9.75,
-  wallMaterial
-);
-
-createBox(
-  'Exterior Corner Floor Skirt',
-  5.25,
-  0.24,
-  0.24,
-  -11.4,
-  0.12,
-  9.9,
-  wallMaterial
 );
 
 createAirCond(
@@ -1890,8 +1806,8 @@ loadSceneModel({
 loadSceneModel({
   url: labBenchModelUrl,
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.32, -0.04, -1],
-  scale: 0.55
+  position: [-8.95, -0.04, -1.75],
+  scale: 0.825
 });
 
 createFireExtinguisher(
@@ -2324,59 +2240,96 @@ createAirCond(
   10.26
 );
 
-createBox(
-  'Front Whiteboard',
-  4.2,
-  1.15,
-  0.06,
-  -17.2,
+const lecturerSlide = createTextPanel(
+  'LECTURER SLIDE',
+  3.7,
+  1.1,
+  -10.16,
   1.65,
-  10.26,
-  whitePlasticMaterial
+  -1.48,
+  '#f8fafc',
+  '#1f2937'
 );
+
+lecturerSlide.rotation.y = Math.PI / 2;
 
 createBox(
   'Projector',
   0.45,
   0.18,
   0.3,
-  -17.2,
+  -13.2,
   2.75,
-  5.3,
+  -1.48,
   whitePlasticMaterial
 );
 
 createBox(
-  'Teacher Table',
-  2.1,
-  0.18,
-  0.85,
-  -17.2,
+  'Teacher Desk Top',
+  1.08,
+  0.12,
+  2.55,
+  -12.3,
   0.78,
-  8.85,
+  -1.48,
   deskMaterial
+);
+
+createBox(
+  'Teacher Desk Left Side',
+  0.86,
+  0.7,
+  0.08,
+  -12.3,
+  0.38,
+  -2.69,
+  darkMetalMaterial
+);
+
+createBox(
+  'Teacher Desk Right Side',
+  0.86,
+  0.7,
+  0.08,
+  -12.3,
+  0.38,
+  -0.27,
+  darkMetalMaterial
+);
+
+createBox(
+  'Teacher Desk Back Modesty Panel',
+  0.08,
+  0.48,
+  2.25,
+  -11.85,
+  0.42,
+  -1.48,
+  darkMetalMaterial
 );
 
 loadSceneModel({
   url: labMonitorModelUrl,
   name:
     'Downloaded Teacher Workstation Monitor',
-  position: [-17.2, 0.96, 8.62],
-  rotation: [0, -Math.PI / 2, 0],
+  position: [-12.5, 0.96, -1.48],
+  rotation: [0, 0, 0],
   scale: 0.0011
 });
 
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-18.38, 0.873, 8.43],
+  position: [-12.9, 0.88, -0.62],
+  rotation: [0, Math.PI / 2, 0],
   scale: [1.59, 1.3, 1.52]
 });
 
 loadSceneModel({
   url: labMouseModelUrl,
   name: 'Downloaded Teacher Gaming Mouse',
-  position: [-16.72, 0.84, 9.08],
+  position: [-12.1, 0.84, -2.2],
+  rotation: [0, Math.PI / 2, 0],
   scale: [0.17, 0.1, 0.13]
 });
 
@@ -2384,23 +2337,24 @@ loadSceneModel({
   url: officeChairModelUrl,
   name:
     'Downloaded Teacher Office Chair',
-  position: [-17.2, 0.04, 9.32],
-  rotation: [0, -13 * Math.PI / 36, 0],
+  position: [-11.27, 0.04, -1.48],
+  rotation: [0, Math.PI / 18, 0],
   scale: 0.92
 });
 
 const pairedDeskColumns = [
   -22.8,
-  -21.35,
-  -18.15,
-  -16.7
+  -18.55,
+  -14.3
 ];
 
 const pairedDeskRows = [
-  -1.15,
-  0.65,
-  5.2,
-  7
+  -5.1,
+  -3.65,
+  0,
+  1.45,
+  4,
+  5.45
 ];
 
 for (const z of pairedDeskRows) {
@@ -2461,19 +2415,6 @@ for (
     );
   }
 }
-
-createBox(
-  'Distant Building View',
-  5,
-  2,
-  0.2,
-  -4,
-  1,
-  7.6,
-  new THREE.MeshStandardMaterial({
-    color: 0xc49a6c
-  })
-);
 
 createBox(
   'Outdoor Tree Area',
