@@ -2409,7 +2409,7 @@ for (const z of pairedDeskRows) {
       x,
       z,
       scene,
-      Math.PI / 2
+      -Math.PI / 2
     );
   }
 }
@@ -3121,7 +3121,7 @@ function animate() {
 
   const labDoorTarget =
     labDoorOpen
-      ? -Math.PI / 2.15
+      ? Math.PI / 2.15
       : 0;
 
   labDoorProgress =
