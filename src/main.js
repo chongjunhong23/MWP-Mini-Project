@@ -2258,44 +2258,79 @@ createAirCond(
   10.26
 );
 
-createBox(
-  'Front Whiteboard',
-  0.06,
-  1.15,
-  4.2,
-  -10.02,
+const lecturerSlide = createTextPanel(
+  'LECTURER SLIDE',
+  3.7,
+  1.1,
+  -10.16,
   1.65,
   -1.48,
-  whitePlasticMaterial
+  '#f8fafc',
+  '#1f2937'
 );
+
+lecturerSlide.rotation.y = Math.PI / 2;
 
 createBox(
   'Projector',
   0.45,
   0.18,
   0.3,
-  -11.6,
+  -12.65,
   2.75,
   -1.48,
   whitePlasticMaterial
 );
 
 createBox(
-  'Teacher Table',
-  0.85,
-  0.18,
-  2.1,
-  -11.18,
+  'Teacher Desk Top',
+  1.08,
+  0.12,
+  2.55,
+  -11.75,
   0.78,
   -1.48,
   deskMaterial
+);
+
+createBox(
+  'Teacher Desk Left Side',
+  0.86,
+  0.7,
+  0.08,
+  -11.75,
+  0.38,
+  -2.69,
+  darkMetalMaterial
+);
+
+createBox(
+  'Teacher Desk Right Side',
+  0.86,
+  0.7,
+  0.08,
+  -11.75,
+  0.38,
+  -0.27,
+  darkMetalMaterial
+);
+
+createBox(
+  'Teacher Desk Back Modesty Panel',
+  0.08,
+  0.48,
+  2.25,
+  -11.3,
+  0.42,
+  -1.48,
+  darkMetalMaterial
 );
 
 loadSceneModel({
   url: labMonitorModelUrl,
   name:
     'Downloaded Teacher Workstation Monitor',
-  position: [-11.45, 0.96, -1.48],
+  position: [-11.95, 0.96, -1.48],
   rotation: [0, Math.PI, 0],
   scale: 0.0011
 });
@@ -2303,7 +2338,7 @@ loadSceneModel({
 loadSceneModel({
   url: labKeyboardModelUrl,
   name: 'Downloaded Teacher Keyboard',
-  position: [-11.54, 0.873, -0.42],
+  position: [-11.62, 0.873, -0.82],
   rotation: [0, Math.PI / 2, 0],
   scale: [1.59, 1.3, 1.52]
 });
@@ -2311,7 +2346,7 @@ loadSceneModel({
 loadSceneModel({
   url: labMouseModelUrl,
   name: 'Downloaded Teacher Gaming Mouse',
-  position: [-11.12, 0.84, -2],
+  position: [-11.55, 0.84, -2.2],
   rotation: [0, Math.PI / 2, 0],
   scale: [0.17, 0.1, 0.13]
 });
@@ -2320,7 +2355,7 @@ loadSceneModel({
   url: officeChairModelUrl,
   name:
     'Downloaded Teacher Office Chair',
-  position: [-10.45, 0.04, -1.48],
+  position: [-10.72, 0.04, -1.48],
   rotation: [0, -Math.PI / 2, 0],
   scale: 0.92
 });
