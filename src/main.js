@@ -863,7 +863,7 @@ function createComputerStation(
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
     position: [0, 0.04, 0.42],
-    rotation: [0, -7 * Math.PI / 18, 0],
+    rotation: [0, -13 * Math.PI / 36, 0],
     scale: 0.92,
     parent: group
   });
@@ -1282,6 +1282,28 @@ createBox(
 );
 
 createBox(
+  'Corridor Outside Corner L Wall Long Leg',
+  0.36,
+  3.2,
+  2.9,
+  -10.86,
+  1.5,
+  10.7,
+  wallMaterial
+);
+
+createBox(
+  'Corridor Outside Corner L Wall Return Leg',
+  1.08,
+  3.2,
+  0.3,
+  -10.9,
+  1.5,
+  12.0,
+  wallMaterial
+);
+
+createBox(
   'Corridor Outside Corner Floor Cover',
   0.4,
   0.12,
@@ -1289,6 +1311,17 @@ createBox(
   -10.42,
   -0.06,
   10.9,
+  floorMaterial
+);
+
+createBox(
+  'Corridor Outside Corner L Floor Cover',
+  1.1,
+  0.12,
+  2.95,
+  -10.88,
+  -0.06,
+  10.72,
   floorMaterial
 );
 
@@ -2198,7 +2231,7 @@ loadSceneModel({
   name:
     'Downloaded Teacher Office Chair',
   position: [-13.35, 0.04, -3.18],
-  rotation: [0, -7 * Math.PI / 18, 0],
+  rotation: [0, -13 * Math.PI / 36, 0],
   scale: 0.92
 });
 
@@ -2366,7 +2399,7 @@ function createHotspot(
     name: `${title} Info Sign`,
     position: [0, 0, 0],
     rotation: [0, Math.PI, 0],
-    scale: radius * 0.9,
+    scale: radius * 0.45,
     parent: group
   });
 
