@@ -947,7 +947,7 @@ const walkableZones = [
   {
     minX: -24.2,
     maxX: -10.35,
-    minZ: -4.7,
+    minZ: -8.25,
     maxZ: 9.75,
     needsLiftDoor: true,
     needsLabDoor: true
@@ -1609,6 +1609,17 @@ createBox(
 );
 
 createBox(
+  'Lab Wall Between Exit And Entry Doors',
+  0.22,
+  3,
+  7.65,
+  -9.92,
+  1.5,
+  -1.48,
+  wallMaterial
+);
+
+createBox(
   'Lab Door Lower Jamb',
   0.24,
   2.45,
@@ -1697,6 +1708,17 @@ createBox(
 );
 
 createBox(
+  'Lab Exterior Safety Wall Between Doors',
+  0.38,
+  3.25,
+  7.65,
+  -10.15,
+  1.625,
+  -1.48,
+  wallMaterial
+);
+
+createBox(
   'Lab Exterior Floor Cover Before Exit',
   0.9,
   0.05,
@@ -1704,6 +1726,17 @@ createBox(
   -10.15,
   0.025,
   -7.85,
+  floorMaterial
+);
+
+createBox(
+  'Lab Exterior Floor Cover Between Doors',
+  0.55,
+  0.05,
+  7.65,
+  -10.15,
+  0.025,
+  -1.48,
   floorMaterial
 );
 
@@ -1813,6 +1846,28 @@ createBox(
   wallMaterial
 );
 
+createBox(
+  'Lab Wall Base Seal Between Doors',
+  0.08,
+  0.18,
+  7.45,
+  -9.74,
+  0.09,
+  -1.48,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Base Seal After Entry',
+  0.08,
+  0.18,
+  6.05,
+  -9.74,
+  0.09,
+  7.15,
+  wallMaterial
+);
+
 createNoticeBoard(
   'Lab Entrance Door Notices',
   -9.78,
@@ -1862,10 +1917,10 @@ createBox(
   'Computer Lab Floor',
   14.6,
   0.2,
-  15.4,
+  19,
   -17.25,
   -0.1,
-  2.7,
+  0.9,
   carpetMaterial
 );
 
@@ -1876,7 +1931,7 @@ createBox(
   0.2,
   -17.3,
   1.5,
-  -5,
+  -8.6,
   wallMaterial
 );
 
@@ -1895,10 +1950,10 @@ createBox(
   'Computer Lab Left Wall',
   0.2,
   3,
-  15.4,
+  19,
   -24.65,
   1.5,
-  2.7,
+  0.9,
   wallMaterial
 );
 
@@ -1906,10 +1961,10 @@ createBox(
   'Computer Lab Ceiling',
   14.8,
   0.2,
-  15.4,
+  19,
   -17.3,
   3.1,
-  2.7,
+  0.9,
   ceilingMaterial
 );
 
@@ -1917,10 +1972,10 @@ createBox(
   'Lab Center Walkway Carpet',
   1.8,
   0.02,
-  12.5,
+  16.1,
   -17.7,
   0.02,
-  3.15,
+  1.35,
   new THREE.MeshStandardMaterial({
     color: 0x1f6f93,
     roughness: 0.5
@@ -2255,17 +2310,6 @@ createNoticeBoard(
   0xf8fafc
 );
 
-createBox(
-  'Lab Wall Base Seal After Entry',
-  0.08,
-  0.18,
-  6.05,
-  -9.74,
-  0.09,
-  7.15,
-  wallMaterial
-);
-
 createAirCond(
   'Lab Rear Air Conditioner',
   -17.2,
@@ -2372,9 +2416,9 @@ for (const z of pairedDeskRows) {
 
 createCeilingGrid(
   14.8,
-  15.4,
+  19,
   -17.3,
-  2.7,
+  0.9,
   3.02
 );
 
@@ -2404,7 +2448,7 @@ for (
   x += 2.2
 ) {
   for (
-    let z = -2.2;
+    let z = -5.8;
     z <= 8.2;
     z += 3.6
   ) {
@@ -2592,8 +2636,8 @@ hotspotGroups.push(
 hotspotGroups.push(
   createHotspot(
     'Computer Lab Exit Door',
-    'This side exit door opens from the corridor beside the bench. It marks the end of the covered tour area without teleporting the user back to the lift.',
-    -9.25,
+    'This right-side lab door marks the end of the FC-N28 Level 5 computer lab route without teleporting the user back to the lift.',
+    -10.85,
     2,
     -6.2
   )
