@@ -177,6 +177,15 @@ const liftButtonActiveMaterial = new THREE.MeshBasicMaterial({
 const labMonitorModelUrl =
   '/models/office_monitor__workstation_monitor.glb';
 
+const labKeyboardModelUrl =
+  '/models/basic_keyboard.glb';
+
+const labMouseModelUrl =
+  '/models/gaming_mouse.glb';
+
+const labBenchModelUrl =
+  '/models/classic_park_bench.glb';
+
 const officeChairModelUrl =
   '/models/ergonomic_office_chair.glb';
 
@@ -757,12 +766,14 @@ function createAirCond(
 function createComputerStation(
   x,
   z,
-  parent = scene
+  parent = scene,
+  rotationY = 0
 ) {
   const group = new THREE.Group();
 
   group.name = 'Detailed Computer Station';
   group.position.set(x, 0, z);
+  group.rotation.y = rotationY;
 
   parent.add(group);
 
@@ -823,29 +834,21 @@ function createComputerStation(
     parent: group
   });
 
-  createBox(
-    'Keyboard',
-    0.72,
-    0.035,
-    0.22,
-    0,
-    0.88,
-    0.12,
-    darkMetalMaterial,
-    group
-  );
+  loadSceneModel({
+    url: labKeyboardModelUrl,
+    name: 'Downloaded Lab Keyboard',
+    position: [-1.18, 0.873, -0.53],
+    scale: [1.59, 1.3, 1.52],
+    parent: group
+  });
 
-  createBox(
-    'Mouse',
-    0.14,
-    0.035,
-    0.2,
-    0.48,
-    0.88,
-    0.12,
-    darkMetalMaterial,
-    group
-  );
+  loadSceneModel({
+    url: labMouseModelUrl,
+    name: 'Downloaded Lab Gaming Mouse',
+    position: [0.48, 0.84, 0.12],
+    scale: [0.17, 0.1, 0.13],
+    parent: group
+  });
 
   createBox(
     'CPU Tower',
@@ -863,7 +866,7 @@ function createComputerStation(
     url: officeChairModelUrl,
     name: 'Downloaded Lab Office Chair',
     position: [0, 0.04, 0.42],
-    rotation: [0, -7 * Math.PI / 18, 0],
+    rotation: [0, -13 * Math.PI / 36, 0],
     scale: 0.92,
     parent: group
   });
@@ -920,16 +923,16 @@ const walkableZones = [
     needsLiftDoor: true
   },
   {
-    minX: -8.9,
+    minX: -9.55,
     maxX: -1.2,
     minZ: 9.65,
     maxZ: 12.15,
     needsLiftDoor: true
   },
   {
-    minX: -9.9,
+    minX: -10.35,
     maxX: -7.1,
-    minZ: -6.8,
+    minZ: -8.75,
     maxZ: 12.15,
     needsLiftDoor: true
   },
@@ -944,7 +947,7 @@ const walkableZones = [
   {
     minX: -24.2,
     maxX: -10.35,
-    minZ: -4.7,
+    minZ: -8.25,
     maxZ: 9.75,
     needsLiftDoor: true,
     needsLabDoor: true
@@ -1282,6 +1285,28 @@ createBox(
 );
 
 createBox(
+  'Corridor Outside Corner L Wall Long Leg',
+  0.36,
+  3.2,
+  2.9,
+  -10.86,
+  1.5,
+  10.7,
+  wallMaterial
+);
+
+createBox(
+  'Corridor Outside Corner L Wall Return Leg',
+  1.08,
+  3.2,
+  0.3,
+  -10.9,
+  1.5,
+  12.0,
+  wallMaterial
+);
+
+createBox(
   'Corridor Outside Corner Floor Cover',
   0.4,
   0.12,
@@ -1289,6 +1314,17 @@ createBox(
   -10.42,
   -0.06,
   10.9,
+  floorMaterial
+);
+
+createBox(
+  'Corridor Outside Corner L Floor Cover',
+  1.1,
+  0.12,
+  2.95,
+  -10.88,
+  -0.06,
+  10.72,
   floorMaterial
 );
 
@@ -1377,10 +1413,10 @@ loadSceneModel({
 
 createBox(
   'First Left Corridor Floor',
-  8.1,
+  8.95,
   0.2,
   2.5,
-  -5.05,
+  -5.48,
   -0.1,
   10.9,
   floorMaterial
@@ -1388,10 +1424,10 @@ createBox(
 
 createBox(
   'First Corridor Solid Wall',
-  8.3,
+  9.05,
   3,
   0.2,
-  -5.05,
+  -5.43,
   1.5,
   12.15,
   wallMaterial
@@ -1410,10 +1446,10 @@ createBox(
 
 createBox(
   'First Corridor Ceiling',
-  8.3,
+  9.05,
   0.2,
   2.5,
-  -5.05,
+  -5.43,
   3.1,
   10.9,
   ceilingMaterial
@@ -1442,12 +1478,12 @@ createNoticeBoard(
 
 createBox(
   'Right Turn Corridor Floor',
-  2.8,
+  3.55,
   0.2,
-  16.45,
-  -8.5,
+  18.25,
+  -8.62,
   -0.1,
-  1.425,
+  0.525,
   floorMaterial
 );
 
@@ -1455,10 +1491,10 @@ createBox(
   'Right Turn Balcony Half Wall',
   0.2,
   1.2,
-  16.25,
+  18.05,
   -7.1,
   0.6,
-  1.525,
+  0.625,
   wallMaterial
 );
 
@@ -1466,10 +1502,10 @@ createBox(
   'Right Turn Balcony Rail',
   0.12,
   0.12,
-  15.9,
+  17.7,
   -7.25,
   1.35,
-  1.7,
+  0.8,
   railingMaterial
 );
 
@@ -1477,10 +1513,10 @@ createBox(
   'Right Turn Balcony Flat Face',
   0.05,
   1.18,
-  16.25,
+  18.05,
   -6.98,
   0.6,
-  1.525,
+  0.625,
   wallMaterial
 );
 
@@ -1499,43 +1535,87 @@ createBox(
   'Right Turn Balcony Top Cap',
   0.28,
   0.08,
-  16.25,
+  18.05,
   -7.1,
   1.22,
-  1.525,
+  0.625,
   wallMaterial
 );
 
 createBox(
   'Right Turn Ceiling',
-  2.8,
+  3.55,
   0.2,
-  16.45,
-  -8.5,
+  18.25,
+  -8.62,
   3.1,
-  1.425,
+  0.525,
   ceilingMaterial
 );
 
 createBox(
-  'Lab Wall Before Door',
-  0.22,
-  3,
-  8.9,
-  -9.92,
-  1.5,
-  -2.2,
+  'Right Turn Corridor End Wall',
+  3.55,
+  3.05,
+  0.24,
+  -8.62,
+  1.525,
+  -8.6,
   wallMaterial
 );
 
 createBox(
-  'Lab Wall After Door',
+  'Right Turn Corridor End Floor Seal',
+  3.55,
+  0.08,
+  0.45,
+  -8.62,
+  0.02,
+  -8.38,
+  floorMaterial
+);
+
+createBox(
+  'Corridor L Corner Floor Seam Cover',
+  2.95,
+  0.06,
+  0.34,
+  -8.5,
+  0.03,
+  9.62,
+  floorMaterial
+);
+
+createBox(
+  'Corridor L Corner Enclosed Wall Cap',
+  0.22,
+  3.2,
+  2.85,
+  -9.92,
+  1.6,
+  10.82,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Before Exit Door',
   0.22,
   3,
-  5.3,
+  1.45,
   -9.92,
   1.5,
-  6.7,
+  -7.85,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Between Exit And Entry Doors',
+  0.22,
+  3,
+  7.65,
+  -9.92,
+  1.5,
+  -1.48,
   wallMaterial
 );
 
@@ -1558,6 +1638,17 @@ createBox(
   -9.92,
   1.225,
   4.05,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall After Entry Door',
+  0.22,
+  3,
+  6.35,
+  -9.92,
+  1.5,
+  7.22,
   wallMaterial
 );
 
@@ -1606,46 +1697,68 @@ createBox(
 );
 
 createBox(
-  'Lab Exterior Safety Wall Before Door',
+  'Lab Exterior Safety Wall Before Exit',
   0.55,
   3,
-  8.75,
+  1.45,
   -10.22,
   1.5,
-  -2.275,
+  -7.85,
   wallMaterial
 );
 
 createBox(
-  'Lab Exterior Safety Wall After Door',
-  0.24,
+  'Lab Exterior Safety Wall Between Doors',
+  0.38,
   3.25,
-  5.4,
+  7.65,
   -10.15,
   1.625,
-  6.95,
+  -1.48,
   wallMaterial
 );
 
 createBox(
-  'Lab Exterior Floor Cover Before Door',
+  'Lab Exterior Floor Cover Before Exit',
   0.9,
   0.05,
-  8.75,
+  1.45,
   -10.15,
   0.025,
-  -2.275,
+  -7.85,
   floorMaterial
 );
 
 createBox(
-  'Lab Exterior Floor Cover After Door',
-  0.38,
+  'Lab Exterior Floor Cover Between Doors',
+  0.55,
   0.05,
-  5.4,
+  7.65,
   -10.15,
   0.025,
-  6.95,
+  -1.48,
+  floorMaterial
+);
+
+createBox(
+  'Lab Exterior Safety Wall After Entry',
+  0.24,
+  3.25,
+  6.35,
+  -10.15,
+  1.625,
+  7.22,
+  wallMaterial
+);
+
+createBox(
+  'Lab Exterior Floor Cover After Entry',
+  0.38,
+  0.05,
+  6.35,
+  -10.15,
+  0.025,
+  7.22,
   floorMaterial
 );
 
@@ -1723,24 +1836,35 @@ createAirCond(
 );
 
 createBox(
-  'Lab Wall Base Seal Before Door',
+  'Lab Wall Base Seal Before Exit',
   0.08,
   0.18,
-  8.7,
+  1.35,
   -9.74,
   0.09,
-  -2.25,
+  -7.85,
   wallMaterial
 );
 
 createBox(
-  'Lab Wall Base Seal After Door',
+  'Lab Wall Base Seal Between Doors',
   0.08,
   0.18,
-  5.15,
+  7.45,
   -9.74,
   0.09,
-  6.7,
+  -1.48,
+  wallMaterial
+);
+
+createBox(
+  'Lab Wall Base Seal After Entry',
+  0.08,
+  0.18,
+  6.05,
+  -9.74,
+  0.09,
+  7.15,
   wallMaterial
 );
 
@@ -1764,11 +1888,10 @@ loadSceneModel({
 });
 
 loadSceneModel({
-  url: '/models/kenney/bench.glb',
+  url: labBenchModelUrl,
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.32, 0.02, -1],
-  rotation: [0, Math.PI / 2, 0],
-  scale: 2.65
+  position: [-9.32, -0.04, -1],
+  scale: 0.55
 });
 
 createFireExtinguisher(
@@ -1777,7 +1900,7 @@ createFireExtinguisher(
   2.18
 );
 
-for (let z = 8; z >= -5; z -= 4) {
+for (let z = 8; z >= -8; z -= 4) {
   createBox(
     'Right Turn Balcony Pillar',
     0.35,
@@ -1794,10 +1917,10 @@ createBox(
   'Computer Lab Floor',
   14.6,
   0.2,
-  15.4,
+  19,
   -17.25,
   -0.1,
-  2.7,
+  0.9,
   carpetMaterial
 );
 
@@ -1808,7 +1931,7 @@ createBox(
   0.2,
   -17.3,
   1.5,
-  -5,
+  -8.6,
   wallMaterial
 );
 
@@ -1827,10 +1950,10 @@ createBox(
   'Computer Lab Left Wall',
   0.2,
   3,
-  15.4,
+  19,
   -24.65,
   1.5,
-  2.7,
+  0.9,
   wallMaterial
 );
 
@@ -1838,10 +1961,10 @@ createBox(
   'Computer Lab Ceiling',
   14.8,
   0.2,
-  15.4,
+  19,
   -17.3,
   3.1,
-  2.7,
+  0.9,
   ceilingMaterial
 );
 
@@ -1849,10 +1972,10 @@ createBox(
   'Lab Center Walkway Carpet',
   1.8,
   0.02,
-  12.5,
+  16.1,
   -17.7,
   0.02,
-  3.15,
+  1.35,
   new THREE.MeshStandardMaterial({
     color: 0x1f6f93,
     roughness: 0.5
@@ -2039,61 +2162,122 @@ createTextPanel(
   '#3a1f12'
 );
 
-const exitDoor = createBox(
-  'Clickable Computer Lab Exit Door',
-  1.6,
+createBox(
+  'Exit Door Lower Jamb',
+  0.24,
   2.45,
+  0.18,
+  -9.92,
+  1.225,
+  -7.05,
+  wallMaterial
+);
+
+createBox(
+  'Exit Door Upper Jamb',
+  0.24,
+  2.45,
+  0.18,
+  -9.92,
+  1.225,
+  -5.35,
+  wallMaterial
+);
+
+createBox(
+  'Exit Door Top Lintel',
+  0.24,
+  0.72,
+  1.98,
+  -9.92,
+  2.74,
+  -6.2,
+  wallMaterial
+);
+
+createBox(
+  'Exit Door Threshold Floor Fill',
+  2.1,
+  0.05,
+  1.95,
+  -9.98,
+  0.025,
+  -6.2,
+  floorMaterial
+);
+
+const exitDoorPivot = new THREE.Group();
+
+exitDoorPivot.name =
+  'Computer Lab Side Exit Door Pivot';
+
+exitDoorPivot.position.set(
+  -9.92,
+  1.2,
+  -5.35
+);
+
+scene.add(exitDoorPivot);
+
+const exitDoor = createBox(
+  'Openable Computer Lab Side Exit Door',
   0.15,
-  -16.05,
-  1.22,
-  10.28,
-  doorMaterial
+  2.4,
+  1.65,
+  0,
+  0,
+  -0.825,
+  doorMaterial,
+  exitDoorPivot
 );
 
 exitDoor.userData = {
   isExitDoor: true,
   title: 'Exit Door',
   text:
-    'Click this exit door to end the current walkthrough and return to the lift starting screen.'
+    'This side exit door opens beside the corridor bench. It marks the route exit without returning to the lift.'
 };
 
 createBox(
   'Exit Door Raised Top Panel',
-  1,
-  0.56,
   0.04,
-  -16.05,
-  1.5,
-  10.18,
+  0.58,
+  1,
+  0.09,
+  0.28,
+  -0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
     roughness: 0.36
-  })
+  }),
+  exitDoorPivot
 );
 
 createBox(
   'Exit Door Raised Bottom Panel',
-  1,
-  0.62,
   0.04,
-  -16.05,
-  0.6,
-  10.18,
+  0.62,
+  1,
+  0.09,
+  -0.55,
+  -0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
     roughness: 0.36
-  })
+  }),
+  exitDoorPivot
 );
 
 const exitDoorHandle = createBox(
   'Exit Door Handle',
+  0.22,
   0.08,
   0.08,
-  0.25,
-  -15.55,
-  1.1,
-  10.16,
-  railingMaterial
+  0.12,
+  -0.1,
+  -1.32,
+  railingMaterial,
+  exitDoorPivot
 );
 
 exitDoorHandle.userData =
@@ -2103,9 +2287,9 @@ createTextPanel(
   'KELUAR',
   1.35,
   0.34,
-  -16.05,
+  -9.78,
   2.62,
-  10.16,
+  -6.2,
   '#007a3d',
   '#ffffff'
 );
@@ -2118,9 +2302,9 @@ createFireExtinguisher(
 
 createNoticeBoard(
   'Exit Safety Notice',
-  -18,
+  -9.78,
   1.45,
-  10.16,
+  -7.55,
   0.9,
   0.58,
   0xf8fafc
@@ -2128,16 +2312,16 @@ createNoticeBoard(
 
 createAirCond(
   'Lab Rear Air Conditioner',
-  -19.1,
+  -17.2,
   2.45,
-  -4.86
+  10.26
 );
 
 createAirCond(
   'Lab Side Air Conditioner',
-  -12.8,
+  -13.1,
   2.45,
-  -4.86
+  10.26
 );
 
 createBox(
@@ -2145,9 +2329,9 @@ createBox(
   4.2,
   1.15,
   0.06,
-  -16.1,
+  -17.2,
   1.65,
-  -4.86,
+  10.26,
   whitePlasticMaterial
 );
 
@@ -2156,9 +2340,9 @@ createBox(
   0.45,
   0.18,
   0.3,
-  -16.1,
+  -17.2,
   2.75,
-  0.7,
+  5.3,
   whitePlasticMaterial
 );
 
@@ -2167,9 +2351,9 @@ createBox(
   2.1,
   0.18,
   0.85,
-  -13.35,
+  -17.2,
   0.78,
-  -3.65,
+  8.85,
   deskMaterial
 );
 
@@ -2177,28 +2361,31 @@ loadSceneModel({
   url: labMonitorModelUrl,
   name:
     'Downloaded Teacher Workstation Monitor',
-  position: [-13.35, 0.96, -3.88],
+  position: [-17.2, 0.96, 8.62],
   rotation: [0, -Math.PI / 2, 0],
   scale: 0.0011
 });
 
-createBox(
-  'Teacher Keyboard',
-  0.72,
-  0.035,
-  0.22,
-  -13.35,
-  0.88,
-  -3.42,
-  darkMetalMaterial
-);
+loadSceneModel({
+  url: labKeyboardModelUrl,
+  name: 'Downloaded Teacher Keyboard',
+  position: [-18.38, 0.873, 8.43],
+  scale: [1.59, 1.3, 1.52]
+});
+
+loadSceneModel({
+  url: labMouseModelUrl,
+  name: 'Downloaded Teacher Gaming Mouse',
+  position: [-16.72, 0.84, 9.08],
+  scale: [0.17, 0.1, 0.13]
+});
 
 loadSceneModel({
   url: officeChairModelUrl,
   name:
     'Downloaded Teacher Office Chair',
-  position: [-13.35, 0.04, -3.18],
-  rotation: [0, -7 * Math.PI / 18, 0],
+  position: [-17.2, 0.04, 9.32],
+  rotation: [0, -13 * Math.PI / 36, 0],
   scale: 0.92
 });
 
@@ -2218,15 +2405,20 @@ const pairedDeskRows = [
 
 for (const z of pairedDeskRows) {
   for (const x of pairedDeskColumns) {
-    createComputerStation(x, z);
+    createComputerStation(
+      x,
+      z,
+      scene,
+      -Math.PI / 2
+    );
   }
 }
 
 createCeilingGrid(
   14.8,
-  15.4,
+  19,
   -17.3,
-  2.7,
+  0.9,
   3.02
 );
 
@@ -2240,7 +2432,7 @@ for (let x = -8; x <= -2; x += 2) {
   );
 }
 
-for (let z = -5; z <= 9; z += 4) {
+for (let z = -7; z <= 9; z += 4) {
   createFluorescentLight(
     'Right Turn Ceiling Light',
     -8.5,
@@ -2256,7 +2448,7 @@ for (
   x += 2.2
 ) {
   for (
-    let z = -2.2;
+    let z = -5.8;
     z <= 8.2;
     z += 3.6
   ) {
@@ -2298,6 +2490,8 @@ createBox(
 
 let labDoorOpen = false;
 let labDoorProgress = 0;
+let exitDoorOpen = false;
+let exitDoorProgress = 0;
 
 function openLabDoor() {
   labDoorOpen = true;
@@ -2316,6 +2510,17 @@ function resetLabDoor() {
   openLabDoorBtn.disabled = false;
   openLabDoorBtn.textContent =
     'Open Lab Door';
+}
+
+function openExitDoor() {
+  exitDoorOpen = true;
+}
+
+function resetExitDoor() {
+  exitDoorOpen = false;
+  exitDoorProgress = 0;
+
+  exitDoorPivot.rotation.y = 0;
 }
 
 // ===============================
@@ -2366,7 +2571,7 @@ function createHotspot(
     name: `${title} Info Sign`,
     position: [0, 0, 0],
     rotation: [0, Math.PI, 0],
-    scale: radius * 0.9,
+    scale: radius * 0.45,
     parent: group
   });
 
@@ -2431,10 +2636,10 @@ hotspotGroups.push(
 hotspotGroups.push(
   createHotspot(
     'Computer Lab Exit Door',
-    'Click the exit door to end the walkthrough and return to the lift starting screen.',
-    -16.05,
+    'This right-side lab door marks the end of the FC-N28 Level 5 computer lab route without teleporting the user back to the lift.',
+    -10.85,
     2,
-    9.55
+    -6.2
   )
 );
 
@@ -2567,8 +2772,7 @@ canvas.addEventListener(
       clickedObject.userData
         .isExitDoor
     ) {
-      returnToLiftStart();
-      return;
+      openExitDoor();
     }
 
     infoTitle.textContent =
@@ -2631,6 +2835,7 @@ function returnToLiftStart() {
 
   resetLiftDoors();
   resetLabDoor();
+  resetExitDoor();
   resetCameraZoom();
 
   setCameraView(
@@ -2916,7 +3121,7 @@ function animate() {
 
   const labDoorTarget =
     labDoorOpen
-      ? -Math.PI / 2.15
+      ? Math.PI / 2.15
       : 0;
 
   labDoorProgress =
@@ -2932,6 +3137,26 @@ function animate() {
       0,
       labDoorTarget,
       labDoorProgress
+    );
+
+  const exitDoorTarget =
+    exitDoorOpen
+      ? Math.PI / 2.15
+      : 0;
+
+  exitDoorProgress =
+    THREE.MathUtils.damp(
+      exitDoorProgress,
+      exitDoorOpen ? 1 : 0,
+      4.2,
+      delta
+    );
+
+  exitDoorPivot.rotation.y =
+    THREE.MathUtils.lerp(
+      0,
+      exitDoorTarget,
+      exitDoorProgress
     );
 
   hotspotGroups.forEach(
