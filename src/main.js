@@ -177,6 +177,15 @@ const liftButtonActiveMaterial = new THREE.MeshBasicMaterial({
 const labMonitorModelUrl =
   '/models/office_monitor__workstation_monitor.glb';
 
+const labKeyboardModelUrl =
+  '/models/keyboard.glb';
+
+const labMouseModelUrl =
+  '/models/gaming_mouse.glb';
+
+const labBenchModelUrl =
+  '/models/classic_park_bench.glb';
+
 const officeChairModelUrl =
   '/models/ergonomic_office_chair.glb';
 
@@ -823,29 +832,21 @@ function createComputerStation(
     parent: group
   });
 
-  createBox(
-    'Keyboard',
-    0.72,
-    0.035,
-    0.22,
-    0,
-    0.88,
-    0.12,
-    darkMetalMaterial,
-    group
-  );
+  loadSceneModel({
+    url: labKeyboardModelUrl,
+    name: 'Downloaded Lab Keyboard',
+    position: [-0.84, 0.855, 0.12],
+    scale: [1.55, 0.08, 0.2],
+    parent: group
+  });
 
-  createBox(
-    'Mouse',
-    0.14,
-    0.035,
-    0.2,
-    0.48,
-    0.88,
-    0.12,
-    darkMetalMaterial,
-    group
-  );
+  loadSceneModel({
+    url: labMouseModelUrl,
+    name: 'Downloaded Lab Gaming Mouse',
+    position: [0.48, 0.84, 0.12],
+    scale: [0.17, 0.1, 0.13],
+    parent: group
+  });
 
   createBox(
     'CPU Tower',
@@ -1797,11 +1798,10 @@ loadSceneModel({
 });
 
 loadSceneModel({
-  url: '/models/kenney/bench.glb',
+  url: labBenchModelUrl,
   name: 'Lab Entrance Corridor Bench',
-  position: [-9.32, 0.02, -1],
-  rotation: [0, Math.PI / 2, 0],
-  scale: 2.65
+  position: [-9.32, -0.04, -1],
+  scale: 0.55
 });
 
 createFireExtinguisher(
@@ -2215,16 +2215,19 @@ loadSceneModel({
   scale: 0.0011
 });
 
-createBox(
-  'Teacher Keyboard',
-  0.72,
-  0.035,
-  0.22,
-  -13.35,
-  0.88,
-  -3.42,
-  darkMetalMaterial
-);
+loadSceneModel({
+  url: labKeyboardModelUrl,
+  name: 'Downloaded Teacher Keyboard',
+  position: [-14.19, 0.855, -3.42],
+  scale: [1.55, 0.08, 0.2]
+});
+
+loadSceneModel({
+  url: labMouseModelUrl,
+  name: 'Downloaded Teacher Gaming Mouse',
+  position: [-12.87, 0.84, -3.42],
+  scale: [0.17, 0.1, 0.13]
+});
 
 loadSceneModel({
   url: officeChairModelUrl,
