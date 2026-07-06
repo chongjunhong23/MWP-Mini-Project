@@ -34,12 +34,14 @@ let lastFrameTime = performance.now();
 
 const cameraRotation = {
   yaw: 0,
-  pitch: 0
+  pitch: 0,
+  targetYaw: 0,
+  targetPitch: 0
 };
 
 const mouseLookSensitivity = 0.0022;
-const minPitch = THREE.MathUtils.degToRad(-78);
-const maxPitch = THREE.MathUtils.degToRad(78);
+const minPitch = THREE.MathUtils.degToRad(-89.9);
+const maxPitch = THREE.MathUtils.degToRad(89.9);
 
 const moveKeys = {
   forward: false,
@@ -882,16 +884,21 @@ function setCameraView(position, target) {
     .sub(position)
     .normalize();
 
-  cameraRotation.yaw = Math.atan2(
+  const yaw = Math.atan2(
     -direction.x,
     -direction.z
   );
 
-  cameraRotation.pitch = THREE.MathUtils.clamp(
+  const pitch = THREE.MathUtils.clamp(
     Math.asin(direction.y),
     minPitch,
     maxPitch
   );
+
+  cameraRotation.yaw = yaw;
+  cameraRotation.pitch = pitch;
+  cameraRotation.targetYaw = yaw;
+  cameraRotation.targetPitch = pitch;
 
   applyCameraRotation();
 }
@@ -909,48 +916,57 @@ function resetCameraZoom() {
 }
 
 const walkableZones = [
+  // 1. Lift Interior (Safe distance from back/side walls and door)
   {
-    minX: -1.75,
-    maxX: 1.75,
-    minZ: 12.1,
-    maxZ: 15.8
+    minX: -1.4,
+    maxX: 1.4,
+    minZ: 12.4,
+    maxZ: 15.4
   },
+  // 2. Lift Door Threshold (Only passable if lift door is open; connects lift to landing)
   {
-    minX: -1.75,
-    maxX: 1.35,
-    minZ: 10.25,
-    maxZ: 12.35,
+    minX: -0.8,
+    maxX: 0.8,
+    minZ: 11.7,
+    maxZ: 12.5,
     needsLiftDoor: true
   },
+  // 3. Corridor Walkway (Allows walking on the landing and the main corridor)
   {
-    minX: -9.55,
-    maxX: -1.2,
-    minZ: 9.65,
-    maxZ: 12.15,
-    needsLiftDoor: true
+    minX: -9.5,
+    maxX: 1.4,
+    minZ: 10.0,
+    maxZ: 11.8
   },
+  // 4. Corridor Turn & Balcony View (Restricted so user cannot walk through lab wall or balcony)
   {
-    minX: -10.35,
-    maxX: -7.1,
-    minZ: -8.75,
-    maxZ: 12.15,
-    needsLiftDoor: true
+    minX: -9.6,
+    maxX: -7.4,
+    minZ: -8.2,
+    maxZ: 11.8
   },
+  // 5. Lab Door Threshold (Only passable if lab door is open; bridges corridor and lab interior)
   {
-    minX: -10.55,
-    maxX: -9.7,
-    minZ: 2.45,
-    maxZ: 3.65,
-    needsLiftDoor: true,
+    minX: -10.3,
+    maxX: -9.5,
+    minZ: 2.5,
+    maxZ: 3.5,
     needsLabDoor: true
   },
+  // 6. Lab Interior (Prevents clipping through lab walls)
   {
-    minX: -24.2,
-    maxX: -10.35,
-    minZ: -8.25,
-    maxZ: 9.75,
-    needsLiftDoor: true,
-    needsLabDoor: true
+    minX: -23.8,
+    maxX: -10.2,
+    minZ: -7.9,
+    maxZ: 9.4
+  },
+  // 7. Exit Door Threshold (Only passable if exit door is open; bridges corridor and lab interior at the side exit)
+  {
+    minX: -10.3,
+    maxX: -9.5,
+    minZ: -6.9,
+    maxZ: -5.4,
+    needsExitDoor: true
   }
 ];
 
@@ -960,6 +976,10 @@ function isInsideZone(position, zone) {
   }
 
   if (zone.needsLabDoor && !labDoorOpen) {
+    return false;
+  }
+
+  if (zone.needsExitDoor && !exitDoorOpen) {
     return false;
   }
 
@@ -1192,12 +1212,6 @@ let liftDoorProgress = 0;
 
 function toggleLiftDoors() {
   liftDoorOpen = !liftDoorOpen;
-
-  if (liftDoorOpen) {
-    openLiftBtn.textContent = 'Close Lift Door';
-  } else {
-    openLiftBtn.textContent = 'Open Lift Door';
-  }
 }
 
 function resetLiftDoors() {
@@ -1207,10 +1221,6 @@ function resetLiftDoors() {
   applyLiftModelDoorProgress(
     liftDoorProgress
   );
-
-  openLiftBtn.disabled = false;
-  openLiftBtn.textContent =
-    'Open Lift Door';
 
   arrowMaterial.opacity = 0;
 }
@@ -2438,12 +2448,6 @@ let exitDoorProgress = 0;
 
 function toggleLabDoor() {
   labDoorOpen = !labDoorOpen;
-
-  if (labDoorOpen) {
-    openLabDoorBtn.textContent = 'Close Lab Door';
-  } else {
-    openLabDoorBtn.textContent = 'Open Lab Door';
-  }
 }
 
 function resetLabDoor() {
@@ -2451,10 +2455,6 @@ function resetLabDoor() {
   labDoorProgress = 0;
 
   labDoorPivot.rotation.y = 0;
-
-  openLabDoorBtn.disabled = false;
-  openLabDoorBtn.textContent =
-    'Open Lab Door';
 }
 
 function toggleExitDoor() {
@@ -2613,32 +2613,22 @@ const infoText =
 window.addEventListener(
   'mousemove',
   (event) => {
-    if (!tourStarted) {
+    if (!tourStarted || document.pointerLockElement !== canvas) {
       return;
     }
 
-    if (
-      event.target.closest?.(
-        '#ui-panel, #info-panel, #welcome-screen'
-      )
-    ) {
-      return;
-    }
-
-    cameraRotation.yaw -=
+    cameraRotation.targetYaw -=
       event.movementX *
       mouseLookSensitivity;
 
-    cameraRotation.pitch =
+    cameraRotation.targetPitch =
       THREE.MathUtils.clamp(
-        cameraRotation.pitch -
+        cameraRotation.targetPitch -
           event.movementY *
             mouseLookSensitivity,
         minPitch,
         maxPitch
       );
-
-    applyCameraRotation();
   }
 );
 
@@ -2662,25 +2652,34 @@ canvas.addEventListener(
   }
 );
 
-canvas.addEventListener(
-  'click',
-  (event) => {
-    mouse.x =
-      (event.clientX /
-        window.innerWidth) *
-        2 -
-      1;
+  canvas.addEventListener(
+    'click',
+    (event) => {
+      if (tourStarted && document.pointerLockElement !== canvas) {
+        canvas.requestPointerLock();
+      }
 
-    mouse.y =
-      -(event.clientY /
-        window.innerHeight) *
-        2 +
-      1;
+      if (document.pointerLockElement === canvas) {
+        mouse.x = 0;
+        mouse.y = 0;
+      } else {
+        mouse.x =
+          (event.clientX /
+            window.innerWidth) *
+            2 -
+          1;
 
-    raycaster.setFromCamera(
-      mouse,
-      camera
-    );
+        mouse.y =
+          -(event.clientY /
+            window.innerHeight) *
+            2 +
+          1;
+      }
+
+      raycaster.setFromCamera(
+        mouse,
+        camera
+      );
 
     const intersects =
       raycaster.intersectObjects([
@@ -2750,26 +2749,6 @@ const closeInfoBtn =
     '#close-info-btn'
   );
 
-const openLiftBtn =
-  document.querySelector(
-    '#open-lift-btn'
-  );
-
-const openLabDoorBtn =
-  document.querySelector(
-    '#open-lab-door-btn'
-  );
-
-const resetCameraBtn =
-  document.querySelector(
-    '#reset-camera-btn'
-  );
-
-const toggleLightBtn =
-  document.querySelector(
-    '#toggle-light-btn'
-  );
-
 function returnToLiftStart() {
   moveKeys.forward = false;
   moveKeys.backward = false;
@@ -2787,6 +2766,10 @@ function returnToLiftStart() {
     liftCameraPosition,
     liftCameraTarget
   );
+
+  if (document.pointerLockElement === canvas) {
+    document.exitPointerLock();
+  }
 
   infoPanel.style.display = 'none';
   welcomeScreen.style.display =
@@ -2807,8 +2790,25 @@ startBtn.addEventListener(
       liftCameraPosition,
       liftCameraTarget
     );
+
+    canvas.requestPointerLock();
   }
 );
+
+// Pointer Lock Controls & Crosshair Setup
+const crosshairElement = document.querySelector('#crosshair');
+
+document.addEventListener('pointerlockchange', () => {
+  if (document.pointerLockElement === canvas) {
+    if (crosshairElement) {
+      crosshairElement.style.display = 'block';
+    }
+  } else {
+    if (crosshairElement) {
+      crosshairElement.style.display = 'none';
+    }
+  }
+});
 
 closeInfoBtn.addEventListener(
   'click',
@@ -2818,60 +2818,41 @@ closeInfoBtn.addEventListener(
   }
 );
 
-openLiftBtn.addEventListener(
-  'click',
-  () => {
-    toggleLiftDoors();
+function resetTourView() {
+  resetLiftDoors();
+  resetLabDoor();
+  resetExitDoor();
+  resetCameraZoom();
+
+  setCameraView(
+    liftCameraPosition,
+    liftCameraTarget
+  );
+}
+
+function toggleLight() {
+  lightsOn = !lightsOn;
+
+  if (lightsOn) {
+    ambientLight.intensity = 0.8;
+    sunLight.intensity = 1.2;
+    liftLight.intensity = 1.5;
+
+    scene.background =
+      new THREE.Color(
+        0xbfdfff
+      );
+  } else {
+    ambientLight.intensity = 0.25;
+    sunLight.intensity = 0.15;
+    liftLight.intensity = 0.55;
+
+    scene.background =
+      new THREE.Color(
+        0x111827
+      );
   }
-);
-
-openLabDoorBtn.addEventListener(
-  'click',
-  () => {
-    toggleLabDoor();
-  }
-);
-
-resetCameraBtn.addEventListener(
-  'click',
-  () => {
-    resetLiftDoors();
-    resetLabDoor();
-    resetCameraZoom();
-
-    setCameraView(
-      liftCameraPosition,
-      liftCameraTarget
-    );
-  }
-);
-
-toggleLightBtn.addEventListener(
-  'click',
-  () => {
-    lightsOn = !lightsOn;
-
-    if (lightsOn) {
-      ambientLight.intensity = 0.8;
-      sunLight.intensity = 1.2;
-      liftLight.intensity = 1.5;
-
-      scene.background =
-        new THREE.Color(
-          0xbfdfff
-        );
-    } else {
-      ambientLight.intensity = 0.25;
-      sunLight.intensity = 0.15;
-      liftLight.intensity = 0.55;
-
-      scene.background =
-        new THREE.Color(
-          0x111827
-        );
-    }
-  }
-);
+}
 
 window.addEventListener(
   'keydown',
@@ -2902,6 +2883,14 @@ window.addEventListener(
 
     if (key === 'd') {
       moveKeys.right = true;
+    }
+
+    if (key === 'r' && tourStarted) {
+      resetTourView();
+    }
+
+    if (key === 'l' && tourStarted) {
+      toggleLight();
     }
   }
 );
@@ -3034,16 +3023,35 @@ function animate() {
 
   lastFrameTime = now;
 
+  // Smooth camera rotation damping
+  cameraRotation.yaw = THREE.MathUtils.damp(
+    cameraRotation.yaw,
+    cameraRotation.targetYaw,
+    11.5,
+    delta
+  );
+
+  cameraRotation.pitch = THREE.MathUtils.damp(
+    cameraRotation.pitch,
+    cameraRotation.targetPitch,
+    11.5,
+    delta
+  );
+
+  applyCameraRotation();
+
   updatePlayerMovement(delta);
 
   const targetProgress =
     liftDoorOpen ? 1 : 0;
 
+  const liftDoorDamp = liftDoorOpen ? 3.0 : 2.0;
+
   liftDoorProgress =
     THREE.MathUtils.damp(
       liftDoorProgress,
       targetProgress,
-      4.2,
+      liftDoorDamp,
       delta
     );
 
@@ -3064,43 +3072,39 @@ function animate() {
   arrowHead.material.opacity =
     arrowMaterial.opacity;
 
-  const labDoorTarget =
-    labDoorOpen
-      ? Math.PI / 2.15
-      : 0;
+  const labDoorMaxRotation = Math.PI / 2.15;
+  const labDoorDamp = labDoorOpen ? 3.0 : 2.0;
 
   labDoorProgress =
     THREE.MathUtils.damp(
       labDoorProgress,
       labDoorOpen ? 1 : 0,
-      4.2,
+      labDoorDamp,
       delta
     );
 
   labDoorPivot.rotation.y =
     THREE.MathUtils.lerp(
       0,
-      labDoorTarget,
+      labDoorMaxRotation,
       labDoorProgress
     );
 
-  const exitDoorTarget =
-    exitDoorOpen
-      ? Math.PI / 2.15
-      : 0;
+  const exitDoorMaxRotation = Math.PI / 2.15;
+  const exitDoorDamp = exitDoorOpen ? 3.0 : 2.0;
 
   exitDoorProgress =
     THREE.MathUtils.damp(
       exitDoorProgress,
       exitDoorOpen ? 1 : 0,
-      4.2,
+      exitDoorDamp,
       delta
     );
 
   exitDoorPivot.rotation.y =
     THREE.MathUtils.lerp(
       0,
-      exitDoorTarget,
+      exitDoorMaxRotation,
       exitDoorProgress
     );
 
