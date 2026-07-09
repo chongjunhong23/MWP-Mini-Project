@@ -1190,14 +1190,12 @@ directionArrowGroup.add(arrowHead);
 let liftDoorOpen = false;
 let liftDoorProgress = 0;
 
-function toggleLiftDoors() {
-  liftDoorOpen = !liftDoorOpen;
+function openLiftDoors() {
+  liftDoorOpen = true;
 
-  if (liftDoorOpen) {
-    openLiftBtn.textContent = 'Close Lift Door';
-  } else {
-    openLiftBtn.textContent = 'Open Lift Door';
-  }
+  openLiftBtn.disabled = true;
+  openLiftBtn.textContent =
+    'Lift Door Open';
 }
 
 function resetLiftDoors() {
@@ -2436,14 +2434,12 @@ let labDoorProgress = 0;
 let exitDoorOpen = false;
 let exitDoorProgress = 0;
 
-function toggleLabDoor() {
-  labDoorOpen = !labDoorOpen;
+function openLabDoor() {
+  labDoorOpen = true;
 
-  if (labDoorOpen) {
-    openLabDoorBtn.textContent = 'Close Lab Door';
-  } else {
-    openLabDoorBtn.textContent = 'Open Lab Door';
-  }
+  openLabDoorBtn.disabled = true;
+  openLabDoorBtn.textContent =
+    'Lab Door Open';
 }
 
 function resetLabDoor() {
@@ -2457,8 +2453,8 @@ function resetLabDoor() {
     'Open Lab Door';
 }
 
-function toggleExitDoor() {
-  exitDoorOpen = !exitDoorOpen;
+function openExitDoor() {
+  exitDoorOpen = true;
 }
 
 function resetExitDoor() {
@@ -2703,21 +2699,21 @@ canvas.addEventListener(
       clickedObject.userData
         .isLiftButton
     ) {
-      toggleLiftDoors();
+      openLiftDoors();
     }
 
     if (
       clickedObject.userData
         .isLabDoor
     ) {
-      toggleLabDoor();
+      openLabDoor();
     }
 
     if (
       clickedObject.userData
         .isExitDoor
     ) {
-      toggleExitDoor();
+      openExitDoor();
     }
 
     infoTitle.textContent =
@@ -2821,14 +2817,14 @@ closeInfoBtn.addEventListener(
 openLiftBtn.addEventListener(
   'click',
   () => {
-    toggleLiftDoors();
+    openLiftDoors();
   }
 );
 
 openLabDoorBtn.addEventListener(
   'click',
   () => {
-    toggleLabDoor();
+    openLabDoor();
   }
 );
 
