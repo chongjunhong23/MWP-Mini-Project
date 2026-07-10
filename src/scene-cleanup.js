@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const hiddenSceneObjectNames = new Set([
   'Lab Door Exterior Header Fill'
@@ -16,7 +17,27 @@ const flattenedDoorFrameGeometry = new Map([
   ['Exit Door Top Lintel', { size: [0.035, 0.72, 2.0], face: 'lab' }]
 ]);
 
+const airConditionerGroupNames = new Set([
+  'Lab Rear Air Conditioner',
+  'Lab Side Air Conditioner'
+]);
+
+const oldAirConditionerPartNames = new Set([
+  'Air Conditioner Body',
+  'Air Conditioner Vent',
+  'Air Conditioner Indicator'
+]);
+
 const addedInteriorHeaderFills = new Set();
+const airConditionerLoader = new GLTFLoader();
+const airConditionerModelPromise = new Promise((resolve, reject) => {
+  airConditionerLoader.load(
+    '/models/indoor_air_conditioner_unit.glb',
+    (gltf) => resolve(gltf.scene),
+    undefined,
+    reject
+  );
+});
 
 function getFlushX(size, face) {
   if (face === 'lab') {
@@ -34,12 +55,12 @@ function createExitDoorInteriorHeaderFill(object) {
   addedInteriorHeaderFills.add(object.name);
 
   const fillMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.035, 0.82, 2.18),
+    new THREE.BoxGeometry(0.05, 0.92, 2.85),
     object.material
   );
 
   fillMesh.name = 'Exit Door Interior Header Flat Fill';
-  fillMesh.position.set(labWallFaceX + 0.035 / 2, 2.74, -6.2);
+  fillMesh.position.set(labWallFaceX + 0.05 / 2, 2.72, -6.2);
 
   return fillMesh;
 }
@@ -55,6 +76,44 @@ function flattenDoorFrameObject(object) {
   object.position.x = getFlushX(config.size, config.face);
 
   return createExitDoorInteriorHeaderFill(object);
+}
+
+function hideOldAirConditionerParts(group) {
+  group.traverse((child) => {
+    if (oldAirConditionerPartNames.has(child.name)) {
+      child.visible = false;
+    }
+  });
+}
+
+function attachAirConditionerModel(group) {
+  if (!airConditionerGroupNames.has(group?.name) || group.userData.hasDownloadedAirConditioner) {
+    return;
+  }
+
+  group.userData.hasDownloadedAirConditioner = true;
+
+  airConditionerModelPromise
+    .then((sourceModel) => {
+      hideOldAirConditionerParts(group);
+
+      const model = sourceModel.clone(true);
+      model.name = `${group.name} GLB Model`;
+      model.position.set(0, -0.03, -0.03);
+      model.rotation.set(0, 0, 0);
+      model.scale.setScalar(0.42);
+
+      model.traverse((child) => {
+        if (child.isMesh) {
+          child.frustumCulled = false;
+        }
+      });
+
+      group.add(model);
+    })
+    .catch(() => {
+      group.userData.hasDownloadedAirConditioner = false;
+    });
 }
 
 if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
@@ -87,6 +146,7 @@ if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
 
     if (visibleObjects.length > 0) {
       originalAdd.call(this, ...visibleObjects);
+      visibleObjects.forEach(attachAirConditionerModel);
     }
 
     if (extraObjects.length > 0) {
