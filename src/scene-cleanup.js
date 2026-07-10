@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const hiddenSceneObjectNames = new Set([
-  'Lab Door Exterior Header Fill'
+  'Lab Door Exterior Header Fill',
+  'Right Turn Corridor End Floor Seal'
 ]);
 
 const corridorWallFaceX = -9.81;
