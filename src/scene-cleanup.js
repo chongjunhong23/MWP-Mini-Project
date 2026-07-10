@@ -11,23 +11,17 @@ const labWallSkinX = labWallFaceX - 0.006;
 const keluarSignWallX = labWallFaceX - 0.045;
 
 const flattenedDoorFrameGeometry = new Map([
-  ['Lab Door Lower Jamb', { size: [0.012, 2.45, 0.08], face: 'corridor' }],
-  ['Lab Door Upper Jamb', { size: [0.012, 2.45, 0.08], face: 'corridor' }],
-  ['Lab Door Top Lintel', { size: [0.012, 0.72, 2.05], face: 'corridor' }],
-  ['Exit Door Lower Jamb', { size: [0.012, 2.45, 0.08], face: 'lab' }],
-  ['Exit Door Upper Jamb', { size: [0.012, 2.45, 0.08], face: 'lab' }],
-  ['Exit Door Top Lintel', { size: [0.012, 0.72, 2.0], face: 'lab' }]
+  ['Lab Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'corridor' }],
+  ['Lab Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'corridor' }],
+  ['Lab Door Top Lintel', { size: [0.035, 0.72, 2.05], face: 'corridor' }],
+  ['Exit Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'lab' }],
+  ['Exit Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'lab' }],
+  ['Exit Door Top Lintel', { size: [0.035, 0.72, 2.0], face: 'lab' }]
 ]);
 
 const doorHeaderSkinPlacements = new Map([
   ['Lab Door Top Lintel', { name: 'Lab Door Interior Header Flat Skin', z: 3.2, depth: 3.05 }],
   ['Exit Door Top Lintel', { name: 'Exit Door Interior Header Flat Skin', z: -6.2, depth: 3.05 }]
-]);
-
-const wallSegmentSkinPlacements = new Map([
-  ['Lab Wall Before Exit Door', { name: 'Lab Wall Before Exit Door Flat Skin', y: 1.5, z: -7.85, height: 3.0, depth: 1.45 }],
-  ['Lab Wall Between Exit And Entry Doors', { name: 'Lab Wall Between Doors Flat Skin', y: 1.5, z: -1.48, height: 3.0, depth: 7.65 }],
-  ['Lab Wall After Entry Door', { name: 'Lab Wall After Entry Door Flat Skin', y: 1.5, z: 7.22, height: 3.0, depth: 6.35 }]
 ]);
 
 const airConditionerGroupNames = new Set([
@@ -42,7 +36,6 @@ const oldAirConditionerPartNames = new Set([
 ]);
 
 const addedDoorHeaderSkins = new Set();
-const addedWallSegmentSkins = new Set();
 const airConditionerLoader = new GLTFLoader();
 const airConditionerModelPromise = new Promise((resolve, reject) => {
   airConditionerLoader.load(
@@ -88,26 +81,6 @@ function createDoorHeaderSkin(object) {
     0.78,
     placement.depth,
     2.78,
-    placement.z,
-    object.material
-  );
-}
-
-function createWallSegmentSkin(object) {
-  const placement = wallSegmentSkinPlacements.get(object?.name);
-
-  if (!object?.isMesh || !placement || addedWallSegmentSkins.has(object.name)) {
-    return null;
-  }
-
-  addedWallSegmentSkins.add(object.name);
-
-  return createWallSkin(
-    placement.name,
-    0.012,
-    placement.height,
-    placement.depth,
-    placement.y,
     placement.z,
     object.material
   );
@@ -199,17 +172,12 @@ if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
         return;
       }
 
-      const doorExtraObject = flattenDoorFrameObject(object);
-      const wallExtraObject = createWallSegmentSkin(object);
+      const extraObject = flattenDoorFrameObject(object);
       adjustKeluarSign(object);
       visibleObjects.push(object);
 
-      if (doorExtraObject) {
-        extraObjects.push(doorExtraObject);
-      }
-
-      if (wallExtraObject) {
-        extraObjects.push(wallExtraObject);
+      if (extraObject) {
+        extraObjects.push(extraObject);
       }
     });
 
