@@ -25,8 +25,8 @@ const doorHeaderSkinPlacements = new Map();
 const airConditionerGroupNames = new Set([
   'Lab Rear Air Conditioner',
   'Lab Side Air Conditioner',
-  'Lab Left Wall Air Conditioner A',
-  'Lab Left Wall Air Conditioner B'
+  'Lab Opposite Wall Air Conditioner A',
+  'Lab Opposite Wall Air Conditioner B'
 ]);
 
 const oldAirConditionerPartNames = new Set([
