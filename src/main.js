@@ -785,8 +785,8 @@ const interactiveChairs = [];
 const acPositions = [
   new THREE.Vector3(-17.2, 2.45, 10.26),
   new THREE.Vector3(-13.1, 2.45, 10.26),
-  new THREE.Vector3(-24.51, 2.45, -4.2),
-  new THREE.Vector3(-24.51, 2.45, 4.2)
+  new THREE.Vector3(-17.2, 2.45, -8.46),
+  new THREE.Vector3(-13.1, 2.45, -8.46)
 ];
 let acHumNode = null;
 let bobTime = 0;
@@ -2528,21 +2528,21 @@ createAirCond(
   10.26
 );
 
-const labLeftWallAirConditionerA = createAirCond(
-  'Lab Left Wall Air Conditioner A',
-  -24.51,
+const labOppositeWallAirConditionerA = createAirCond(
+  'Lab Opposite Wall Air Conditioner A',
+  -17.2,
   2.45,
-  -4.2
+  -8.46
 );
-labLeftWallAirConditionerA.rotation.y = -Math.PI / 2;
+labOppositeWallAirConditionerA.rotation.y = Math.PI;
 
-const labLeftWallAirConditionerB = createAirCond(
-  'Lab Left Wall Air Conditioner B',
-  -24.51,
+const labOppositeWallAirConditionerB = createAirCond(
+  'Lab Opposite Wall Air Conditioner B',
+  -13.1,
   2.45,
-  4.2
+  -8.46
 );
-labLeftWallAirConditionerB.rotation.y = -Math.PI / 2;
+labOppositeWallAirConditionerB.rotation.y = Math.PI;
 
 createBox(
   'Projector Screen Frame',
