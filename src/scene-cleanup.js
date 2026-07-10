@@ -14,8 +14,9 @@ const flattenedDoorFrameGeometry = new Map([
   ['Lab Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'corridor' }],
   ['Lab Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'corridor' }],
   ['Lab Door Top Lintel', { size: [0.035, 0.72, 2.05], face: 'corridor' }],
-  ['Exit Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'lab' }],
-  ['Exit Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'lab' }]
+  ['Exit Door Lower Jamb', { size: [0.22, 2.45, 0.18], x: -9.92 }],
+  ['Exit Door Upper Jamb', { size: [0.22, 2.45, 0.18], x: -9.92 }],
+  ['Exit Door Top Lintel', { size: [0.22, 0.72, 1.98], x: -9.92 }]
 ]);
 
 const doorHeaderSkinPlacements = new Map([
@@ -92,7 +93,7 @@ function flattenDoorFrameObject(object) {
   }
 
   object.geometry = new THREE.BoxGeometry(...config.size);
-  object.position.x = getFlushX(config.size, config.face);
+  object.position.x = config.x ?? getFlushX(config.size, config.face);
 
   return createDoorHeaderSkin(object);
 }
