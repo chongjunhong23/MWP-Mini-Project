@@ -15,13 +15,11 @@ const flattenedDoorFrameGeometry = new Map([
   ['Lab Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'corridor' }],
   ['Lab Door Top Lintel', { size: [0.035, 0.72, 2.05], face: 'corridor' }],
   ['Exit Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'lab' }],
-  ['Exit Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'lab' }],
-  ['Exit Door Top Lintel', { size: [0.035, 0.72, 2.0], face: 'lab' }]
+  ['Exit Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'lab' }]
 ]);
 
 const doorHeaderSkinPlacements = new Map([
-  ['Lab Door Top Lintel', { name: 'Lab Door Interior Header Flat Skin', z: 3.2, depth: 3.05 }],
-  ['Exit Door Top Lintel', { name: 'Exit Door Interior Header Flat Skin', z: -6.2, depth: 3.05 }]
+  ['Lab Door Top Lintel', { name: 'Lab Door Interior Header Flat Skin', z: 3.2, depth: 3.05 }]
 ]);
 
 const airConditionerGroupNames = new Set([
