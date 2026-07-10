@@ -7,6 +7,7 @@ const hiddenSceneObjectNames = new Set([
 
 const corridorWallFaceX = -9.81;
 const labWallFaceX = -10.03;
+const labWallSkinX = labWallFaceX - 0.012;
 
 const flattenedDoorFrameGeometry = new Map([
   ['Lab Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'corridor' }],
@@ -47,6 +48,18 @@ function getFlushX(size, face) {
   return corridorWallFaceX - size[0] / 2;
 }
 
+function createWallSkin(name, width, height, depth, y, z, material) {
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(width, height, depth),
+    material
+  );
+
+  mesh.name = name;
+  mesh.position.set(labWallSkinX, y, z);
+
+  return mesh;
+}
+
 function createExitDoorInteriorHeaderFill(object) {
   if (object?.name !== 'Exit Door Top Lintel' || addedInteriorHeaderFills.has(object.name)) {
     return null;
@@ -54,15 +67,46 @@ function createExitDoorInteriorHeaderFill(object) {
 
   addedInteriorHeaderFills.add(object.name);
 
-  const fillMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.05, 0.92, 2.85),
-    object.material
+  const fillGroup = new THREE.Group();
+  fillGroup.name = 'Exit Door Interior Flat Wall Fill';
+
+  fillGroup.add(
+    createWallSkin(
+      'Exit Door Interior Header Skin',
+      0.024,
+      0.78,
+      3.26,
+      2.78,
+      -6.2,
+      object.material
+    )
   );
 
-  fillMesh.name = 'Exit Door Interior Header Flat Fill';
-  fillMesh.position.set(labWallFaceX + 0.05 / 2, 2.72, -6.2);
+  fillGroup.add(
+    createWallSkin(
+      'Exit Door Interior Upper Right Reveal Skin',
+      0.024,
+      0.42,
+      0.22,
+      2.22,
+      -5.22,
+      object.material
+    )
+  );
 
-  return fillMesh;
+  fillGroup.add(
+    createWallSkin(
+      'Exit Door Interior Upper Left Reveal Skin',
+      0.024,
+      0.42,
+      0.22,
+      2.22,
+      -7.18,
+      object.material
+    )
+  );
+
+  return fillGroup;
 }
 
 function flattenDoorFrameObject(object) {
