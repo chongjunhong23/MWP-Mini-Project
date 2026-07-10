@@ -11,17 +11,15 @@ const labWallSkinX = labWallFaceX - 0.006;
 const keluarSignWallX = labWallFaceX - 0.045;
 
 const flattenedDoorFrameGeometry = new Map([
-  ['Lab Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'corridor' }],
-  ['Lab Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'corridor' }],
-  ['Lab Door Top Lintel', { size: [0.035, 0.72, 2.05], face: 'corridor' }],
+  ['Lab Door Lower Jamb', { size: [0.22, 2.45, 0.18], x: -9.92 }],
+  ['Lab Door Upper Jamb', { size: [0.22, 2.45, 0.18], x: -9.92 }],
+  ['Lab Door Top Lintel', { size: [0.22, 0.72, 2.05], x: -9.92 }],
   ['Exit Door Lower Jamb', { size: [0.22, 2.45, 0.18], x: -9.92 }],
   ['Exit Door Upper Jamb', { size: [0.22, 2.45, 0.18], x: -9.92 }],
   ['Exit Door Top Lintel', { size: [0.22, 0.72, 1.98], x: -9.92 }]
 ]);
 
-const doorHeaderSkinPlacements = new Map([
-  ['Lab Door Top Lintel', { name: 'Lab Door Interior Header Flat Skin', z: 3.2, depth: 3.05 }]
-]);
+const doorHeaderSkinPlacements = new Map();
 
 const airConditionerGroupNames = new Set([
   'Lab Rear Air Conditioner',
@@ -98,6 +96,15 @@ function flattenDoorFrameObject(object) {
   return createDoorHeaderSkin(object);
 }
 
+function extendCornerBaseSeal(object) {
+  if (!object?.isMesh || object.name !== 'Lab Wall Base Seal After Entry') {
+    return;
+  }
+
+  object.geometry = new THREE.BoxGeometry(0.08, 0.18, 8.14);
+  object.position.z = 8.185;
+}
+
 function adjustKeluarSign(object) {
   if (!object?.isMesh || object.geometry?.type !== 'PlaneGeometry') {
     return;
@@ -172,6 +179,7 @@ if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
       }
 
       const extraObject = flattenDoorFrameObject(object);
+      extendCornerBaseSeal(object);
       adjustKeluarSign(object);
       visibleObjects.push(object);
 
