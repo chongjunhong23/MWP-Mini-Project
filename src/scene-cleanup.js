@@ -10,6 +10,8 @@ const flattenedDoorFrameGeometry = new Map([
   ['Lab Door Top Lintel', [0.035, 0.72, 2.05]]
 ]);
 
+const corridorWallFaceX = -9.81;
+
 function flattenDoorFrameObject(object) {
   const geometrySize = flattenedDoorFrameGeometry.get(object?.name);
 
@@ -18,7 +20,7 @@ function flattenDoorFrameObject(object) {
   }
 
   object.geometry = new THREE.BoxGeometry(...geometrySize);
-  object.position.x = -9.795;
+  object.position.x = corridorWallFaceX - geometrySize[0] / 2;
 }
 
 if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
