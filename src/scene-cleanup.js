@@ -7,7 +7,8 @@ const hiddenSceneObjectNames = new Set([
 
 const corridorWallFaceX = -9.81;
 const labWallFaceX = -10.03;
-const labWallSkinX = labWallFaceX - 0.012;
+const labWallSkinX = labWallFaceX - 0.006;
+const keluarSignWallX = labWallFaceX - 0.045;
 
 const flattenedDoorFrameGeometry = new Map([
   ['Lab Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'corridor' }],
@@ -16,6 +17,11 @@ const flattenedDoorFrameGeometry = new Map([
   ['Exit Door Lower Jamb', { size: [0.035, 2.45, 0.32], face: 'lab' }],
   ['Exit Door Upper Jamb', { size: [0.035, 2.45, 0.24], face: 'lab' }],
   ['Exit Door Top Lintel', { size: [0.035, 0.72, 2.0], face: 'lab' }]
+]);
+
+const doorHeaderSkinPlacements = new Map([
+  ['Lab Door Top Lintel', { name: 'Lab Door Interior Header Flat Skin', z: 3.2, depth: 3.05 }],
+  ['Exit Door Top Lintel', { name: 'Exit Door Interior Header Flat Skin', z: -6.2, depth: 3.05 }]
 ]);
 
 const airConditionerGroupNames = new Set([
@@ -29,7 +35,7 @@ const oldAirConditionerPartNames = new Set([
   'Air Conditioner Indicator'
 ]);
 
-const addedInteriorHeaderFills = new Set();
+const addedDoorHeaderSkins = new Set();
 const airConditionerLoader = new GLTFLoader();
 const airConditionerModelPromise = new Promise((resolve, reject) => {
   airConditionerLoader.load(
@@ -60,53 +66,24 @@ function createWallSkin(name, width, height, depth, y, z, material) {
   return mesh;
 }
 
-function createExitDoorInteriorHeaderFill(object) {
-  if (object?.name !== 'Exit Door Top Lintel' || addedInteriorHeaderFills.has(object.name)) {
+function createDoorHeaderSkin(object) {
+  const placement = doorHeaderSkinPlacements.get(object?.name);
+
+  if (!placement || addedDoorHeaderSkins.has(object.name)) {
     return null;
   }
 
-  addedInteriorHeaderFills.add(object.name);
+  addedDoorHeaderSkins.add(object.name);
 
-  const fillGroup = new THREE.Group();
-  fillGroup.name = 'Exit Door Interior Flat Wall Fill';
-
-  fillGroup.add(
-    createWallSkin(
-      'Exit Door Interior Header Skin',
-      0.024,
-      0.78,
-      3.26,
-      2.78,
-      -6.2,
-      object.material
-    )
+  return createWallSkin(
+    placement.name,
+    0.012,
+    0.78,
+    placement.depth,
+    2.78,
+    placement.z,
+    object.material
   );
-
-  fillGroup.add(
-    createWallSkin(
-      'Exit Door Interior Upper Right Reveal Skin',
-      0.024,
-      0.42,
-      0.22,
-      2.22,
-      -5.22,
-      object.material
-    )
-  );
-
-  fillGroup.add(
-    createWallSkin(
-      'Exit Door Interior Upper Left Reveal Skin',
-      0.024,
-      0.42,
-      0.22,
-      2.22,
-      -7.18,
-      object.material
-    )
-  );
-
-  return fillGroup;
 }
 
 function flattenDoorFrameObject(object) {
@@ -119,7 +96,22 @@ function flattenDoorFrameObject(object) {
   object.geometry = new THREE.BoxGeometry(...config.size);
   object.position.x = getFlushX(config.size, config.face);
 
-  return createExitDoorInteriorHeaderFill(object);
+  return createDoorHeaderSkin(object);
+}
+
+function adjustKeluarSign(object) {
+  if (!object?.isMesh || object.geometry?.type !== 'PlaneGeometry') {
+    return;
+  }
+
+  const isWallSign = Math.abs(object.position.x + 10.15) < 0.08;
+  const isKeluarHeight = Math.abs(object.position.y - 2.57) < 0.08;
+  const isEntrySign = Math.abs(object.position.z - 3.225) < 0.18;
+  const isExitSign = Math.abs(object.position.z + 6.175) < 0.18;
+
+  if (isWallSign && isKeluarHeight && (isEntrySign || isExitSign)) {
+    object.position.x = keluarSignWallX;
+  }
 }
 
 function hideOldAirConditionerParts(group) {
@@ -181,6 +173,7 @@ if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
       }
 
       const extraObject = flattenDoorFrameObject(object);
+      adjustKeluarSign(object);
       visibleObjects.push(object);
 
       if (extraObject) {
