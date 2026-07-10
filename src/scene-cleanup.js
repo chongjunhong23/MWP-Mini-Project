@@ -16,7 +16,7 @@ const flattenedDoorFrameGeometry = new Map([
   ['Exit Door Top Lintel', { size: [0.035, 0.72, 2.0], face: 'lab' }]
 ]);
 
-const interiorHeaderFillNames = new Set();
+const addedInteriorHeaderFills = new Set();
 
 function getFlushX(size, face) {
   if (face === 'lab') {
@@ -26,32 +26,35 @@ function getFlushX(size, face) {
   return corridorWallFaceX - size[0] / 2;
 }
 
-function addExitDoorInteriorHeaderFill(object) {
-  if (object?.name !== 'Exit Door Top Lintel' || interiorHeaderFillNames.has(object.name)) {
-    return;
+function createExitDoorInteriorHeaderFill(object) {
+  if (object?.name !== 'Exit Door Top Lintel' || addedInteriorHeaderFills.has(object.name)) {
+    return null;
   }
 
-  interiorHeaderFillNames.add(object.name);
+  addedInteriorHeaderFills.add(object.name);
 
-  const fillGeometry = new THREE.BoxGeometry(0.035, 0.82, 2.18);
-  const fillMesh = new THREE.Mesh(fillGeometry, object.material);
+  const fillMesh = new THREE.Mesh(
+    new THREE.BoxGeometry(0.035, 0.82, 2.18),
+    object.material
+  );
 
   fillMesh.name = 'Exit Door Interior Header Flat Fill';
   fillMesh.position.set(labWallFaceX + 0.035 / 2, 2.74, -6.2);
 
-  object.parent?.add(fillMesh);
+  return fillMesh;
 }
 
 function flattenDoorFrameObject(object) {
   const config = flattenedDoorFrameGeometry.get(object?.name);
 
   if (!object?.isMesh || !config) {
-    return;
+    return null;
   }
 
   object.geometry = new THREE.BoxGeometry(...config.size);
   object.position.x = getFlushX(config.size, config.face);
-  addExitDoorInteriorHeaderFill(object);
+
+  return createExitDoorInteriorHeaderFill(object);
 }
 
 if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
@@ -66,19 +69,30 @@ if (!THREE.Object3D.prototype.__fcN28SceneCleanupPatched) {
   );
 
   THREE.Object3D.prototype.add = function addCleanedSceneObjects(...objects) {
-    const visibleObjects = objects.filter((object) => {
+    const visibleObjects = [];
+    const extraObjects = [];
+
+    objects.forEach((object) => {
       if (hiddenSceneObjectNames.has(object?.name)) {
-        return false;
+        return;
       }
 
-      flattenDoorFrameObject(object);
-      return true;
+      const extraObject = flattenDoorFrameObject(object);
+      visibleObjects.push(object);
+
+      if (extraObject) {
+        extraObjects.push(extraObject);
+      }
     });
 
-    if (visibleObjects.length === 0) {
-      return this;
+    if (visibleObjects.length > 0) {
+      originalAdd.call(this, ...visibleObjects);
     }
 
-    return originalAdd.call(this, ...visibleObjects);
+    if (extraObjects.length > 0) {
+      originalAdd.call(this, ...extraObjects);
+    }
+
+    return this;
   };
 }
