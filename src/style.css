@@ -183,4 +183,46 @@ body {
   pointer-events: none;
   z-index: 100;
   display: none;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#crosshair.active {
+  background: #ffd000;
+  border-color: #ffffff;
+  transform: translate(-50%, -50%) scale(1.6);
+  box-shadow: 0 0 12px rgba(255, 208, 0, 0.8);
+}
+
+#action-prompt {
+  position: fixed;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(15, 15, 15, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+  pointer-events: none;
+}
+
+#action-prompt.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+#action-prompt .action-icon {
+  font-size: 17px;
 }
