@@ -141,18 +141,59 @@ function attachAirConditionerModel(group) {
       hideOldAirConditionerParts(group);
 
       const model = sourceModel.clone(true);
-      model.name = `${group.name} GLB Model`;
-      model.position.set(0, -0.03, -0.03);
-      model.rotation.set(0, 0, 0);
-      model.scale.setScalar(0.42);
+      model.updateMatrixWorld(true);
+
+      const bounds = new THREE.Box3().setFromObject(model);
+      const size = bounds.getSize(new THREE.Vector3());
+      const center = bounds.getCenter(new THREE.Vector3());
+      const targetWidth = 1.5;
+      const normalizedModel = new THREE.Group();
+
+      normalizedModel.name = `${group.name} GLB Model`;
+      normalizedModel.position.set(0, 0, -0.12);
+      normalizedModel.rotation.y = Math.PI;
+      normalizedModel.scale.setScalar(targetWidth / size.x);
+      model.position.copy(center).multiplyScalar(-1);
 
       model.traverse((child) => {
-        if (child.isMesh) {
-          child.frustumCulled = false;
+        if (!child.isMesh) {
+          return;
         }
+
+        const materials = Array.isArray(child.material)
+          ? child.material
+          : [child.material];
+        const preparedMaterials = materials.map((material) => {
+          const prepared = material.clone();
+
+          prepared.color?.setHex(0xffffff);
+          prepared.emissive?.setHex(0x303030);
+          prepared.emissiveIntensity = 0.35;
+          prepared.metalness = Math.min(prepared.metalness ?? 0, 0.15);
+          prepared.roughness = Math.max(prepared.roughness ?? 0.5, 0.5);
+          prepared.side = THREE.DoubleSide;
+
+          if (prepared.map) {
+            prepared.map.colorSpace = THREE.SRGBColorSpace;
+            prepared.map.needsUpdate = true;
+          }
+
+          prepared.normalScale?.set(0.35, 0.35);
+          prepared.needsUpdate = true;
+
+          return prepared;
+        });
+
+        child.material = Array.isArray(child.material)
+          ? preparedMaterials
+          : preparedMaterials[0];
+        child.castShadow = true;
+        child.receiveShadow = true;
+        child.frustumCulled = false;
       });
 
-      group.add(model);
+      normalizedModel.add(model);
+      group.add(normalizedModel);
     })
     .catch(() => {
       group.userData.hasDownloadedAirConditioner = false;
