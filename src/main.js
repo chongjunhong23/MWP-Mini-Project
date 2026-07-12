@@ -39,7 +39,7 @@ const cameraRotation = {
   targetPitch: 0
 };
 
-const mouseLookSensitivity = 0.0022;
+const mouseLookSensitivity = 0.0012;
 const minPitch = THREE.MathUtils.degToRad(-89.9);
 const maxPitch = THREE.MathUtils.degToRad(89.9);
 
@@ -790,8 +790,8 @@ const acPositions = [
 ];
 let acHumNode = null;
 let bobTime = 0;
-const bobFrequency = 8.0;
-const bobAmplitude = 0.035;
+const bobFrequency = 5.5;
+const bobAmplitude = 0.02;
 const baseEyeHeight = 1.75;
 
 function startACHum() {
@@ -2974,11 +2974,14 @@ canvas.addEventListener(
     ) {
       toggleLiftDoors();
       playClickSound();
+      playDoorSound();
     } else if (isLab) {
       toggleLabDoor();
+      playClickSound();
       playDoorSound();
     } else if (isExit) {
       toggleExitDoor();
+      playClickSound();
       playDoorSound();
     } else if (clickedObject.userData.isMonitorScreen) {
       toggleMonitorScreen(clickedObject);
@@ -3028,12 +3031,13 @@ startBtn.addEventListener(
       minimap.classList.add('visible');
     }
 
-    // Initialize Web Audio and start AC ambient hum
+    // Initialize Web Audio, play click, and start AC ambient hum
     try {
       const ctx = THREE.AudioContext.getContext();
       if (ctx.state === 'suspended') {
         ctx.resume();
       }
+      playClickSound();
       startACHum();
     } catch (e) {
       console.warn('Failed to start AC hum audio:', e);
@@ -3068,6 +3072,7 @@ document.addEventListener('pointerlockchange', () => {
 closeInfoBtn.addEventListener(
   'click',
   () => {
+    playClickSound();
     infoPanel.style.display =
       'none';
   }
