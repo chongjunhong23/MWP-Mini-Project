@@ -39,7 +39,7 @@ const cameraRotation = {
   targetPitch: 0
 };
 
-const mouseLookSensitivity = 0.0022;
+const mouseLookSensitivity = 0.0012;
 const minPitch = THREE.MathUtils.degToRad(-89.9);
 const maxPitch = THREE.MathUtils.degToRad(89.9);
 
@@ -69,6 +69,8 @@ liftLight.position.set(0, 2.65, 14.2);
 scene.add(liftLight);
 
 let lightsOn = true;
+let lightTransitionProgress = 1.0;
+let lightTransitionTarget = 1.0;
 
 // ===============================
 // MATERIALS
@@ -790,8 +792,8 @@ const acPositions = [
 ];
 let acHumNode = null;
 let bobTime = 0;
-const bobFrequency = 8.0;
-const bobAmplitude = 0.035;
+const bobFrequency = 5.5;
+const bobAmplitude = 0.02;
 const baseEyeHeight = 1.75;
 
 function startACHum() {
@@ -992,7 +994,7 @@ function createComputerStation(
 
   const screenId = interactiveScreens.length + 1;
   // Placeholder pushed now so id is correct; actual mesh replaced in onLoad
-  const screenPlaceholder = { userData: { isMonitorScreen: true, isOn: false, id: screenId } };
+  const screenPlaceholder = { userData: { isMonitorScreen: true, isOn: true, id: screenId } };
   const screenSlotIndex = interactiveScreens.length;
   interactiveScreens.push(screenPlaceholder);
 
@@ -1023,9 +1025,12 @@ function createComputerStation(
       if (screenMesh) {
         screenMesh.userData = {
           isMonitorScreen: true,
-          isOn: false,
+          isOn: true,
           id: screenId
         };
+        screenMesh.material = new THREE.MeshBasicMaterial({
+          map: createTerminalTexture(screenId)
+        });
         interactiveScreens[screenSlotIndex] = screenMesh;
       }
     }
@@ -2239,10 +2244,25 @@ labDoor.userData = {
 createBox(
   'Lab Door Raised Top Panel',
   0.04,
-  0.58,
+  0.88,
   1,
   0.09,
-  0.28,
+  0.43,
+  -0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  labDoorPivot
+);
+
+createBox(
+  'Lab Door Raised Top Panel Inner',
+  0.04,
+  0.88,
+  1,
+  -0.09,
+  0.43,
   -0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
@@ -2256,7 +2276,7 @@ const doorNameplate = createTextPanel(
   0.75,
   0.40,
   0.111,
-  0.28,
+  0.43,
   -0.825,
   '#d4af37',
   '#111111',
@@ -2270,6 +2290,21 @@ createBox(
   0.62,
   1,
   0.09,
+  -0.55,
+  -0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  labDoorPivot
+);
+
+createBox(
+  'Lab Door Raised Bottom Panel Inner',
+  0.04,
+  0.62,
+  1,
+  -0.09,
   -0.55,
   -0.825,
   new THREE.MeshStandardMaterial({
@@ -2422,10 +2457,25 @@ exitDoor.userData = {
 createBox(
   'Exit Door Raised Top Panel',
   0.04,
-  0.58,
+  0.88,
   1,
   0.09,
-  0.28,
+  0.43,
+  0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  exitDoorPivot
+);
+
+createBox(
+  'Exit Door Raised Top Panel Inner',
+  0.04,
+  0.88,
+  1,
+  -0.09,
+  0.43,
   0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
@@ -2439,7 +2489,7 @@ const exitDoorNameplate = createTextPanel(
   0.75,
   0.40,
   0.111,
-  0.28,
+  0.43,
   0.825,
   '#d4af37',
   '#111111',
@@ -2453,6 +2503,21 @@ createBox(
   0.62,
   1,
   0.09,
+  -0.55,
+  0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  exitDoorPivot
+);
+
+createBox(
+  'Exit Door Raised Bottom Panel Inner',
+  0.04,
+  0.62,
+  1,
+  -0.09,
   -0.55,
   0.825,
   new THREE.MeshStandardMaterial({
@@ -2624,7 +2689,7 @@ createBox(
 );
 
 const teacherScreenSlotIndex = interactiveScreens.length;
-const teacherScreenPlaceholder = { userData: { isMonitorScreen: true, isOn: false, id: 'Teacher' } };
+const teacherScreenPlaceholder = { userData: { isMonitorScreen: true, isOn: true, id: 'Teacher' } };
 interactiveScreens.push(teacherScreenPlaceholder);
 
 loadSceneModel({
@@ -2653,9 +2718,12 @@ loadSceneModel({
     if (screenMesh) {
       screenMesh.userData = {
         isMonitorScreen: true,
-        isOn: false,
+        isOn: true,
         id: 'Teacher'
       };
+      screenMesh.material = new THREE.MeshBasicMaterial({
+        map: createTerminalTexture('Teacher')
+      });
       interactiveScreens[teacherScreenSlotIndex] = screenMesh;
     }
   }
@@ -2974,15 +3042,15 @@ canvas.addEventListener(
     ) {
       toggleLiftDoors();
       playClickSound();
+      playDoorSound();
     } else if (isLab) {
       toggleLabDoor();
+      playClickSound();
       playDoorSound();
     } else if (isExit) {
       toggleExitDoor();
-      playDoorSound();
-    } else if (clickedObject.userData.isMonitorScreen) {
-      toggleMonitorScreen(clickedObject);
       playClickSound();
+      playDoorSound();
     } else if (clickedObject.userData.isOfficeChair) {
       const chair = clickedObject.userData.chairRoot;
       chair.userData.isSwivelRight = !chair.userData.isSwivelRight;
@@ -3022,12 +3090,19 @@ startBtn.addEventListener(
 
     tourStarted = true;
 
-    // Initialize Web Audio and start AC ambient hum
+    // Show the minimap container
+    const minimap = document.querySelector('#minimap-container');
+    if (minimap) {
+      minimap.classList.add('visible');
+    }
+
+    // Initialize Web Audio, play click, and start AC ambient hum
     try {
       const ctx = THREE.AudioContext.getContext();
       if (ctx.state === 'suspended') {
         ctx.resume();
       }
+      playClickSound();
       startACHum();
     } catch (e) {
       console.warn('Failed to start AC hum audio:', e);
@@ -3062,6 +3137,7 @@ document.addEventListener('pointerlockchange', () => {
 closeInfoBtn.addEventListener(
   'click',
   () => {
+    playClickSound();
     infoPanel.style.display =
       'none';
   }
@@ -3077,10 +3153,14 @@ function resetTourView() {
   // Set tourStarted to false
   tourStarted = false;
 
-  // Restore daytime lighting if night mode is active
-  if (!lightsOn) {
-    toggleLight();
-  }
+  // Restore daytime lighting instantly if night mode was active
+  lightsOn = true;
+  lightTransitionTarget = 1.0;
+  lightTransitionProgress = 1.0;
+  ambientLight.intensity = 0.8;
+  sunLight.intensity = 1.2;
+  liftLight.intensity = 1.5;
+  scene.background = new THREE.Color(0xbfdfff);
 
   // Stop AC ambient hum
   if (acHumNode) {
@@ -3091,15 +3171,13 @@ function resetTourView() {
     acHumNode = null;
   }
 
-  // Reset interactive screens to OFF
+  // Reset interactive screens to ON
   interactiveScreens.forEach((screen) => {
     if (screen && screen.userData && screen.userData.isMonitorScreen) {
-      screen.userData.isOn = false;
+      screen.userData.isOn = true;
       if (screen.material) {
-        screen.material = new THREE.MeshStandardMaterial({
-          color: 0x0a0a0a,
-          roughness: 0.1,
-          metalness: 0.9
+        screen.material = new THREE.MeshBasicMaterial({
+          map: createTerminalTexture(screen.userData.id)
         });
       }
     }
@@ -3147,30 +3225,15 @@ function resetTourView() {
   if (welcomeScreen) {
     welcomeScreen.style.display = 'flex';
   }
+  const minimap = document.querySelector('#minimap-container');
+  if (minimap) {
+    minimap.classList.remove('visible');
+  }
 }
 
 function toggleLight() {
   lightsOn = !lightsOn;
-
-  if (lightsOn) {
-    ambientLight.intensity = 0.8;
-    sunLight.intensity = 1.2;
-    liftLight.intensity = 1.5;
-
-    scene.background =
-      new THREE.Color(
-        0xbfdfff
-      );
-  } else {
-    ambientLight.intensity = 0.25;
-    sunLight.intensity = 0.15;
-    liftLight.intensity = 0.55;
-
-    scene.background =
-      new THREE.Color(
-        0x111827
-      );
-  }
+  lightTransitionTarget = lightsOn ? 1.0 : 0.0;
 }
 
 window.addEventListener(
@@ -3370,8 +3433,6 @@ function updateHUDInteractionPrompt() {
         promptString = labDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
       } else if (isExit) {
         promptString = exitDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
-      } else if (hitObj.userData.isMonitorScreen) {
-        promptString = hitObj.userData.isOn ? 'Click to Turn Monitor OFF' : 'Click to Turn Monitor ON';
       } else if (hitObj.userData.isOfficeChair) {
         promptString = 'Click to Swivel Chair';
       }
@@ -3391,6 +3452,159 @@ function updateHUDInteractionPrompt() {
 }
 
 // ===============================
+// MINIMAP DRAWING LOGIC
+// ===============================
+function drawMinimap() {
+  const canvas = document.getElementById('minimap-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const playerPos = camera.position;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Center of canvas
+  const cx = 80;
+  const cy = 80;
+  const scale = 8.0; // 8 pixels per world unit (zoomed in nicely for local surroundings)
+
+  // 1. Draw circular HUD grid background
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+  ctx.beginPath();
+  ctx.arc(cx, cy, 76, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Circular clip so drawing stays inside the circular map frame
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, 74, 0, Math.PI * 2);
+  ctx.clip();
+
+  // Grid background lines (scrolling relative to player position)
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
+  ctx.lineWidth = 1;
+  const offsetX = -(playerPos.x * scale) % 20;
+  const offsetZ = -(playerPos.z * scale) % 20;
+  for (let i = offsetX - 20; i < 180; i += 20) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, 160);
+    ctx.stroke();
+  }
+  for (let i = offsetZ - 20; i < 180; i += 20) {
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(160, i);
+    ctx.stroke();
+  }
+
+  // Translate to center, then offset by negative player position (player-centered map!)
+  ctx.translate(cx, cy);
+  ctx.translate(-playerPos.x * scale, -playerPos.z * scale);
+
+  // 2. Draw walkable zones (rooms and corridors)
+  ctx.fillStyle = 'rgba(30, 41, 59, 0.6)';
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+  ctx.lineWidth = 1.5;
+
+  walkableZones.forEach((zone) => {
+    const x = zone.minX * scale;
+    const z = zone.minZ * scale;
+    const w = (zone.maxX - zone.minX) * scale;
+    const h = (zone.maxZ - zone.minZ) * scale;
+
+    ctx.fillRect(x, z, w, h);
+    ctx.strokeRect(x, z, w, h);
+  });
+
+  // 3. Draw student workstation desks
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
+  pairedDeskRows.forEach((z) => {
+    pairedDeskColumns.forEach((x) => {
+      // Desk is 1.45 wide (X) and 0.9 deep (Z)
+      ctx.fillRect((x - 0.725) * scale, (z - 0.45) * scale, 1.45 * scale, 0.9 * scale);
+    });
+  });
+
+  // 4. Draw teacher desk
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+  // Teacher desk is centered at X = -12.27, Z = -1.48
+  ctx.fillRect((-12.27 - 0.49) * scale, (-1.48 - 1.2) * scale, 0.98 * scale, 2.4 * scale);
+
+  // 5. Draw interactive doors
+  // Lift doors: centered at X = 0, Z = 11.8
+  ctx.strokeStyle = liftDoorOpen ? '#34d399' : '#f87171';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  if (liftDoorOpen) {
+    // Open slides
+    ctx.moveTo(-1.2 * scale, 11.8 * scale);
+    ctx.lineTo(-0.7 * scale, 11.8 * scale);
+    ctx.moveTo(0.7 * scale, 11.8 * scale);
+    ctx.lineTo(1.2 * scale, 11.8 * scale);
+  } else {
+    // Closed
+    ctx.moveTo(-1.2 * scale, 11.8 * scale);
+    ctx.lineTo(1.2 * scale, 11.8 * scale);
+  }
+  ctx.stroke();
+
+  // Lab entrance door: centered at X = -9.92, Z = 3.225
+  ctx.strokeStyle = labDoorOpen ? '#34d399' : '#f87171';
+  ctx.beginPath();
+  if (labDoorOpen) {
+    // Open swing
+    ctx.moveTo(-9.92 * scale, 3.225 * scale);
+    ctx.lineTo(-9.92 * scale, (3.225 - 0.8) * scale);
+  } else {
+    // Closed
+    ctx.moveTo(-9.92 * scale, 2.4 * scale);
+    ctx.lineTo(-9.92 * scale, 4.05 * scale);
+  }
+  ctx.stroke();
+
+  // Exit door: centered at X = -9.92, Z = -6.175
+  ctx.strokeStyle = exitDoorOpen ? '#34d399' : '#f87171';
+  ctx.beginPath();
+  if (exitDoorOpen) {
+    // Open swing
+    ctx.moveTo(-9.92 * scale, -6.175 * scale);
+    ctx.lineTo(-9.92 * scale, (-6.175 + 0.8) * scale);
+  } else {
+    // Closed
+    ctx.moveTo(-9.92 * scale, -7.0 * scale);
+    ctx.lineTo(-9.92 * scale, -5.35 * scale);
+  }
+  ctx.stroke();
+
+  ctx.restore(); // Restore clip context
+
+  // 6. Draw player representation (dot & view direction) at the exact center of the map
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-cameraRotation.yaw); // Rotate to face player's yaw direction (0 yaw points UP)
+  
+  // Draw cone of vision
+  ctx.fillStyle = 'rgba(251, 207, 36, 0.25)';
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.arc(0, 0, 22, -Math.PI / 6 - Math.PI / 2, Math.PI / 6 - Math.PI / 2);
+  ctx.closePath();
+  ctx.fill();
+
+  // Draw player center dot
+  const pulse = 1.0 + Math.sin(performance.now() * 0.007) * 0.15;
+  ctx.fillStyle = '#fbcf24';
+  ctx.shadowColor = '#fbcf24';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  ctx.arc(0, 0, 3.5 * pulse, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.restore();
+}
+
+// ===============================
 // ANIMATION LOOP
 // ===============================
 
@@ -3406,6 +3620,30 @@ function animate() {
   );
 
   lastFrameTime = now;
+
+  // Smooth day/night lighting transition
+  if (Math.abs(lightTransitionProgress - lightTransitionTarget) > 0.001) {
+    lightTransitionProgress = THREE.MathUtils.damp(
+      lightTransitionProgress,
+      lightTransitionTarget,
+      2.0,
+      delta
+    );
+    ambientLight.intensity = THREE.MathUtils.lerp(0.25, 0.8, lightTransitionProgress);
+    sunLight.intensity = THREE.MathUtils.lerp(0.15, 1.2, lightTransitionProgress);
+    liftLight.intensity = THREE.MathUtils.lerp(0.55, 1.5, lightTransitionProgress);
+    scene.background.lerpColors(
+      new THREE.Color(0x111827),
+      new THREE.Color(0xbfdfff),
+      lightTransitionProgress
+    );
+  } else {
+    lightTransitionProgress = lightTransitionTarget;
+    ambientLight.intensity = lightsOn ? 0.8 : 0.25;
+    sunLight.intensity = lightsOn ? 1.2 : 0.15;
+    liftLight.intensity = lightsOn ? 1.5 : 0.55;
+    scene.background.setHex(lightsOn ? 0xbfdfff : 0x111827);
+  }
 
   // Smooth camera rotation damping
   cameraRotation.yaw = THREE.MathUtils.damp(
@@ -3429,6 +3667,10 @@ function animate() {
   updateInfoPanelByPosition();
 
   updateHUDInteractionPrompt();
+
+  if (tourStarted) {
+    drawMinimap();
+  }
 
   const targetProgress =
     liftDoorOpen ? 1 : 0;
