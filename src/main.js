@@ -2242,10 +2242,25 @@ labDoor.userData = {
 createBox(
   'Lab Door Raised Top Panel',
   0.04,
-  0.58,
+  0.88,
   1,
   0.09,
-  0.28,
+  0.43,
+  -0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  labDoorPivot
+);
+
+createBox(
+  'Lab Door Raised Top Panel Inner',
+  0.04,
+  0.88,
+  1,
+  -0.09,
+  0.43,
   -0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
@@ -2259,7 +2274,7 @@ const doorNameplate = createTextPanel(
   0.75,
   0.40,
   0.111,
-  0.28,
+  0.43,
   -0.825,
   '#d4af37',
   '#111111',
@@ -2273,6 +2288,21 @@ createBox(
   0.62,
   1,
   0.09,
+  -0.55,
+  -0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  labDoorPivot
+);
+
+createBox(
+  'Lab Door Raised Bottom Panel Inner',
+  0.04,
+  0.62,
+  1,
+  -0.09,
   -0.55,
   -0.825,
   new THREE.MeshStandardMaterial({
@@ -2425,10 +2455,25 @@ exitDoor.userData = {
 createBox(
   'Exit Door Raised Top Panel',
   0.04,
-  0.58,
+  0.88,
   1,
   0.09,
-  0.28,
+  0.43,
+  0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  exitDoorPivot
+);
+
+createBox(
+  'Exit Door Raised Top Panel Inner',
+  0.04,
+  0.88,
+  1,
+  -0.09,
+  0.43,
   0.825,
   new THREE.MeshStandardMaterial({
     color: 0x4b2a17,
@@ -2442,7 +2487,7 @@ const exitDoorNameplate = createTextPanel(
   0.75,
   0.40,
   0.111,
-  0.28,
+  0.43,
   0.825,
   '#d4af37',
   '#111111',
@@ -2456,6 +2501,21 @@ createBox(
   0.62,
   1,
   0.09,
+  -0.55,
+  0.825,
+  new THREE.MeshStandardMaterial({
+    color: 0x4b2a17,
+    roughness: 0.36
+  }),
+  exitDoorPivot
+);
+
+createBox(
+  'Exit Door Raised Bottom Panel Inner',
+  0.04,
+  0.62,
+  1,
+  -0.09,
   -0.55,
   0.825,
   new THREE.MeshStandardMaterial({
