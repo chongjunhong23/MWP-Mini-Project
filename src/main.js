@@ -992,7 +992,7 @@ function createComputerStation(
 
   const screenId = interactiveScreens.length + 1;
   // Placeholder pushed now so id is correct; actual mesh replaced in onLoad
-  const screenPlaceholder = { userData: { isMonitorScreen: true, isOn: false, id: screenId } };
+  const screenPlaceholder = { userData: { isMonitorScreen: true, isOn: true, id: screenId } };
   const screenSlotIndex = interactiveScreens.length;
   interactiveScreens.push(screenPlaceholder);
 
@@ -1023,9 +1023,12 @@ function createComputerStation(
       if (screenMesh) {
         screenMesh.userData = {
           isMonitorScreen: true,
-          isOn: false,
+          isOn: true,
           id: screenId
         };
+        screenMesh.material = new THREE.MeshBasicMaterial({
+          map: createTerminalTexture(screenId)
+        });
         interactiveScreens[screenSlotIndex] = screenMesh;
       }
     }
@@ -2624,7 +2627,7 @@ createBox(
 );
 
 const teacherScreenSlotIndex = interactiveScreens.length;
-const teacherScreenPlaceholder = { userData: { isMonitorScreen: true, isOn: false, id: 'Teacher' } };
+const teacherScreenPlaceholder = { userData: { isMonitorScreen: true, isOn: true, id: 'Teacher' } };
 interactiveScreens.push(teacherScreenPlaceholder);
 
 loadSceneModel({
@@ -2653,9 +2656,12 @@ loadSceneModel({
     if (screenMesh) {
       screenMesh.userData = {
         isMonitorScreen: true,
-        isOn: false,
+        isOn: true,
         id: 'Teacher'
       };
+      screenMesh.material = new THREE.MeshBasicMaterial({
+        map: createTerminalTexture('Teacher')
+      });
       interactiveScreens[teacherScreenSlotIndex] = screenMesh;
     }
   }
@@ -2983,9 +2989,6 @@ canvas.addEventListener(
       toggleExitDoor();
       playClickSound();
       playDoorSound();
-    } else if (clickedObject.userData.isMonitorScreen) {
-      toggleMonitorScreen(clickedObject);
-      playClickSound();
     } else if (clickedObject.userData.isOfficeChair) {
       const chair = clickedObject.userData.chairRoot;
       chair.userData.isSwivelRight = !chair.userData.isSwivelRight;
@@ -3102,15 +3105,13 @@ function resetTourView() {
     acHumNode = null;
   }
 
-  // Reset interactive screens to OFF
+  // Reset interactive screens to ON
   interactiveScreens.forEach((screen) => {
     if (screen && screen.userData && screen.userData.isMonitorScreen) {
-      screen.userData.isOn = false;
+      screen.userData.isOn = true;
       if (screen.material) {
-        screen.material = new THREE.MeshStandardMaterial({
-          color: 0x0a0a0a,
-          roughness: 0.1,
-          metalness: 0.9
+        screen.material = new THREE.MeshBasicMaterial({
+          map: createTerminalTexture(screen.userData.id)
         });
       }
     }
@@ -3385,8 +3386,6 @@ function updateHUDInteractionPrompt() {
         promptString = labDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
       } else if (isExit) {
         promptString = exitDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
-      } else if (hitObj.userData.isMonitorScreen) {
-        promptString = hitObj.userData.isOn ? 'Click to Turn Monitor OFF' : 'Click to Turn Monitor ON';
       } else if (hitObj.userData.isOfficeChair) {
         promptString = 'Click to Swivel Chair';
       }
