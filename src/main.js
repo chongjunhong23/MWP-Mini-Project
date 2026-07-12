@@ -2939,34 +2939,24 @@ canvas.addEventListener(
         camera
       );
 
-    const intersects = raycaster.intersectObjects(scene.children, true);
+    const intersects =
+      raycaster.intersectObjects([
+        liftButton,
+        ...liftDoorMeshes,
+        labDoor,
+        ...labDoorHandleMeshes,
+        exitDoor,
+        ...exitDoorHandleMeshes,
+        ...interactiveScreens,
+        ...interactiveChairs
+      ], true);
 
     if (intersects.length === 0) {
       return;
     }
 
-    const hit = intersects[0];
-    if (hit.distance > 3.5) {
-      return;
-    }
-
-    const clickedObject = hit.object;
-
-    // Check parent chain to see if clickedObject is part of labDoor or exitDoor
-    let isLab = false;
-    let isExit = false;
-    let temp = clickedObject;
-    while (temp) {
-      if (temp === labDoorPivot || temp === labDoor || (temp.userData && temp.userData.isLabDoor)) {
-        isLab = true;
-        break;
-      }
-      if (temp === exitDoorPivot || temp === exitDoor || (temp.userData && temp.userData.isExitDoor)) {
-        isExit = true;
-        break;
-      }
-      temp = temp.parent;
-    }
+    const clickedObject =
+      intersects[0].object;
 
     if (
       clickedObject.userData.isLiftButton ||
@@ -2974,16 +2964,32 @@ canvas.addEventListener(
     ) {
       toggleLiftDoors();
       playClickSound();
-    } else if (isLab) {
+    }
+
+    if (
+      clickedObject.userData.isLabDoor
+    ) {
       toggleLabDoor();
       playDoorSound();
-    } else if (isExit) {
+    }
+
+    if (
+      clickedObject.userData.isExitDoor
+    ) {
       toggleExitDoor();
       playDoorSound();
-    } else if (clickedObject.userData.isMonitorScreen) {
+    }
+
+    if (
+      clickedObject.userData.isMonitorScreen
+    ) {
       toggleMonitorScreen(clickedObject);
       playClickSound();
-    } else if (clickedObject.userData.isOfficeChair) {
+    }
+
+    if (
+      clickedObject.userData.isOfficeChair
+    ) {
       const chair = clickedObject.userData.chairRoot;
       chair.userData.isSwivelRight = !chair.userData.isSwivelRight;
       playClickSound();
@@ -3011,7 +3017,31 @@ const closeInfoBtn =
   );
 
 function returnToLiftStart() {
-  resetTourView();
+  moveKeys.forward = false;
+  moveKeys.backward = false;
+  moveKeys.left = false;
+  moveKeys.right = false;
+
+  tourStarted = false;
+
+  resetLiftDoors();
+  resetLabDoor();
+  resetExitDoor();
+  resetCameraZoom();
+  lastZoneTitle = '';
+
+  setCameraView(
+    liftCameraPosition,
+    liftCameraTarget
+  );
+
+  if (document.pointerLockElement === canvas) {
+    document.exitPointerLock();
+  }
+
+  infoPanel.style.display = 'none';
+  welcomeScreen.style.display =
+    'flex';
 }
 
 startBtn.addEventListener(
@@ -3068,85 +3098,16 @@ closeInfoBtn.addEventListener(
 );
 
 function resetTourView() {
-  // Reset movement keys
-  moveKeys.forward = false;
-  moveKeys.backward = false;
-  moveKeys.left = false;
-  moveKeys.right = false;
-
-  // Set tourStarted to false
-  tourStarted = false;
-
-  // Restore daytime lighting if night mode is active
-  if (!lightsOn) {
-    toggleLight();
-  }
-
-  // Stop AC ambient hum
-  if (acHumNode) {
-    try {
-      acHumNode.osc1.stop();
-      acHumNode.osc2.stop();
-    } catch (e) {}
-    acHumNode = null;
-  }
-
-  // Reset interactive screens to OFF
-  interactiveScreens.forEach((screen) => {
-    if (screen && screen.userData && screen.userData.isMonitorScreen) {
-      screen.userData.isOn = false;
-      if (screen.material) {
-        screen.material = new THREE.MeshStandardMaterial({
-          color: 0x0a0a0a,
-          roughness: 0.1,
-          metalness: 0.9
-        });
-      }
-    }
-  });
-
-  // Reset interactive chairs to default rotation
-  interactiveChairs.forEach((chair) => {
-    if (chair && chair.userData) {
-      chair.userData.isSwivelRight = false;
-      chair.rotation.y = chair.userData.initialRotationY;
-    }
-  });
-
-  // Reset doors & zoom
   resetLiftDoors();
   resetLabDoor();
   resetExitDoor();
   resetCameraZoom();
   lastZoneTitle = '';
 
-  // Reset camera position and target
   setCameraView(
     liftCameraPosition,
     liftCameraTarget
   );
-
-  // Exit pointer lock if currently locked
-  if (document.pointerLockElement === canvas) {
-    document.exitPointerLock();
-  }
-
-  // Hide info panel & HUD interaction prompts, show welcome screen
-  if (infoPanel) {
-    infoPanel.style.display = 'none';
-  }
-  const prompt = document.querySelector('#action-prompt');
-  if (prompt) {
-    prompt.classList.remove('visible');
-  }
-  const ch = document.querySelector('#crosshair');
-  if (ch) {
-    ch.classList.remove('active');
-    ch.style.display = 'none';
-  }
-  if (welcomeScreen) {
-    welcomeScreen.style.display = 'flex';
-  }
 }
 
 function toggleLight() {
@@ -3340,48 +3301,38 @@ function updateHUDInteractionPrompt() {
   // Raycast from the center of the viewport (0, 0)
   raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
 
-  const intersects = raycaster.intersectObjects(scene.children, true);
+  const intersects = raycaster.intersectObjects([
+    liftButton,
+    ...liftDoorMeshes,
+    labDoor,
+    ...labDoorHandleMeshes,
+    exitDoor,
+    ...exitDoorHandleMeshes,
+    ...interactiveScreens,
+    ...interactiveChairs
+  ], true);
 
   if (intersects.length > 0) {
-    const hit = intersects[0];
-    if (hit.distance <= 3.5) {
-      const hitObj = hit.object;
-      let promptString = '';
+    const hitObj = intersects[0].object;
+    let promptString = '';
 
-      // Check parent chain to see if hitObj is part of labDoor or exitDoor
-      let isLab = false;
-      let isExit = false;
-      let temp = hitObj;
-      while (temp) {
-        if (temp === labDoorPivot || temp === labDoor || (temp.userData && temp.userData.isLabDoor)) {
-          isLab = true;
-          break;
-        }
-        if (temp === exitDoorPivot || temp === exitDoor || (temp.userData && temp.userData.isExitDoor)) {
-          isExit = true;
-          break;
-        }
-        temp = temp.parent;
-      }
+    if (hitObj.userData.isLiftButton || hitObj.userData.isLiftDoor) {
+      promptString = liftDoorOpen ? 'Click to Close Lift Door' : 'Click to Open Lift Door';
+    } else if (hitObj.userData.isLabDoor) {
+      promptString = labDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
+    } else if (hitObj.userData.isExitDoor) {
+      promptString = exitDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
+    } else if (hitObj.userData.isMonitorScreen) {
+      promptString = hitObj.userData.isOn ? 'Click to Turn Monitor OFF' : 'Click to Turn Monitor ON';
+    } else if (hitObj.userData.isOfficeChair) {
+      promptString = 'Click to Swivel Chair';
+    }
 
-      if (hitObj.userData.isLiftButton || hitObj.userData.isLiftDoor) {
-        promptString = liftDoorOpen ? 'Click to Close Lift Door' : 'Click to Open Lift Door';
-      } else if (isLab) {
-        promptString = labDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
-      } else if (isExit) {
-        promptString = exitDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
-      } else if (hitObj.userData.isMonitorScreen) {
-        promptString = hitObj.userData.isOn ? 'Click to Turn Monitor OFF' : 'Click to Turn Monitor ON';
-      } else if (hitObj.userData.isOfficeChair) {
-        promptString = 'Click to Swivel Chair';
-      }
-
-      if (promptString) {
-        if (actionText) actionText.textContent = promptString;
-        if (actionPrompt) actionPrompt.classList.add('visible');
-        if (crosshair) crosshair.classList.add('active');
-        return;
-      }
+    if (promptString) {
+      if (actionText) actionText.textContent = promptString;
+      if (actionPrompt) actionPrompt.classList.add('visible');
+      if (crosshair) crosshair.classList.add('active');
+      return;
     }
   }
 
