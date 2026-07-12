@@ -69,6 +69,8 @@ liftLight.position.set(0, 2.65, 14.2);
 scene.add(liftLight);
 
 let lightsOn = true;
+let lightTransitionProgress = 1.0;
+let lightTransitionTarget = 1.0;
 
 // ===============================
 // MATERIALS
@@ -3151,10 +3153,14 @@ function resetTourView() {
   // Set tourStarted to false
   tourStarted = false;
 
-  // Restore daytime lighting if night mode is active
-  if (!lightsOn) {
-    toggleLight();
-  }
+  // Restore daytime lighting instantly if night mode was active
+  lightsOn = true;
+  lightTransitionTarget = 1.0;
+  lightTransitionProgress = 1.0;
+  ambientLight.intensity = 0.8;
+  sunLight.intensity = 1.2;
+  liftLight.intensity = 1.5;
+  scene.background = new THREE.Color(0xbfdfff);
 
   // Stop AC ambient hum
   if (acHumNode) {
@@ -3227,26 +3233,7 @@ function resetTourView() {
 
 function toggleLight() {
   lightsOn = !lightsOn;
-
-  if (lightsOn) {
-    ambientLight.intensity = 0.8;
-    sunLight.intensity = 1.2;
-    liftLight.intensity = 1.5;
-
-    scene.background =
-      new THREE.Color(
-        0xbfdfff
-      );
-  } else {
-    ambientLight.intensity = 0.25;
-    sunLight.intensity = 0.15;
-    liftLight.intensity = 0.55;
-
-    scene.background =
-      new THREE.Color(
-        0x111827
-      );
-  }
+  lightTransitionTarget = lightsOn ? 1.0 : 0.0;
 }
 
 window.addEventListener(
@@ -3633,6 +3620,30 @@ function animate() {
   );
 
   lastFrameTime = now;
+
+  // Smooth day/night lighting transition
+  if (Math.abs(lightTransitionProgress - lightTransitionTarget) > 0.001) {
+    lightTransitionProgress = THREE.MathUtils.damp(
+      lightTransitionProgress,
+      lightTransitionTarget,
+      2.0,
+      delta
+    );
+    ambientLight.intensity = THREE.MathUtils.lerp(0.25, 0.8, lightTransitionProgress);
+    sunLight.intensity = THREE.MathUtils.lerp(0.15, 1.2, lightTransitionProgress);
+    liftLight.intensity = THREE.MathUtils.lerp(0.55, 1.5, lightTransitionProgress);
+    scene.background.lerpColors(
+      new THREE.Color(0x111827),
+      new THREE.Color(0xbfdfff),
+      lightTransitionProgress
+    );
+  } else {
+    lightTransitionProgress = lightTransitionTarget;
+    ambientLight.intensity = lightsOn ? 0.8 : 0.25;
+    sunLight.intensity = lightsOn ? 1.2 : 0.15;
+    liftLight.intensity = lightsOn ? 1.5 : 0.55;
+    scene.background.setHex(lightsOn ? 0xbfdfff : 0x111827);
+  }
 
   // Smooth camera rotation damping
   cameraRotation.yaw = THREE.MathUtils.damp(
