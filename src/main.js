@@ -1522,46 +1522,27 @@ liftButton.userData = {
     'The lift door opens to begin the FC-N28 Level 5 tour route.'
 };
 
-const directionArrowGroup = new THREE.Group();
+const floorMapCanvas = document.createElement('canvas');
+floorMapCanvas.width = 512;
+floorMapCanvas.height = 512;
+const floorMapCtx = floorMapCanvas.getContext('2d');
+const floorMapTexture = new THREE.CanvasTexture(floorMapCanvas);
 
-directionArrowGroup.name =
-  'Corridor Direction Arrow';
+const floorMapMaterial = new THREE.MeshBasicMaterial({
+  map: floorMapTexture,
+  transparent: true,
+  opacity: 0,
+  depthWrite: false
+});
 
-scene.add(directionArrowGroup);
-
-const arrowMaterial =
-  new THREE.MeshBasicMaterial({
-    color: 0xffd000,
-    transparent: true,
-    opacity: 0,
-    side: THREE.DoubleSide
-  });
-
-// Create 2D arrow shape pointing left (negative X direction)
-const arrowShape = new THREE.Shape();
-arrowShape.moveTo(-0.8, 0);
-arrowShape.lineTo(0, 0.45);
-arrowShape.lineTo(0, 0.14);
-arrowShape.lineTo(1.23, 0.14);
-arrowShape.lineTo(1.23, -0.14);
-arrowShape.lineTo(0, -0.14);
-arrowShape.lineTo(0, -0.45);
-arrowShape.closePath();
-
-const arrowGeometry = new THREE.ShapeGeometry(arrowShape);
-const arrowStem = new THREE.Mesh(arrowGeometry, arrowMaterial);
-arrowStem.name = 'Arrow Stem';
-arrowStem.position.set(-1.88, 0.015, 10.9);
-arrowStem.rotation.x = -Math.PI / 2;
-directionArrowGroup.add(arrowStem);
-
-// Dummy mesh for compatibility with update loop opacity setting
-const arrowHead = new THREE.Mesh(
-  new THREE.BufferGeometry(),
-  arrowMaterial
+const floorMapPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(2.4, 2.4),
+  floorMapMaterial
 );
-arrowHead.name = 'Arrow Head Dummy';
-directionArrowGroup.add(arrowHead);
+floorMapPlane.name = 'Floor Plan Map';
+floorMapPlane.position.set(-0.5, 0.015, 10.9);
+floorMapPlane.rotation.x = -Math.PI / 2;
+scene.add(floorMapPlane);
 
 let liftDoorOpen = false;
 let liftDoorProgress = 0;
@@ -1578,7 +1559,7 @@ function resetLiftDoors() {
     liftDoorProgress
   );
 
-  arrowMaterial.opacity = 0;
+  floorMapMaterial.opacity = 0;
 }
 
 // ===============================
@@ -3692,6 +3673,238 @@ function drawMinimap() {
   ctx.restore();
 }
 
+function drawFloorMap() {
+  const canvas = floorMapCanvas;
+  const ctx = floorMapCtx;
+  const playerPos = camera.position;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background
+  ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+  // Rounded rectangle for background
+  const r = 24;
+  const x = 10;
+  const y = 10;
+  const w = canvas.width - 20;
+  const h = canvas.height - 20;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Double tech borders
+  ctx.strokeStyle = '#fbcf24';
+  ctx.lineWidth = 3.5;
+  ctx.stroke();
+
+  // Draw thin inner cyan border
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+  ctx.lineWidth = 1.5;
+  const margin = 20;
+  ctx.strokeRect(margin, margin, canvas.width - margin * 2, canvas.height - margin * 2);
+
+  // Tech corner ticks to look high-tech / CAD / blueprint
+  ctx.strokeStyle = '#fbcf24';
+  ctx.lineWidth = 2.5;
+  const tick = 15;
+  // Top-left
+  ctx.beginPath();
+  ctx.moveTo(margin, margin + tick);
+  ctx.lineTo(margin, margin);
+  ctx.lineTo(margin + tick, margin);
+  ctx.stroke();
+  // Top-right
+  ctx.beginPath();
+  ctx.moveTo(canvas.width - margin, margin + tick);
+  ctx.lineTo(canvas.width - margin, margin);
+  ctx.lineTo(canvas.width - margin - tick, margin);
+  ctx.stroke();
+  // Bottom-left
+  ctx.beginPath();
+  ctx.moveTo(margin, canvas.height - margin - tick);
+  ctx.lineTo(margin, canvas.height - margin);
+  ctx.lineTo(margin + tick, canvas.height - margin);
+  ctx.stroke();
+  // Bottom-right
+  ctx.beginPath();
+  ctx.moveTo(canvas.width - margin, canvas.height - margin - tick);
+  ctx.lineTo(canvas.width - margin, canvas.height - margin);
+  ctx.lineTo(canvas.width - margin - tick, canvas.height - margin);
+  ctx.stroke();
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.05)';
+  ctx.lineWidth = 1;
+  for (let gridX = 35; gridX < canvas.width - 35; gridX += 20) {
+    ctx.beginPath();
+    ctx.moveTo(gridX, 35);
+    ctx.lineTo(gridX, canvas.height - 35);
+    ctx.stroke();
+  }
+  for (let gridY = 35; gridY < canvas.height - 35; gridY += 20) {
+    ctx.beginPath();
+    ctx.moveTo(35, gridY);
+    ctx.lineTo(canvas.width - 35, gridY);
+    ctx.stroke();
+  }
+
+  // Coordinate mapping parameters
+  const centerX = -11.425;
+  const centerZ = 3.3;
+  const scale = 17;
+
+  function toCanvas(worldX, worldZ) {
+    return {
+      u: 256 + (worldX - centerX) * scale,
+      v: 256 + (worldZ - centerZ) * scale
+    };
+  }
+
+  // Draw Walkable Zones (Rooms / Corridors)
+  ctx.fillStyle = 'rgba(30, 41, 59, 0.65)';
+  ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+  ctx.lineWidth = 2.0;
+
+  walkableZones.forEach((zone) => {
+    const pMin = toCanvas(zone.minX, zone.minZ);
+    const pMax = toCanvas(zone.maxX, zone.maxZ);
+    const w = pMax.u - pMin.u;
+    const h = pMax.v - pMin.v;
+
+    ctx.fillRect(pMin.u, pMin.v, w, h);
+    ctx.strokeRect(pMin.u, pMin.v, w, h);
+  });
+
+  // Draw desks in the computer lab
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.4)';
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.6)';
+  ctx.lineWidth = 1.0;
+  pairedDeskRows.forEach((worldZ) => {
+    pairedDeskColumns.forEach((worldX) => {
+      const p = toCanvas(worldX - 0.725, worldZ - 0.45);
+      const w = 1.45 * scale;
+      const h = 0.9 * scale;
+      ctx.fillRect(p.u, p.v, w, h);
+      ctx.strokeRect(p.u, p.v, w, h);
+    });
+  });
+
+  // Draw teacher's desk
+  ctx.fillStyle = 'rgba(148, 163, 184, 0.55)';
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.7)';
+  const tDesk = toCanvas(-12.27 - 0.49, -1.48 - 1.2);
+  ctx.fillRect(tDesk.u, tDesk.v, 0.98 * scale, 2.4 * scale);
+  ctx.strokeRect(tDesk.u, tDesk.v, 0.98 * scale, 2.4 * scale);
+
+  // Draw Doors
+  // 1. Lift doors (at Z = 11.8)
+  ctx.lineWidth = 3.5;
+  ctx.strokeStyle = liftDoorOpen ? '#34d399' : '#f87171';
+  const pLiftLeft = toCanvas(-1.2, 11.8);
+  const pLiftRight = toCanvas(1.2, 11.8);
+  ctx.beginPath();
+  if (liftDoorOpen) {
+    const pLiftMidLeft = toCanvas(-0.7, 11.8);
+    const pLiftMidRight = toCanvas(0.7, 11.8);
+    ctx.moveTo(pLiftLeft.u, pLiftLeft.v);
+    ctx.lineTo(pLiftMidLeft.u, pLiftMidLeft.v);
+    ctx.moveTo(pLiftMidRight.u, pLiftMidRight.v);
+    ctx.lineTo(pLiftRight.u, pLiftRight.v);
+  } else {
+    ctx.moveTo(pLiftLeft.u, pLiftLeft.v);
+    ctx.lineTo(pLiftRight.u, pLiftRight.v);
+  }
+  ctx.stroke();
+
+  // 2. Lab door (centered at X = -9.92, Z = 3.225)
+  ctx.strokeStyle = labDoorOpen ? '#34d399' : '#f87171';
+  const pLab1 = toCanvas(-9.92, 2.4);
+  const pLab2 = toCanvas(-9.92, 4.05);
+  ctx.beginPath();
+  if (labDoorOpen) {
+    const pPivot = toCanvas(-9.92, 3.225);
+    ctx.moveTo(pPivot.u, pPivot.v);
+    ctx.lineTo(pPivot.u, pPivot.v - 0.8 * scale);
+  } else {
+    ctx.moveTo(pLab1.u, pLab1.v);
+    ctx.lineTo(pLab2.u, pLab2.v);
+  }
+  ctx.stroke();
+
+  // 3. Exit door (centered at X = -9.92, Z = -6.175)
+  ctx.strokeStyle = exitDoorOpen ? '#34d399' : '#f87171';
+  const pExit1 = toCanvas(-9.92, -7.0);
+  const pExit2 = toCanvas(-9.92, -5.35);
+  ctx.beginPath();
+  if (exitDoorOpen) {
+    const pPivot = toCanvas(-9.92, -6.175);
+    ctx.moveTo(pPivot.u, pPivot.v);
+    ctx.lineTo(pPivot.u, pPivot.v + 0.8 * scale);
+  } else {
+    ctx.moveTo(pExit1.u, pExit1.v);
+    ctx.lineTo(pExit2.u, pExit2.v);
+  }
+  ctx.stroke();
+
+  // Draw Labels
+  ctx.fillStyle = '#f1f5f9';
+  ctx.font = "bold 13px 'Segoe UI', Inter, Arial, sans-serif";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  const lblLift = toCanvas(0, 14.1);
+  ctx.fillText('LIFT', lblLift.u, lblLift.v);
+
+  const lblCorr = toCanvas(-4.0, 10.7);
+  ctx.fillText('CORRIDOR', lblCorr.u, lblCorr.v);
+
+  const lblBalc = toCanvas(-8.5, 4.0);
+  ctx.fillStyle = '#fbcf24';
+  ctx.fillText('BALCONY VIEW', lblBalc.u, lblBalc.v);
+
+  const lblLab = toCanvas(-17.3, 0.9);
+  ctx.fillStyle = '#38bdf8';
+  ctx.fillText('COMPUTER LAB', lblLab.u, lblLab.v);
+
+  // Draw Player Marker
+  const pPlayer = toCanvas(playerPos.x, playerPos.z);
+
+  // Vision cone
+  ctx.save();
+  ctx.translate(pPlayer.u, pPlayer.v);
+  ctx.rotate(-cameraRotation.yaw);
+  ctx.fillStyle = 'rgba(251, 207, 36, 0.22)';
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.arc(0, 0, 32, -Math.PI / 6 - Math.PI / 2, Math.PI / 6 - Math.PI / 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // Pulsing center dot
+  const pulse = 1.0 + Math.sin(performance.now() * 0.007) * 0.15;
+  ctx.fillStyle = '#fbcf24';
+  ctx.shadowColor = '#fbcf24';
+  ctx.shadowBlur = 8;
+  ctx.beginPath();
+  ctx.arc(pPlayer.u, pPlayer.v, 5.0 * pulse, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Mark texture for update
+  floorMapTexture.needsUpdate = true;
+}
+
 // ===============================
 // ANIMATION LOOP
 // ===============================
@@ -3776,6 +3989,9 @@ function animate() {
 
   if (tourStarted) {
     drawMinimap();
+    if (floorMapMaterial.opacity > 0) {
+      drawFloorMap();
+    }
   }
 
   const targetProgress =
@@ -3795,18 +4011,12 @@ function animate() {
     liftDoorProgress
   );
 
-  arrowMaterial.opacity =
+  floorMapMaterial.opacity =
     THREE.MathUtils.lerp(
       0,
       0.9,
       liftDoorProgress
     );
-
-  arrowStem.material.opacity =
-    arrowMaterial.opacity;
-
-  arrowHead.material.opacity =
-    arrowMaterial.opacity;
 
   const labDoorMaxRotation = Math.PI / 2.15;
   const labDoorDamp = labDoorOpen ? 3.0 : 2.0;

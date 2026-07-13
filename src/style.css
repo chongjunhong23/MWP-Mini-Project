@@ -11,6 +11,13 @@ body {
   overflow: hidden;
   font-family: Arial, sans-serif;
   background: black;
+  cursor: url('/custom-cursor.png') 16 0, auto;
+}
+
+button,
+a,
+[role="button"] {
+  cursor: url('/custom-cursor.png') 16 0, pointer;
 }
 
 #three-canvas {
@@ -174,23 +181,19 @@ body {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.85);
-  border: 2px solid rgba(0, 0, 0, 0.7);
-  border-radius: 50%;
+  transform: translate(-50%, 0);
+  width: 32px;
+  height: 32px;
+  background: url('/custom-cursor.png') no-repeat center/contain;
   pointer-events: none;
   z-index: 100;
   display: none;
-  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 #crosshair.active {
-  background: #ffd000;
-  border-color: #ffffff;
-  transform: translate(-50%, -50%) scale(1.6);
-  box-shadow: 0 0 12px rgba(255, 208, 0, 0.8);
+  transform: translate(-50%, 0) scale(1.25);
+  filter: drop-shadow(0 0 6px #ffd000);
 }
 
 #action-prompt {
