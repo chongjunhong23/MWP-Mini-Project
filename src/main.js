@@ -1442,34 +1442,34 @@ const arrowMaterial =
   new THREE.MeshBasicMaterial({
     color: 0xffd000,
     transparent: true,
-    opacity: 0
+    opacity: 0,
+    side: THREE.DoubleSide
   });
 
-const arrowStem = createBox(
-  'Arrow Stem',
-  1.4,
-  0.05,
-  0.28,
-  -1.35,
-  0.08,
-  10.9,
-  arrowMaterial,
-  directionArrowGroup
-);
+// Create 2D arrow shape pointing left (negative X direction)
+const arrowShape = new THREE.Shape();
+arrowShape.moveTo(-0.8, 0);
+arrowShape.lineTo(0, 0.45);
+arrowShape.lineTo(0, 0.14);
+arrowShape.lineTo(1.23, 0.14);
+arrowShape.lineTo(1.23, -0.14);
+arrowShape.lineTo(0, -0.14);
+arrowShape.lineTo(0, -0.45);
+arrowShape.closePath();
 
+const arrowGeometry = new THREE.ShapeGeometry(arrowShape);
+const arrowStem = new THREE.Mesh(arrowGeometry, arrowMaterial);
+arrowStem.name = 'Arrow Stem';
+arrowStem.position.set(-1.88, 0.015, 10.9);
+arrowStem.rotation.x = -Math.PI / 2;
+directionArrowGroup.add(arrowStem);
+
+// Dummy mesh for compatibility with update loop opacity setting
 const arrowHead = new THREE.Mesh(
-  new THREE.ConeGeometry(
-    0.45,
-    0.8,
-    4
-  ),
+  new THREE.BufferGeometry(),
   arrowMaterial
 );
-
-arrowHead.name = 'Arrow Head';
-arrowHead.position.set(-2.28, 0.08, 10.9);
-arrowHead.rotation.z = Math.PI / 2;
-
+arrowHead.name = 'Arrow Head Dummy';
 directionArrowGroup.add(arrowHead);
 
 let liftDoorOpen = false;
@@ -2910,19 +2910,8 @@ function updateInfoPanelByPosition() {
     zoneText = 'This is the opening scene of the FC-N28 Level 5 tour. The user begins inside the lift, then opens the door to enter the corridor walkway.';
   } else if (pos.x < -10.3) {
     // Inside the computer lab
-    if (pos.z <= -4.5) {
-      zoneTitle = 'Computer Lab Exit Door';
-      zoneText = 'This right-side lab door marks the end of the FC-N28 Level 5 computer lab route without teleporting the user back to the lift.';
-    } else {
-      zoneTitle = 'Computer Lab Interior';
-      zoneText = 'The expanded computer lab interior contains paired computer desks, clear walking aisles between desk groups, realistic monitor models, chairs, ceiling lights, storage, and learning facilities for students.';
-    }
-  } else if (pos.x < -9.0 && pos.z >= 2.0 && pos.z <= 4.0) {
-    zoneTitle = 'Computer Lab Entrance';
-    zoneText = 'This entrance leads into the computer lab. The lab is used for practical classes, programming sessions, and multimedia-related learning activities.';
-  } else if (pos.x <= -6.0 || pos.z < 10.0) {
-    zoneTitle = 'Open Balcony View';
-    zoneText = 'The open balcony provides a view of the surrounding Faculty of Computing area. It also gives natural lighting and open-air visibility to the Level 5 corridor.';
+    zoneTitle = 'Computer Lab';
+    zoneText = 'The computer lab contains paired computer desks, chairs, monitor with keyboard and mouse on each desk, and a projector screen at the front.';
   } else {
     zoneTitle = 'Level 5 Open Corridor Walkway';
     zoneText = 'From the lift landing, users turn left into this corridor before turning right toward the computer lab entrance.';
