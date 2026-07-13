@@ -54,7 +54,7 @@ const walkSpeed = 2.2;
 let tourStarted = false;
 
 // ===============================
-// LIGHTING
+// LIGHTING, SUN & MOON
 // ===============================
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
@@ -63,6 +63,32 @@ scene.add(ambientLight);
 const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
 sunLight.position.set(5, 10, 5);
 scene.add(sunLight);
+
+// Sun Mesh (Sprite with glowing radial gradient texture)
+const sunTexture = createSunTexture();
+const sunMaterial = new THREE.SpriteMaterial({
+  map: sunTexture,
+  transparent: true,
+  opacity: 1.0
+});
+const sunMesh = new THREE.Sprite(sunMaterial);
+sunMesh.name = 'Celestial Sun';
+sunMesh.scale.set(45, 45, 1);
+sunMesh.position.set(120, 80, -80);
+scene.add(sunMesh);
+
+// Moon Mesh (Sprite with crescent shape and soft background glow)
+const moonTexture = createMoonTexture();
+const moonMaterial = new THREE.SpriteMaterial({
+  map: moonTexture,
+  transparent: true,
+  opacity: 0.0
+});
+const moonMesh = new THREE.Sprite(moonMaterial);
+moonMesh.name = 'Celestial Moon';
+moonMesh.scale.set(35, 35, 1);
+moonMesh.position.set(120, -180, -80);
+scene.add(moonMesh);
 
 const liftLight = new THREE.PointLight(0xfff4d0, 1.5, 8);
 liftLight.position.set(0, 2.65, 14.2);
@@ -198,6 +224,71 @@ let lastZoneTitle = '';
 // ===============================
 // HELPER FUNCTIONS
 // ===============================
+
+function createSunTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  grad.addColorStop(0.0, 'rgba(255, 255, 255, 1.0)');
+  grad.addColorStop(0.15, 'rgba(255, 253, 220, 1.0)');
+  grad.addColorStop(0.3, 'rgba(255, 249, 196, 0.8)');
+  grad.addColorStop(0.5, 'rgba(255, 245, 157, 0.4)');
+  grad.addColorStop(0.75, 'rgba(255, 236, 179, 0.15)');
+  grad.addColorStop(1.0, 'rgba(255, 236, 179, 0.0)');
+
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 256, 256);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+function createMoonTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+
+  // 1. Draw soft radial glow in the background
+  const glowGrad = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  glowGrad.addColorStop(0.0, 'rgba(224, 247, 250, 0.55)');
+  glowGrad.addColorStop(0.4, 'rgba(128, 222, 234, 0.25)');
+  glowGrad.addColorStop(0.8, 'rgba(0, 188, 212, 0.05)');
+  glowGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0.0)');
+  
+  ctx.fillStyle = glowGrad;
+  ctx.fillRect(0, 0, 256, 256);
+
+  // 2. Draw crescent moon shape using temp masking canvas
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = 256;
+  tempCanvas.height = 256;
+  const tempCtx = tempCanvas.getContext('2d');
+
+  tempCtx.fillStyle = '#e0f7fa';
+  tempCtx.shadowColor = '#e0f7fa';
+  tempCtx.shadowBlur = 12;
+  tempCtx.beginPath();
+  tempCtx.arc(128, 128, 48, 0, Math.PI * 2);
+  tempCtx.fill();
+
+  tempCtx.shadowBlur = 0;
+  tempCtx.globalCompositeOperation = 'destination-out';
+  tempCtx.beginPath();
+  tempCtx.arc(102, 128, 48, 0, Math.PI * 2);
+  tempCtx.fill();
+
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.drawImage(tempCanvas, 0, 0);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
 
 function createBox(
   name,
@@ -1442,34 +1533,34 @@ const arrowMaterial =
   new THREE.MeshBasicMaterial({
     color: 0xffd000,
     transparent: true,
-    opacity: 0
+    opacity: 0,
+    side: THREE.DoubleSide
   });
 
-const arrowStem = createBox(
-  'Arrow Stem',
-  1.4,
-  0.05,
-  0.28,
-  -1.35,
-  0.08,
-  10.9,
-  arrowMaterial,
-  directionArrowGroup
-);
+// Create 2D arrow shape pointing left (negative X direction)
+const arrowShape = new THREE.Shape();
+arrowShape.moveTo(-0.8, 0);
+arrowShape.lineTo(0, 0.45);
+arrowShape.lineTo(0, 0.14);
+arrowShape.lineTo(1.23, 0.14);
+arrowShape.lineTo(1.23, -0.14);
+arrowShape.lineTo(0, -0.14);
+arrowShape.lineTo(0, -0.45);
+arrowShape.closePath();
 
+const arrowGeometry = new THREE.ShapeGeometry(arrowShape);
+const arrowStem = new THREE.Mesh(arrowGeometry, arrowMaterial);
+arrowStem.name = 'Arrow Stem';
+arrowStem.position.set(-1.88, 0.015, 10.9);
+arrowStem.rotation.x = -Math.PI / 2;
+directionArrowGroup.add(arrowStem);
+
+// Dummy mesh for compatibility with update loop opacity setting
 const arrowHead = new THREE.Mesh(
-  new THREE.ConeGeometry(
-    0.45,
-    0.8,
-    4
-  ),
+  new THREE.BufferGeometry(),
   arrowMaterial
 );
-
-arrowHead.name = 'Arrow Head';
-arrowHead.position.set(-2.28, 0.08, 10.9);
-arrowHead.rotation.z = Math.PI / 2;
-
+arrowHead.name = 'Arrow Head Dummy';
 directionArrowGroup.add(arrowHead);
 
 let liftDoorOpen = false;
@@ -2910,19 +3001,8 @@ function updateInfoPanelByPosition() {
     zoneText = 'This is the opening scene of the FC-N28 Level 5 tour. The user begins inside the lift, then opens the door to enter the corridor walkway.';
   } else if (pos.x < -10.3) {
     // Inside the computer lab
-    if (pos.z <= -4.5) {
-      zoneTitle = 'Computer Lab Exit Door';
-      zoneText = 'This right-side lab door marks the end of the FC-N28 Level 5 computer lab route without teleporting the user back to the lift.';
-    } else {
-      zoneTitle = 'Computer Lab Interior';
-      zoneText = 'The expanded computer lab interior contains paired computer desks, clear walking aisles between desk groups, realistic monitor models, chairs, ceiling lights, storage, and learning facilities for students.';
-    }
-  } else if (pos.x < -9.0 && pos.z >= 2.0 && pos.z <= 4.0) {
-    zoneTitle = 'Computer Lab Entrance';
-    zoneText = 'This entrance leads into the computer lab. The lab is used for practical classes, programming sessions, and multimedia-related learning activities.';
-  } else if (pos.x <= -6.0 || pos.z < 10.0) {
-    zoneTitle = 'Open Balcony View';
-    zoneText = 'The open balcony provides a view of the surrounding Faculty of Computing area. It also gives natural lighting and open-air visibility to the Level 5 corridor.';
+    zoneTitle = 'Computer Lab';
+    zoneText = 'The computer lab contains paired computer desks, chairs, monitor with keyboard and mouse on each desk, and a projector screen at the front.';
   } else {
     zoneTitle = 'Level 5 Open Corridor Walkway';
     zoneText = 'From the lift landing, users turn left into this corridor before turning right toward the computer lab entrance.';
@@ -3161,6 +3241,14 @@ function resetTourView() {
   sunLight.intensity = 1.2;
   liftLight.intensity = 1.5;
   scene.background = new THREE.Color(0xbfdfff);
+
+  // Reset Sun and Moon meshes
+  sunMesh.position.y = 80;
+  moonMesh.position.y = -180;
+  sunMaterial.opacity = 1.0;
+  sunMesh.visible = true;
+  moonMaterial.opacity = 0.0;
+  moonMesh.visible = false;
 
   // Stop AC ambient hum
   if (acHumNode) {
@@ -3644,6 +3732,24 @@ function animate() {
     liftLight.intensity = lightsOn ? 1.5 : 0.55;
     scene.background.setHex(lightsOn ? 0xbfdfff : 0x111827);
   }
+
+  // Update celestial sun and moon transitions (height positions and opacities)
+  let t_sun, t_moon;
+  if (lightsOn) {
+    t_sun = lightTransitionProgress;
+    t_moon = Math.pow(1.0 - lightTransitionProgress, 3.0);
+  } else {
+    t_sun = Math.pow(lightTransitionProgress, 3.0);
+    t_moon = 1.0 - lightTransitionProgress;
+  }
+
+  sunMesh.position.y = THREE.MathUtils.lerp(-180, 80, t_sun);
+  moonMesh.position.y = THREE.MathUtils.lerp(-180, 80, t_moon);
+
+  sunMaterial.opacity = lightTransitionProgress;
+  moonMaterial.opacity = 1.0 - lightTransitionProgress;
+  sunMesh.visible = sunMaterial.opacity > 0.001;
+  moonMesh.visible = moonMaterial.opacity > 0.001;
 
   // Smooth camera rotation damping
   cameraRotation.yaw = THREE.MathUtils.damp(
