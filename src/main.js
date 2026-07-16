@@ -3553,6 +3553,85 @@ function updateHUDInteractionPrompt() {
         if (crosshair) crosshair.classList.add('active');
         return;
       }
+
+      // If not interactive, check if it is a named static prop to display its label
+      let objectType = '';
+      temp = hitObj;
+      while (temp) {
+        if (temp.userData) {
+          if (temp.userData.isMonitorScreen) {
+            objectType = 'Computer Monitor';
+            break;
+          }
+        }
+        if (temp.name) {
+          const nameLower = temp.name.toLowerCase();
+          if (nameLower.includes('keyboard')) {
+            objectType = 'Keyboard';
+            break;
+          }
+          if (nameLower.includes('mouse')) {
+            objectType = 'Mouse';
+            break;
+          }
+          if (nameLower.includes('projector screen')) {
+            objectType = 'Projector Screen';
+            break;
+          }
+          if (nameLower.includes('projector')) {
+            objectType = 'Projector';
+            break;
+          }
+          if (nameLower.includes('monitor') || nameLower.includes('screen')) {
+            objectType = 'Computer Monitor';
+            break;
+          }
+          if (nameLower.includes('bench')) {
+            objectType = 'Corridor Bench';
+            break;
+          }
+          if (nameLower.includes('extinguisher')) {
+            objectType = 'Fire Extinguisher';
+            break;
+          }
+          if (nameLower.includes('shoe rack') || nameLower.includes('shoe_rack')) {
+            objectType = 'Shoe Rack';
+            break;
+          }
+          if (nameLower.includes('notice board') || nameLower.includes('noticeboard') || nameLower.includes('notice paper')) {
+            objectType = 'Notice Board';
+            break;
+          }
+          if (nameLower.includes('air conditioner') || nameLower.includes('aircond') || nameLower.includes('ac unit') || nameLower.includes('ac_unit')) {
+            objectType = 'Air Conditioner';
+            break;
+          }
+          if (nameLower.includes('teacher desk') || nameLower.includes('teacher\'s desk')) {
+            objectType = 'Teacher\'s Desk';
+            break;
+          }
+          if (nameLower.includes('cpu tower') || nameLower.includes('cpu')) {
+            objectType = 'CPU Tower';
+            break;
+          }
+          if (nameLower.includes('desk') || nameLower.includes('table')) {
+            objectType = 'Workstation Desk';
+            break;
+          }
+          if (nameLower.includes('cabinet')) {
+            objectType = 'Storage Cabinet';
+            break;
+          }
+        }
+        temp = temp.parent;
+      }
+
+      if (objectType) {
+        if (actionText) actionText.textContent = objectType;
+        if (actionPrompt) actionPrompt.classList.add('visible');
+        if (crosshair) crosshair.classList.remove('active');
+        return;
+      }
     }
   }
 
