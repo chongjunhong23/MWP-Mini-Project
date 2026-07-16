@@ -1,4 +1,3 @@
-# MWP Mini Project
 # FC-N28 Level 5 3D Campus Tour
 
 ## Project Description
