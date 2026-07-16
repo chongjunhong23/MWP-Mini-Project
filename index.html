@@ -23,6 +23,20 @@
       <button id="start-btn">Start Tour</button>
     </div>
 
+    <!-- Map Modal -->
+    <div id="map-modal">
+      <div class="map-modal-content">
+        <button id="close-map-btn">&times;</button>
+        <h2>FC-N28 Level 5 Floor Plan</h2>
+        <div class="canvas-wrapper">
+          <canvas id="modal-map-canvas" width="512" height="512"></canvas>
+        </div>
+        <div class="map-modal-info">
+          <p>This layout shows the Elevator Lobby, Corridor, and Computer Programming Lab.</p>
+        </div>
+      </div>
+    </div>
+
     <div id="ui-panel">
       <h2>Navigation Guide</h2>
       <p><b>Left Click:</b> Lock mouse & look around</p>
@@ -33,15 +47,16 @@
       <p><b>A key:</b> Move left</p>
       <p><b>D key:</b> Move right</p>
       <p><b>Scroll wheel:</b> Zoom in / out</p>
-      <p><b>Click markers/doors:</b> Trigger actions/info</p>
+      <p><b>Click doors/objects:</b> Interact with doors, chairs, and buttons</p>
       <p><b>R key:</b> Reset tour & camera view</p>
       <p><b>L key:</b> Toggle day/night light</p>
+      <p><b>M key:</b> Toggle map overlay</p>
     </div>
 
     <div id="info-panel">
       <button id="close-info-btn">X</button>
       <h2 id="info-title">Information</h2>
-      <p id="info-text">Click a yellow hotspot to view details.</p>
+      <p id="info-text">Walk around to view information about your location.</p>
     </div>
 
     <div id="minimap-container">

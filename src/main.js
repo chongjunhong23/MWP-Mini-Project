@@ -1526,29 +1526,12 @@ const floorMapCanvas = document.createElement('canvas');
 floorMapCanvas.width = 512;
 floorMapCanvas.height = 512;
 const floorMapCtx = floorMapCanvas.getContext('2d');
-const floorMapTexture = new THREE.CanvasTexture(floorMapCanvas);
-
-const floorMapMaterial = new THREE.MeshBasicMaterial({
-  map: floorMapTexture,
-  transparent: true,
-  opacity: 0,
-  depthWrite: false
-});
-
-const floorMapPlane = new THREE.Mesh(
-  new THREE.PlaneGeometry(2.4, 2.4),
-  floorMapMaterial
-);
-floorMapPlane.name = 'Floor Plan Map';
-floorMapPlane.position.set(-0.5, 0.015, 10.9);
-floorMapPlane.rotation.x = -Math.PI / 2;
-scene.add(floorMapPlane);
 
 let liftDoorOpen = false;
 let liftDoorProgress = 0;
 
 function toggleLiftDoors() {
-  liftDoorOpen = !liftDoorOpen;
+  liftDoorOpen = true;
 }
 
 function resetLiftDoors() {
@@ -1558,8 +1541,6 @@ function resetLiftDoors() {
   applyLiftModelDoorProgress(
     liftDoorProgress
   );
-
-  floorMapMaterial.opacity = 0;
 }
 
 // ===============================
@@ -1766,10 +1747,10 @@ createBox(
 
 createBox(
   'Lift Control Full Wall',
-  1.4,
+  0.9,
   3.0,
   0.2,
-  -1.5,
+  -1.75,
   1.5,
   12.15,
   wallMaterial
@@ -2978,15 +2959,14 @@ function updateInfoPanelByPosition() {
   let zoneText = '';
 
   if (pos.z >= 11.8) {
-    zoneTitle = 'Starting Point Inside Lift';
-    zoneText = 'This is the opening scene of the FC-N28 Level 5 tour. The user begins inside the lift, then opens the door to enter the corridor walkway.';
+    zoneTitle = 'Elevator Cabin';
+    zoneText = 'The starting point inside the elevator. Open the doors to step out into the lobby and begin your tour.';
+  } else if (pos.x >= -10.3) {
+    zoneTitle = 'Corridor Walkway';
+    zoneText = 'The open corridor walkway connects the elevator lobby, balcony view, and the computer programming lab.';
   } else if (pos.x < -10.3) {
-    // Inside the computer lab
-    zoneTitle = 'Computer Lab';
-    zoneText = 'The computer lab contains paired computer desks, chairs, monitor with keyboard and mouse on each desk, and a projector screen at the front.';
-  } else {
-    zoneTitle = 'Level 5 Open Corridor Walkway';
-    zoneText = 'From the lift landing, users turn left into this corridor before turning right toward the computer lab entrance.';
+    zoneTitle = 'Computer Programming Lab';
+    zoneText = 'A fully equipped computing laboratory containing student desks, office chairs, computer monitors, and teaching aids for programming classes.';
   }
 
   if (zoneTitle !== lastZoneTitle) {
@@ -3101,9 +3081,11 @@ canvas.addEventListener(
       clickedObject.userData.isLiftButton ||
       clickedObject.userData.isLiftDoor
     ) {
-      toggleLiftDoors();
-      playClickSound();
-      playDoorSound();
+      if (!liftDoorOpen) {
+        toggleLiftDoors();
+        playClickSound();
+        playDoorSound();
+      }
     } else if (isLab) {
       toggleLabDoor();
       playClickSound();
@@ -3143,42 +3125,95 @@ function returnToLiftStart() {
   resetTourView();
 }
 
+// Map Modal elements
+const mapModal = document.querySelector('#map-modal');
+const closeMapBtn = document.querySelector('#close-map-btn');
+const modalMapCanvas = document.querySelector('#modal-map-canvas');
+const modalMapCtx = modalMapCanvas ? modalMapCanvas.getContext('2d') : null;
+
+// Starts the actual tour (locks cursor and setups scene)
+function startWalkthrough() {
+  tourStarted = true;
+
+  // Show the minimap container
+  const minimap = document.querySelector('#minimap-container');
+  if (minimap) {
+    minimap.classList.add('visible');
+  }
+
+  // Initialize Web Audio, play click, and start AC ambient hum
+  try {
+    const ctx = THREE.AudioContext.getContext();
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    playClickSound();
+    startACHum();
+  } catch (e) {
+    console.warn('Failed to start AC hum audio:', e);
+  }
+
+  resetCameraZoom();
+
+  setCameraView(
+    liftCameraPosition,
+    liftCameraTarget
+  );
+
+  canvas.requestPointerLock();
+}
+
 startBtn.addEventListener(
   'click',
   () => {
-    welcomeScreen.style.display =
-      'none';
+    // Hide welcome screen
+    welcomeScreen.style.display = 'none';
+    playClickSound();
 
-    tourStarted = true;
-
-    // Show the minimap container
-    const minimap = document.querySelector('#minimap-container');
-    if (minimap) {
-      minimap.classList.add('visible');
-    }
-
-    // Initialize Web Audio, play click, and start AC ambient hum
-    try {
-      const ctx = THREE.AudioContext.getContext();
-      if (ctx.state === 'suspended') {
-        ctx.resume();
+    // Show the map modal first
+    if (mapModal) {
+      mapModal.classList.add('visible');
+      // Draw the map onto the modal canvas
+      if (modalMapCanvas && modalMapCtx) {
+        drawFloorMap(modalMapCanvas, modalMapCtx);
       }
-      playClickSound();
-      startACHum();
-    } catch (e) {
-      console.warn('Failed to start AC hum audio:', e);
+    } else {
+      // Fallback if modal is missing
+      startWalkthrough();
     }
-
-    resetCameraZoom();
-
-    setCameraView(
-      liftCameraPosition,
-      liftCameraTarget
-    );
-
-    canvas.requestPointerLock();
   }
 );
+
+function toggleMapModal() {
+  if (!mapModal) return;
+  const isVisible = mapModal.classList.contains('visible');
+
+  if (isVisible) {
+    mapModal.classList.remove('visible');
+    playClickSound();
+    canvas.requestPointerLock();
+  } else {
+    mapModal.classList.add('visible');
+    playClickSound();
+    if (modalMapCanvas && modalMapCtx) {
+      drawFloorMap(modalMapCanvas, modalMapCtx);
+    }
+    document.exitPointerLock();
+  }
+}
+
+// Map Modal Close Event Listeners
+if (closeMapBtn) {
+  closeMapBtn.addEventListener('click', () => {
+    mapModal.classList.remove('visible');
+    if (!tourStarted) {
+      startWalkthrough();
+    } else {
+      playClickSound();
+      canvas.requestPointerLock();
+    }
+  });
+}
 
 // Pointer Lock Controls & Crosshair Setup
 const crosshairElement = document.querySelector('#crosshair');
@@ -3343,6 +3378,10 @@ window.addEventListener(
     if (key === 'l' && tourStarted) {
       toggleLight();
     }
+
+    if (key === 'm' && tourStarted) {
+      toggleMapModal();
+    }
   }
 );
 
@@ -3371,7 +3410,7 @@ window.addEventListener(
 );
 
 function updatePlayerMovement(delta) {
-  if (!tourStarted) {
+  if (!tourStarted || (mapModal && mapModal.classList.contains('visible'))) {
     return;
   }
 
@@ -3497,7 +3536,9 @@ function updateHUDInteractionPrompt() {
       }
 
       if (hitObj.userData.isLiftButton || hitObj.userData.isLiftDoor) {
-        promptString = liftDoorOpen ? 'Click to Close Lift Door' : 'Click to Open Lift Door';
+        if (!liftDoorOpen) {
+          promptString = 'Click to Open Lift Door';
+        }
       } else if (isLab) {
         promptString = labDoorOpen ? 'Click to Close Lab Door' : 'Click to Open Lab Door';
       } else if (isExit) {
@@ -3673,9 +3714,7 @@ function drawMinimap() {
   ctx.restore();
 }
 
-function drawFloorMap() {
-  const canvas = floorMapCanvas;
-  const ctx = floorMapCtx;
+function drawFloorMap(canvas = floorMapCanvas, ctx = floorMapCtx) {
   const playerPos = camera.position;
 
   // Clear canvas
@@ -3863,18 +3902,22 @@ function drawFloorMap() {
   ctx.textBaseline = 'middle';
 
   const lblLift = toCanvas(0, 14.1);
-  ctx.fillText('LIFT', lblLift.u, lblLift.v);
+  ctx.fillText('START (LIFT LOBBY)', lblLift.u, lblLift.v);
 
-  const lblCorr = toCanvas(-4.0, 10.7);
+  const lblCorr = toCanvas(-4.0, 10.8);
   ctx.fillText('CORRIDOR', lblCorr.u, lblCorr.v);
 
-  const lblBalc = toCanvas(-8.5, 4.0);
-  ctx.fillStyle = '#fbcf24';
-  ctx.fillText('BALCONY VIEW', lblBalc.u, lblBalc.v);
+  ctx.save();
+  const lblBalc = toCanvas(-8.4, 0.25);
+  ctx.translate(lblBalc.u, lblBalc.v);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('CORRIDOR', 0, 0);
+  ctx.restore();
 
   const lblLab = toCanvas(-17.3, 0.9);
   ctx.fillStyle = '#38bdf8';
-  ctx.fillText('COMPUTER LAB', lblLab.u, lblLab.v);
+  ctx.fillText('COMPUTER', lblLab.u, lblLab.v - 8);
+  ctx.fillText('PROGRAMMING LAB', lblLab.u, lblLab.v + 8);
 
   // Draw Player Marker
   const pPlayer = toCanvas(playerPos.x, playerPos.z);
@@ -3901,8 +3944,10 @@ function drawFloorMap() {
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // Mark texture for update
-  floorMapTexture.needsUpdate = true;
+  // Mark texture for update if rendering to floor map
+  if (canvas === floorMapCanvas) {
+    floorMapTexture.needsUpdate = true;
+  }
 }
 
 // ===============================
@@ -3989,8 +4034,10 @@ function animate() {
 
   if (tourStarted) {
     drawMinimap();
-    if (floorMapMaterial.opacity > 0) {
-      drawFloorMap();
+    if (mapModal && mapModal.classList.contains('visible')) {
+      if (modalMapCanvas && modalMapCtx) {
+        drawFloorMap(modalMapCanvas, modalMapCtx);
+      }
     }
   }
 
@@ -4010,13 +4057,6 @@ function animate() {
   applyLiftModelDoorProgress(
     liftDoorProgress
   );
-
-  floorMapMaterial.opacity =
-    THREE.MathUtils.lerp(
-      0,
-      0.9,
-      liftDoorProgress
-    );
 
   const labDoorMaxRotation = Math.PI / 2.15;
   const labDoorDamp = labDoorOpen ? 3.0 : 2.0;
